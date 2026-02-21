@@ -1,6 +1,6 @@
 <!--
   ╔═══════════════════════════════════════════════╗
-  ║  Tesla 交付中心 | 號碼牌叫號系統              ║
+  ║  Tesla 台北交付中心 | 號碼牌叫號系統              ║
   ║  Version 2.0  — Tesla.com Design              ║
   ╠═══════════════════════════════════════════════╣
   ║  Views (透過 URL 參數切換):                    ║
@@ -15,8 +15,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla 交付中心 | 號碼牌系統</title>
-    <meta name="description" content="Tesla 交付中心數位號碼牌叫號系統">
+    <title>Tesla 台北交付中心 | 號碼牌系統</title>
+    <meta name="description" content="Tesla 台北交付中心數位號碼牌叫號系統">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -972,11 +972,6 @@
 
     <!-- CONFIG ERROR -->
     <div id="screen-error">
-        <svg class="tesla-logo" width="40" height="50" viewBox="0 0 342 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 51.3C57.5 36.5 116.2 28 171 28s113.5 8.5 171 23.3L327.9 95c-45.9-12.7-103.3-22-156.9-22S70 82.3 24.1 95L0 51.3z" fill="#e82127"/>
-            <path d="M171 128c-50.5 0-101.8 8.2-151.2 24.4L0 108.4C55.8 90.6 113.2 82 171 82s115.2 8.6 171 26.4l-19.8 44C272.8 136.2 221.5 128 171 128z" fill="#e82127"/>
-            <path d="M95.4 152.6L171 512l75.6-359.4C223.5 146.4 197.8 143 171 143s-52.5 3.4-75.6 9.6z" fill="#e82127"/>
-        </svg>
         <h1>Firebase 尚未設定</h1>
         <p>請開啟 <strong>index.html</strong>，找到 <code>firebaseConfig</code> 區塊，填入您的 Firebase 設定值。</p>
         <code>const firebaseConfig = {
@@ -996,13 +991,11 @@
         <!-- 領號 -->
         <div id="kiosk-landing" class="screen active">
             <div class="kiosk-nav">
-                <svg class="tesla-logo" width="90" height="11" viewBox="0 0 342 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h43.5v7.8H24.9V42h-6.3V7.8H0V0zM49.1 0h37.7v7.8H55.4v9.8H85v7.8H55.4v8.8h31.4V42H49.1V0zM94.4 0h6.3v34.2h27.1V42H94.4V0zM131.3 34.4l4.4-5.3c4.4 4.2 10.1 6.7 16 6.7 6.2 0 9.9-2.8 9.9-7.1 0-4-2.5-6.1-12.2-8.4-11.3-2.7-16.6-6.7-16.6-15.2C132.8 6.2 140 0 149.9 0c7.1 0 13.3 2.2 18.2 6.5l-4.1 5.5c-4-3.4-9-5.3-14.3-5.3-5.9 0-9.3 2.9-9.3 6.7 0 4.1 2.7 6.2 12.7 8.6 11.2 2.7 16.1 6.9 16.1 14.9 0 9.1-7.4 15-18.8 15-8 0-15.4-2.8-21.1-7.5zM206.3 42h-6.3V7.8h-18.6V0H225v7.8h-18.7V42zM248.1 28.6L228.4 0h7.2l15.2 23.1L266 0h7.1l-19.7 28.6V42h-5.3V28.6zM278 0h6.3v42H278V0zM295.6 0h5.9l28.6 30.4V0h6.2v42h-5.4L301.8 11V42h-6.2V0z" fill="currentColor"/>
-                </svg>
+                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">台北交付中心</span>
             </div>
             
             <div class="hero-section">
-                <p class="hero-eyebrow">Tesla 交付中心</p>
+                <p class="hero-eyebrow">Tesla 台北交付中心</p>
                 <h1 class="hero-title">歡迎蒞臨</h1>
                 <p class="hero-subtitle">請領取您的報到號碼牌</p>
                 
@@ -1011,19 +1004,20 @@
                 </button>
                 
                 <p class="hero-note">點擊後請保持頁面開啟以接收通知</p>
+                <p style="margin-top:16px;font-size:13px;color:var(--gray-600);max-width:300px;line-height:1.7;text-align:center;">
+                    若多人前來交車，請一位代表抽取即可
+                </p>
             </div>
 
             <div class="kiosk-footer-bar">
-                © Tesla, Inc. · 交付中心叫號系統
+                © Tesla, Inc. · 台北交付中心叫號系統
             </div>
         </div>
 
         <!-- 等待中 -->
         <div id="kiosk-waiting" class="screen">
             <div class="waiting-nav">
-                <svg class="tesla-logo" width="80" height="10" viewBox="0 0 342 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h43.5v7.8H24.9V42h-6.3V7.8H0V0zM49.1 0h37.7v7.8H55.4v9.8H85v7.8H55.4v8.8h31.4V42H49.1V0zM94.4 0h6.3v34.2h27.1V42H94.4V0zM131.3 34.4l4.4-5.3c4.4 4.2 10.1 6.7 16 6.7 6.2 0 9.9-2.8 9.9-7.1 0-4-2.5-6.1-12.2-8.4-11.3-2.7-16.6-6.7-16.6-15.2C132.8 6.2 140 0 149.9 0c7.1 0 13.3 2.2 18.2 6.5l-4.1 5.5c-4-3.4-9-5.3-14.3-5.3-5.9 0-9.3 2.9-9.3 6.7 0 4.1 2.7 6.2 12.7 8.6 11.2 2.7 16.1 6.9 16.1 14.9 0 9.1-7.4 15-18.8 15-8 0-15.4-2.8-21.1-7.5zM206.3 42h-6.3V7.8h-18.6V0H225v7.8h-18.7V42zM248.1 28.6L228.4 0h7.2l15.2 23.1L266 0h7.1l-19.7 28.6V42h-5.3V28.6zM278 0h6.3v42H278V0zM295.6 0h5.9l28.6 30.4V0h6.2v42h-5.4L301.8 11V42h-6.2V0z" fill="currentColor"/>
-                </svg>
+                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">台北交付中心</span>
             </div>
 
             <div class="ticket-hero fade-in">
@@ -1058,13 +1052,19 @@
                 <div class="wake-notice-dot"></div>
                 <span>為了接收叫號通知，請保持螢幕恆亮</span>
             </div>
+
+            <div style="margin:16px 24px 24px;padding:16px 20px;background:var(--gray-100);border-radius:var(--radius);font-size:13px;color:var(--gray-600);line-height:1.9;max-width:480px;width:calc(100% - 48px);">
+                <div style="font-weight:600;color:var(--black);margin-bottom:6px;">📋 請準備以下證件</div>
+                <div>個人戶：訂購人 或 車輛登記人 之<strong>第二證件</strong>以領取資料完成報到</div>
+                <div style="margin-top:4px;">公司戶：訂購人<strong>身分證</strong> 或 <strong>公司名片</strong></div>
+            </div>
         </div>
 
         <!-- 叫號啦 -->
         <div id="kiosk-called" class="screen">
             <div class="called-badge">請前往櫃台</div>
             <div class="called-title">輪到您了</div>
-            <div class="called-sub">請出示此畫面給工作人員</div>
+            <div class="called-sub">請至門口黑龍處排隊等候報到領取資料</div>
             <div class="called-number">
                 <span class="called-number-hash">#</span><span id="calledMyNumber">—</span>
             </div>
@@ -1078,11 +1078,6 @@
 
         <!-- 密碼 -->
         <div id="admin-lock" class="screen active">
-            <svg width="32" height="40" viewBox="0 0 342 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 51.3C57.5 36.5 116.2 28 171 28s113.5 8.5 171 23.3L327.9 95c-45.9-12.7-103.3-22-156.9-22S70 82.3 24.1 95L0 51.3z" fill="#e82127"/>
-                <path d="M171 128c-50.5 0-101.8 8.2-151.2 24.4L0 108.4C55.8 90.6 113.2 82 171 82s115.2 8.6 171 26.4l-19.8 44C272.8 136.2 221.5 128 171 128z" fill="#e82127"/>
-                <path d="M95.4 152.6L171 512l75.6-359.4C223.5 146.4 197.8 143 171 143s-52.5 3.4-75.6 9.6z" fill="#e82127"/>
-            </svg>
             <div>
                 <div class="admin-lock-title">管理後台</div>
                 <div class="admin-lock-sub" style="margin-top:4px;">請輸入管理密碼</div>
@@ -1174,9 +1169,6 @@
          ════════════════════════════════════════ -->
     <div id="view-tv" class="view">
         <div class="tv-header">
-            <svg width="100" height="12" viewBox="0 0 342 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0h43.5v7.8H24.9V42h-6.3V7.8H0V0zM49.1 0h37.7v7.8H55.4v9.8H85v7.8H55.4v8.8h31.4V42H49.1V0zM94.4 0h6.3v34.2h27.1V42H94.4V0zM131.3 34.4l4.4-5.3c4.4 4.2 10.1 6.7 16 6.7 6.2 0 9.9-2.8 9.9-7.1 0-4-2.5-6.1-12.2-8.4-11.3-2.7-16.6-6.7-16.6-15.2C132.8 6.2 140 0 149.9 0c7.1 0 13.3 2.2 18.2 6.5l-4.1 5.5c-4-3.4-9-5.3-14.3-5.3-5.9 0-9.3 2.9-9.3 6.7 0 4.1 2.7 6.2 12.7 8.6 11.2 2.7 16.1 6.9 16.1 14.9 0 9.1-7.4 15-18.8 15-8 0-15.4-2.8-21.1-7.5zM206.3 42h-6.3V7.8h-18.6V0H225v7.8h-18.7V42zM248.1 28.6L228.4 0h7.2l15.2 23.1L266 0h7.1l-19.7 28.6V42h-5.3V28.6zM278 0h6.3v42H278V0zM295.6 0h5.9l28.6 30.4V0h6.2v42h-5.4L301.8 11V42h-6.2V0z" fill="rgba(255,255,255,0.4)"/>
-            </svg>
             <div class="tv-header-line"></div>
             <div class="tv-sub">交 付 中 心</div>
         </div>
@@ -1236,7 +1228,7 @@
         // ═════════════════════════════════
         const ADMIN_PASSWORD = '350019';
 
-        const AVG_SERVICE_MIN = 5;
+        const AVG_SERVICE_MIN = 2;
         const COUNTER_COUNT = 3;
 
         // ═════════════════════════════════
