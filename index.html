@@ -30,7 +30,9 @@
         /* ════════════════════════════════════════
            Tesla Design System — Tesla.com 風格
            ════════════════════════════════════════ */
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -52,9 +54,9 @@
             --radius: 8px;
             --radius-lg: 12px;
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow: 0 4px 16px rgba(0,0,0,0.12);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
         }
 
         body {
@@ -104,7 +106,9 @@
             background: var(--white);
         }
 
-        #screen-error.active { display: flex; }
+        #screen-error.active {
+            display: flex;
+        }
 
         #screen-error h1 {
             font-size: 22px;
@@ -153,7 +157,9 @@
             letter-spacing: 0.3px;
         }
 
-        .btn:active { transform: scale(0.97); }
+        .btn:active {
+            transform: scale(0.97);
+        }
 
         /* Tesla 主要按鈕 — 黑底白字 */
         .btn-primary {
@@ -164,7 +170,9 @@
             font-weight: 500;
         }
 
-        .btn-primary:hover { background: #222; }
+        .btn-primary:hover {
+            background: #222;
+        }
 
         /* Tesla 次要按鈕 — 白底黑框 */
         .btn-secondary {
@@ -175,7 +183,9 @@
             font-size: 14px;
         }
 
-        .btn-secondary:hover { background: var(--gray-100); }
+        .btn-secondary:hover {
+            background: var(--gray-100);
+        }
 
         /* 小型按鈕 */
         .btn-sm {
@@ -191,7 +201,9 @@
             border: 1px solid var(--red);
         }
 
-        .btn-danger:hover { background: rgba(232,33,39,0.06); }
+        .btn-danger:hover {
+            background: rgba(232, 33, 39, 0.06);
+        }
 
         /* 紅色主按鈕 */
         .btn-red {
@@ -200,7 +212,9 @@
             padding: 13px 28px;
         }
 
-        .btn-red:hover { background: var(--red-dark); }
+        .btn-red:hover {
+            background: var(--red-dark);
+        }
 
         .badge {
             display: inline-block;
@@ -212,12 +226,12 @@
         }
 
         .badge-green {
-            background: rgba(62,145,66,0.1);
+            background: rgba(62, 145, 66, 0.1);
             color: var(--green);
         }
 
         .badge-red {
-            background: rgba(232,33,39,0.1);
+            background: rgba(232, 33, 39, 0.1);
             color: var(--red);
         }
 
@@ -421,7 +435,9 @@
             border-right: 1px solid var(--gray-200);
         }
 
-        .stat-item:last-child { border-right: none; }
+        .stat-item:last-child {
+            border-right: none;
+        }
 
         .stat-label {
             font-size: 10px;
@@ -439,8 +455,13 @@
             letter-spacing: -0.5px;
         }
 
-        .stat-value.highlight { color: var(--red); }
-        .stat-value.green { color: var(--green); }
+        .stat-value.highlight {
+            color: var(--red);
+        }
+
+        .stat-value.green {
+            color: var(--green);
+        }
 
         .wake-notice {
             margin: 20px 24px 0;
@@ -479,8 +500,15 @@
         }
 
         @keyframes called-bg-pulse {
-            0%, 100% { background: #171a20; }
-            50% { background: #1f0507; }
+
+            0%,
+            100% {
+                background: #171a20;
+            }
+
+            50% {
+                background: #1f0507;
+            }
         }
 
         .called-badge {
@@ -498,8 +526,15 @@
         }
 
         @keyframes called-badge-appear {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .called-title {
@@ -512,7 +547,7 @@
 
         .called-sub {
             font-size: 16px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             margin-bottom: 48px;
         }
 
@@ -527,7 +562,7 @@
         .called-number-hash {
             font-size: 0.35em;
             font-weight: 400;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
             letter-spacing: 0;
             vertical-align: super;
             margin-right: 4px;
@@ -668,8 +703,13 @@
             color: var(--black);
         }
 
-        .stat-card-value.red { color: var(--red); }
-        .stat-card-value.amber { color: var(--amber); }
+        .stat-card-value.red {
+            color: var(--red);
+        }
+
+        .stat-card-value.amber {
+            color: var(--amber);
+        }
 
         /* 區塊 */
         .admin-section {
@@ -708,7 +748,9 @@
             transition: var(--transition);
         }
 
-        .batch-input:focus { border-color: var(--black); }
+        .batch-input:focus {
+            border-color: var(--black);
+        }
 
         /* QR Section */
         .qr-section {
@@ -755,8 +797,13 @@
             border-radius: 50%;
         }
 
-        .status-dot.online { background: var(--green); }
-        .status-dot.offline { background: var(--red); }
+        .status-dot.online {
+            background: var(--green);
+        }
+
+        .status-dot.offline {
+            background: var(--red);
+        }
 
         /* Divider */
         .divider {
@@ -784,8 +831,8 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: 
-                radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%);
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -803,7 +850,7 @@
         .tv-header-line {
             width: 32px;
             height: 1px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .tv-sub {
@@ -811,7 +858,7 @@
             font-weight: 400;
             letter-spacing: 6px;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .tv-main {
@@ -827,7 +874,7 @@
             font-weight: 500;
             letter-spacing: 6px;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
             margin-bottom: 8px;
         }
 
@@ -845,19 +892,26 @@
         }
 
         @keyframes tv-flip {
-            0% { opacity: 0; transform: translateY(24px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .tv-next-row {
             margin-top: 16px;
             font-size: 16px;
-            color: rgba(255,255,255,0.3);
+            color: rgba(255, 255, 255, 0.3);
             letter-spacing: 1px;
         }
 
         .tv-next-row span {
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 500;
         }
 
@@ -880,14 +934,14 @@
             font-weight: 600;
             letter-spacing: 3px;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.3);
+            color: rgba(255, 255, 255, 0.3);
             margin-bottom: 4px;
         }
 
         .tv-stat-value {
             font-size: 28px;
             font-weight: 300;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             letter-spacing: -1px;
         }
 
@@ -908,7 +962,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: 100;
@@ -917,7 +971,9 @@
             padding: 24px;
         }
 
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active {
+            display: flex;
+        }
 
         .modal-box {
             background: var(--white);
@@ -962,8 +1018,96 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ════════════════════════════════════════
+           Phase 4: Waiting Screen Enhancements
+           ════════════════════════════════════════ */
+        .waiting-card {
+            margin: 12px 24px;
+            padding: 16px 20px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            max-width: 480px;
+            width: calc(100% - 48px);
+        }
+
+        .waiting-card-title {
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .delivery-list-scroll {
+            max-height: 200px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .delivery-list-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .delivery-list-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .delivery-list-scroll::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        .dl-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .dl-table th {
+            text-align: left;
+            color: var(--gray-500);
+            font-weight: 500;
+            font-size: 11px;
+            padding: 4px 8px 8px;
+            border-bottom: 1px solid var(--gray-200);
+            letter-spacing: 0.5px;
+        }
+
+        .dl-table td {
+            padding: 6px 8px;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .dl-table td:first-child {
+            color: var(--red);
+            font-weight: 600;
+            width: 36px;
+        }
+
+        .dl-table td:nth-child(2) {
+            color: var(--gray-500);
+            font-size: 12px;
+            width: 48px;
+        }
+
+        .waiting-map-img {
+            width: 100%;
+            border-radius: var(--radius);
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -993,18 +1137,19 @@
             <div class="kiosk-nav">
                 <span style="font-size:15px;font-weight:500;letter-spacing:1px;">台北交付中心</span>
             </div>
-            
+
             <div class="hero-section">
                 <p class="hero-eyebrow">Tesla 台北交付中心</p>
                 <h1 class="hero-title">歡迎蒞臨</h1>
                 <p class="hero-subtitle">請領取您的報到號碼牌</p>
-                
+
                 <button class="btn-cta" id="btnTakeTicket" onclick="takeTicket()">
                     領取號碼牌
                 </button>
-                
+
                 <p class="hero-note">點擊後請保持頁面開啟以接收通知</p>
-                <p style="margin-top:16px;font-size:13px;color:var(--gray-600);max-width:300px;line-height:1.7;text-align:center;">
+                <p
+                    style="margin-top:16px;font-size:13px;color:var(--gray-600);max-width:300px;line-height:1.7;text-align:center;">
                     若多人前來交車，請一位代表抽取即可
                 </p>
             </div>
@@ -1053,11 +1198,37 @@
                 <span>為了接收叫號通知，請保持螢幕恆亮</span>
             </div>
 
-            <div style="margin:16px 24px 24px;padding:16px 20px;background:var(--gray-100);border-radius:var(--radius);font-size:13px;color:var(--gray-600);line-height:1.9;max-width:480px;width:calc(100% - 48px);">
-                <div style="font-weight:600;color:var(--black);margin-bottom:6px;">📋 請準備以下證件</div>
-                <div>個人戶：訂購人 或 車輛登記人 之<strong>第二證件</strong>以領取資料完成報到</div>
+            <div
+                style="margin:16px 24px 24px;padding:16px 20px;background:var(--gray-100);border-radius:var(--radius);font-size:13px;color:var(--gray-600);line-height:1.9;max-width:480px;width:calc(100% - 48px);">
+                <div style="font-weight:600;color:var(--black);margin-bottom:6px;">📋 請準備以下證件以領取資料完成報到</div>
+                <div>個人戶：訂購人 或 車輛登記人 之<strong>第二證件</strong></div>
                 <div style="margin-top:4px;">公司戶：訂購人<strong>身分證</strong> 或 <strong>公司名片</strong></div>
             </div>
+
+            <!-- Phase 4: 報到名單 -->
+            <div class="waiting-card" id="waitingDeliveryCard" style="display:none;">
+                <div class="waiting-card-title">📋 本場次報到名單</div>
+                <div class="delivery-list-scroll">
+                    <table class="dl-table">
+                        <thead>
+                            <tr>
+                                <th>車位</th>
+                                <th>時間</th>
+                                <th>姓名</th>
+                            </tr>
+                        </thead>
+                        <tbody id="waitingDeliveryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Phase 4: 交車位置圖 -->
+            <div class="waiting-card">
+                <div class="waiting-card-title">📍 B4 交車位置圖</div>
+                <img src="b4_map.png" alt="B4 交車位置圖" class="waiting-map-img"
+                    onerror="this.parentElement.style.display='none'">
+            </div>
+
         </div>
 
         <!-- 叫號啦 -->
@@ -1214,13 +1385,13 @@
         // 🔥 Firebase 設定 — 請填入您的 Firebase 專案設定
         // ══════════════════════════════════════════
         const firebaseConfig = {
-  apiKey: "AIzaSyCZzriWUnBIPKd9MuiJd5Ym0T7wKit9ul4",
-  authDomain: "new-tesla-queue.firebaseapp.com",
-  databaseURL: "https://new-tesla-queue-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "new-tesla-queue",
-  storageBucket: "new-tesla-queue.firebasestorage.app",
-  messagingSenderId: "612392646704",
-  appId: "1:612392646704:web:667dd0784c72af409695f5"
+            apiKey: "AIzaSyCZzriWUnBIPKd9MuiJd5Ym0T7wKit9ul4",
+            authDomain: "new-tesla-queue.firebaseapp.com",
+            databaseURL: "https://new-tesla-queue-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "new-tesla-queue",
+            storageBucket: "new-tesla-queue.firebasestorage.app",
+            messagingSenderId: "612392646704",
+            appId: "1:612392646704:web:667dd0784c72af409695f5"
         };
 
         // ═════════════════════════════════
@@ -1320,6 +1491,44 @@
                         localStorage.removeItem('tq_session');
                     }
                 });
+            }
+
+            // Phase 4: 監聽交車名單 → 顯示在等待畫面
+            db.ref('board/deliveryList').on('value', (snap) => {
+                const text = snap.val();
+                renderWaitingDeliveryList(text);
+            });
+        }
+
+        // Phase 4: 渲染等待畫面報到名單
+        function renderWaitingDeliveryList(text) {
+            const card = document.getElementById('waitingDeliveryCard');
+            const tbody = document.getElementById('waitingDeliveryBody');
+            if (!text || typeof text !== 'string') { card.style.display = 'none'; return; }
+            const now = new Date();
+            const currentHour = now.getHours();
+            const lines = text.split('\n');
+            let html = '';
+            let count = 0;
+            lines.forEach(line => {
+                const parts = line.split('\t');
+                if (parts.length >= 2) {
+                    const time = parts[0].trim();
+                    const spot = parts[1].trim();
+                    const name = parts[2] ? parts[2].trim() : '';
+                    // 篩選目前場次（同一小時）
+                    const h = parseInt(time.split(':')[0]);
+                    if (h === currentHour || (h === currentHour + 1 && now.getMinutes() >= 50)) {
+                        html += `<tr><td>${spot}</td><td>${time}</td><td>${name}</td></tr>`;
+                        count++;
+                    }
+                }
+            });
+            if (count > 0) {
+                tbody.innerHTML = html;
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
             }
         }
 
@@ -1432,7 +1641,7 @@
                     osc.start(audioCtx.currentTime + delay);
                     osc.stop(audioCtx.currentTime + delay + 0.2);
                 });
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function playTVChime() {
@@ -1452,7 +1661,7 @@
                     osc.start(t);
                     osc.stop(t + 0.4);
                 });
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // ═════════════════════════════════
@@ -1592,4 +1801,5 @@
     </script>
 
 </body>
+
 </html>
