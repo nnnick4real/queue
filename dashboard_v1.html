@@ -1411,7 +1411,7 @@
             if (currentSessionData.length === 0) return;
             const totalListPages = Math.ceil(currentSessionData.length / ITEMS_PER_PAGE);
             currentPage++;
-            if (currentPage >= totalListPages) { currentPage = 0; }
+            if (currentPage > totalListPages) { currentPage = 0; }
             renderCurrentPage();
         }
         function renderCurrentPage() {
