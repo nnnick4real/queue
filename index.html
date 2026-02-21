@@ -1109,6 +1109,167 @@
             border-radius: var(--radius);
             margin-top: 4px;
         }
+
+        /* ════════════════════════════════════════
+           Order Search + Map Highlight
+           ════════════════════════════════════════ */
+        .search-section {
+            margin: 16px 24px;
+            max-width: 480px;
+            width: calc(100% - 48px);
+        }
+
+        .search-card {
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+        }
+
+        .search-card-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--black);
+            margin-bottom: 10px;
+        }
+
+        .search-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            color: var(--black);
+            background: var(--white);
+            outline: none;
+            transition: border-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .search-input:focus {
+            border-color: var(--red);
+        }
+
+        .search-input::placeholder {
+            color: var(--gray-400);
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 13px;
+        }
+
+        .search-btn {
+            padding: 12px 20px;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .search-btn:active {
+            opacity: 0.7;
+        }
+
+        /* Result */
+        .search-result {
+            margin-top: 12px;
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            display: none;
+        }
+
+        .search-result.found {
+            display: block;
+            background: linear-gradient(135deg, rgba(232, 33, 39, 0.08), rgba(232, 33, 39, 0.03));
+            border: 1px solid rgba(232, 33, 39, 0.2);
+        }
+
+        .search-result.not-found {
+            display: block;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+        }
+
+        .result-spot {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--red);
+            line-height: 1;
+        }
+
+        .result-spot-label {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-bottom: 2px;
+        }
+
+        .result-name {
+            font-size: 15px;
+            color: var(--black);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .result-not-found-text {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* Interactive Map */
+        .map-interactive {
+            position: relative;
+            margin-top: 12px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #000;
+        }
+
+        .map-interactive img {
+            width: 100%;
+            display: block;
+        }
+
+        .spot-marker {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .spot-marker.active {
+            opacity: 1;
+            background: var(--red);
+            box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.3), 0 0 20px rgba(232, 33, 39, 0.6), 0 0 40px rgba(232, 33, 39, 0.3);
+            animation: spotPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spotPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.3), 0 0 20px rgba(232, 33, 39, 0.6);
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(232, 33, 39, 0.15), 0 0 30px rgba(232, 33, 39, 0.8), 0 0 60px rgba(232, 33, 39, 0.3);
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+        }
     </style>
 </head>
 
@@ -1135,7 +1296,7 @@
         <!-- 領號 -->
         <div id="kiosk-landing" class="screen active">
             <div class="kiosk-nav">
-                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">台北交付中心</span>
+                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">Tesla 台北交付中心</span>
             </div>
 
             <div class="hero-section">
@@ -1154,6 +1315,23 @@
                 </p>
             </div>
 
+            <!-- 訂單查車位（領號頁面） -->
+            <div class="search-section">
+                <div class="search-card">
+                    <div class="search-card-title">🔍 輸入訂單編號查詢車位</div>
+                    <div class="search-input-row">
+                        <input class="search-input" id="searchInputLanding" type="text" placeholder="例：RN123456789"
+                            maxlength="11" inputmode="text" autocomplete="off"
+                            onkeydown="if(event.key==='Enter')searchSpot('landing')">
+                        <button class="search-btn" onclick="searchSpot('landing')">查詢</button>
+                    </div>
+                    <div class="search-result" id="searchResultLanding"></div>
+                    <div class="map-interactive" id="searchMapLanding" style="display:none;">
+                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
+                    </div>
+                </div>
+            </div>
+
             <div class="kiosk-footer-bar">
                 © Tesla, Inc. · 台北交付中心叫號系統
             </div>
@@ -1162,7 +1340,7 @@
         <!-- 等待中 -->
         <div id="kiosk-waiting" class="screen">
             <div class="waiting-nav">
-                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">台北交付中心</span>
+                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">Tesla 台北交付中心</span>
             </div>
 
             <div class="ticket-hero fade-in">
@@ -1200,7 +1378,7 @@
 
             <div
                 style="margin:16px 24px 24px;padding:16px 20px;background:var(--gray-100);border-radius:var(--radius);font-size:13px;color:var(--gray-600);line-height:1.9;max-width:480px;width:calc(100% - 48px);">
-                <div style="font-weight:600;color:var(--black);margin-bottom:6px;">📋 請準備以下證件以領取資料完成報到</div>
+                <div style="font-weight:600;color:var(--black);margin-bottom:6px;">請準備以下證件以領取資料完成報到</div>
                 <div>個人戶：訂購人 或 車輛登記人 之<strong>第二證件</strong></div>
                 <div style="margin-top:4px;">公司戶：訂購人<strong>身分證</strong> 或 <strong>公司名片</strong></div>
             </div>
@@ -1227,6 +1405,24 @@
                 <div class="waiting-card-title">B4 交車位置圖</div>
                 <img src="b4_map.png" alt="B4 交車位置圖" class="waiting-map-img"
                     onerror="this.parentElement.style.display='none'">
+            </div>
+
+            <!-- 訂單查車位（等待頁面） -->
+            <div class="search-section"
+                style="margin-left:0; margin-right:0; width:100%; max-width:480px; padding:0 24px;">
+                <div class="search-card">
+                    <div class="search-card-title">🔍 輸入訂單編號查詢車位</div>
+                    <div class="search-input-row">
+                        <input class="search-input" id="searchInputWaiting" type="text" placeholder="例：RN123456789"
+                            maxlength="11" inputmode="text" autocomplete="off"
+                            onkeydown="if(event.key==='Enter')searchSpot('waiting')">
+                        <button class="search-btn" onclick="searchSpot('waiting')">查詢</button>
+                    </div>
+                    <div class="search-result" id="searchResultWaiting"></div>
+                    <div class="map-interactive" id="searchMapWaiting" style="display:none;">
+                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -1493,10 +1689,11 @@
                 });
             }
 
-            // Phase 4: 監聽交車名單 → 顯示在等待畫面
+            // Phase 4: 監聽交車名單 → 顯示在等待畫面 + 搜尋資料
             db.ref('board/deliveryList').on('value', (snap) => {
                 const text = snap.val();
                 renderWaitingDeliveryList(text);
+                updateSearchData(text);
             });
         }
 
@@ -1530,6 +1727,93 @@
             } else {
                 card.style.display = 'none';
             }
+        }
+
+        // ═════════════════════════════════
+        // 🔍 訂單查車位 + 地圖點亮
+        // ═════════════════════════════════
+        let deliverySearchData = [];
+
+        // B4 車位座標 (% 位置，對應 b4_map.png)
+        const SPOT_POSITIONS = {
+            // Zone A: 上方區域
+            1: { x: 37, y: 33 }, 2: { x: 42, y: 33 }, 3: { x: 47, y: 33 }, 4: { x: 52, y: 33 }, 5: { x: 57, y: 33 },
+            6: { x: 62, y: 33 }, 7: { x: 67, y: 33 }, 8: { x: 72, y: 33 }, 9: { x: 77, y: 33 }, 10: { x: 82, y: 33 },
+            11: { x: 82, y: 25 }, 12: { x: 77, y: 25 }, 13: { x: 72, y: 25 }, 14: { x: 67, y: 25 }, 15: { x: 62, y: 25 },
+            16: { x: 57, y: 25 }, 17: { x: 52, y: 25 }, 18: { x: 47, y: 25 }, 19: { x: 42, y: 25 }, 20: { x: 37, y: 25 },
+            // Zone B: 右上 + 右側
+            21: { x: 95, y: 34 }, 22: { x: 95, y: 29 }, 23: { x: 95, y: 24 }, 24: { x: 95, y: 18 },
+            25: { x: 90, y: 9 }, 26: { x: 85, y: 9 }, 27: { x: 80, y: 9 }, 28: { x: 75, y: 9 }, 29: { x: 70, y: 9 }, 30: { x: 58, y: 9 },
+            // Zone C: 中間區域
+            31: { x: 52, y: 55 }, 32: { x: 57, y: 55 }, 33: { x: 62, y: 55 }, 34: { x: 67, y: 55 }, 35: { x: 72, y: 55 }, 36: { x: 77, y: 55 }, 37: { x: 82, y: 55 },
+            38: { x: 82, y: 62 }, 39: { x: 77, y: 62 }, 50: { x: 67, y: 62 }, 51: { x: 62, y: 62 }, 52: { x: 57, y: 62 }, 53: { x: 52, y: 62 }, 54: { x: 39, y: 60 },
+            // Zone D: 最下排
+            55: { x: 37, y: 87 }, 56: { x: 42, y: 87 }, 57: { x: 47, y: 87 }, 58: { x: 52, y: 87 }, 59: { x: 57, y: 87 }, 60: { x: 62, y: 87 },
+            61: { x: 67, y: 87 }, 62: { x: 72, y: 87 }, 63: { x: 77, y: 87 }, 64: { x: 82, y: 87 }, 65: { x: 87, y: 87 }, 66: { x: 92, y: 87 },
+            // 右側直列
+            67: { x: 95, y: 64 }, 68: { x: 95, y: 61 }, 69: { x: 95, y: 57 }, 70: { x: 95, y: 53 }
+        };
+
+        // 更新搜尋用資料（從 Firebase deliveryList 同步）
+        function updateSearchData(text) {
+            if (!text || typeof text !== 'string') return;
+            deliverySearchData = [];
+            text.split('\n').forEach(line => {
+                const parts = line.split('\t');
+                if (parts.length >= 3) {
+                    deliverySearchData.push({
+                        time: parts[0].trim(),
+                        spot: parts[1].trim(),
+                        name: parts[2].trim(),
+                        order: parts[3] ? parts[3].trim().toUpperCase() : ''
+                    });
+                }
+            });
+        }
+
+        function searchSpot(page) {
+            const input = document.getElementById('searchInput' + (page === 'landing' ? 'Landing' : 'Waiting'));
+            const resultEl = document.getElementById('searchResult' + (page === 'landing' ? 'Landing' : 'Waiting'));
+            const mapEl = document.getElementById('searchMap' + (page === 'landing' ? 'Landing' : 'Waiting'));
+            const query = input.value.trim().toUpperCase();
+
+            if (!query) { input.focus(); return; }
+
+            // 搜尋訂單
+            const found = deliverySearchData.find(d => d.order === query);
+
+            if (found) {
+                resultEl.className = 'search-result found';
+                resultEl.innerHTML = `
+                    <div class="result-spot-label">您的車位</div>
+                    <div class="result-spot">${found.spot} 號</div>
+                    <div class="result-name">${found.name}</div>
+                `;
+                // 在地圖上點亮
+                const spotNum = parseInt(found.spot);
+                if (SPOT_POSITIONS[spotNum]) {
+                    highlightSpotOnMap(mapEl, spotNum);
+                    mapEl.style.display = '';
+                } else {
+                    mapEl.style.display = 'none';
+                }
+            } else {
+                resultEl.className = 'search-result not-found';
+                resultEl.innerHTML = '<div class="result-not-found-text">❌ 查無此訂單編號，請確認後重試</div>';
+                mapEl.style.display = 'none';
+            }
+        }
+
+        function highlightSpotOnMap(mapContainer, spotNum) {
+            // 移除舊的 marker
+            mapContainer.querySelectorAll('.spot-marker').forEach(m => m.remove());
+            const pos = SPOT_POSITIONS[spotNum];
+            if (!pos) return;
+            const marker = document.createElement('div');
+            marker.className = 'spot-marker active';
+            marker.style.left = pos.x + '%';
+            marker.style.top = pos.y + '%';
+            mapContainer.appendChild(marker);
         }
 
         function takeTicket() {
@@ -1803,4 +2087,3 @@
 </body>
 
 </html>
-
