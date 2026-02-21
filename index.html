@@ -1435,6 +1435,13 @@
             <div class="called-number">
                 <span class="called-number-hash">#</span><span id="calledMyNumber">—</span>
             </div>
+            <!-- 車位資訊（若有查詢過） -->
+            <div id="calledSpotInfo"
+                style="display:none; margin-top:20px; padding:16px 24px; background:rgba(232,33,39,0.08); border:1px solid rgba(232,33,39,0.2); border-radius:12px; text-align:center;">
+                <div style="font-size:12px; color:#999;">您的車位</div>
+                <div id="calledSpotNum" style="font-size:48px; font-weight:700; color:#E82127; line-height:1;"></div>
+                <div id="calledSpotName" style="font-size:15px; color:#333; margin-top:6px;"></div>
+            </div>
         </div>
     </div>
 
@@ -1733,6 +1740,7 @@
         // 🔍 訂單查車位 + 地圖點亮
         // ═════════════════════════════════
         let deliverySearchData = [];
+        let lastSearchResult = null;
 
         // B4 車位座標 (% 位置，對應 b4_map.png)
         const SPOT_POSITIONS = {
@@ -1789,6 +1797,8 @@
                     <div class="result-spot">${found.spot} 號</div>
                     <div class="result-name">${found.name}</div>
                 `;
+                // 儲存搜尋結果，叫號頁也顯示
+                lastSearchResult = { spot: found.spot, name: found.name };
                 // 在地圖上點亮
                 const spotNum = parseInt(found.spot);
                 if (SPOT_POSITIONS[spotNum]) {
@@ -1873,6 +1883,12 @@
 
             if (isCalled && calledUpTo > prevCalledUpTo) {
                 switchKioskScreen('kiosk-called');
+                // 若有查過訂單，顯示車位資訊
+                if (lastSearchResult) {
+                    document.getElementById('calledSpotNum').textContent = lastSearchResult.spot + ' 號';
+                    document.getElementById('calledSpotName').textContent = lastSearchResult.name;
+                    document.getElementById('calledSpotInfo').style.display = '';
+                }
                 playNotificationSound();
                 if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
             }
