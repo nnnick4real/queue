@@ -1,7 +1,7 @@
 <!--
   ╔═══════════════════════════════════════════════╗
   ║  Tesla 交付中心 | 號碼牌叫號系統              ║
-  ║  Version 1.0                                  ║
+  ║  Version 2.0  — Tesla.com Design              ║
   ╠═══════════════════════════════════════════════╣
   ║  Views (透過 URL 參數切換):                    ║
   ║  - 車主端 (預設):  ?mode=kiosk                ║
@@ -17,6 +17,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tesla 交付中心 | 號碼牌系統</title>
     <meta name="description" content="Tesla 交付中心數位號碼牌叫號系統">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Firebase SDK (compat 版本) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -26,39 +28,39 @@
 
     <style>
         /* ════════════════════════════════════════
-           Tesla Design System — 全域樣式
+           Tesla Design System — Tesla.com 風格
            ════════════════════════════════════════ */
-        *,
-        *::before,
-        *::after {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         :root {
-            --bg: #0a0a0a;
-            --surface: #161616;
-            --surface-2: #1e1e1e;
-            --surface-3: #282828;
-            --border: #333;
+            --white: #ffffff;
+            --black: #171a20;
+            --gray-100: #f4f4f4;
+            --gray-200: #e0e0e0;
+            --gray-400: #999;
+            --gray-600: #5c5e62;
+            --gray-800: #3e4044;
             --red: #e82127;
-            --red-dark: #b91a1f;
-            --red-glow: rgba(232, 33, 39, 0.25);
-            --green: #00c853;
-            --amber: #ffab00;
-            --text: #ffffff;
-            --text-2: #a0a0a0;
-            --text-3: #666;
-            --radius: 12px;
-            --radius-lg: 20px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --red-dark: #cc171d;
+            --green: #3e9142;
+            --amber: #b36200;
+            --radius-sm: 4px;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--black);
             min-height: 100vh;
             min-height: 100dvh;
             overflow-x: hidden;
@@ -83,114 +85,13 @@
             display: flex;
         }
 
-        /* ── 通用元件 ── */
-        .tesla-wordmark {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 12px;
-            text-transform: uppercase;
-            color: var(--text);
-            text-indent: 12px;
-        }
-
-        .tesla-wordmark.large {
-            font-size: 42px;
-            letter-spacing: 18px;
-            text-indent: 18px;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            border-radius: var(--radius);
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--red), var(--red-dark));
-            color: #fff;
-            font-size: 16px;
-            padding: 14px 28px;
-            box-shadow: 0 4px 15px var(--red-glow);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 8px 30px var(--red-glow);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.96) translateY(0);
-        }
-
-        .btn-secondary {
-            background: var(--surface-2);
-            color: var(--text);
-            font-size: 14px;
-            padding: 10px 20px;
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--surface-3);
-        }
-
-        .btn-danger {
-            background: transparent;
-            color: var(--red);
-            font-size: 14px;
-            padding: 10px 20px;
-            border: 1px solid var(--red);
-        }
-
-        .btn-danger:hover {
-            background: rgba(232, 33, 39, 0.1);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-green {
-            background: rgba(0, 200, 83, 0.15);
-            color: var(--green);
-        }
-
-        .badge-red {
-            background: rgba(232, 33, 39, 0.15);
-            color: var(--red);
-        }
-
-        .badge-amber {
-            background: rgba(255, 171, 0, 0.15);
-            color: var(--amber);
+        /* ── Tesla Logo SVG ── */
+        .tesla-logo {
+            display: block;
         }
 
         /* ════════════════════════════════════════
-           CONFIG ERROR 畫面
+           CONFIG ERROR
            ════════════════════════════════════════ */
         #screen-error {
             display: none;
@@ -200,35 +101,129 @@
             min-height: 100vh;
             padding: 40px 24px;
             text-align: center;
+            background: var(--white);
         }
 
-        #screen-error.active {
-            display: flex;
-        }
+        #screen-error.active { display: flex; }
 
         #screen-error h1 {
-            font-size: 24px;
-            margin-bottom: 12px;
+            font-size: 22px;
+            font-weight: 500;
+            margin: 20px 0 12px;
+            color: var(--black);
         }
 
         #screen-error p {
-            color: var(--text-2);
+            color: var(--gray-600);
             max-width: 480px;
             line-height: 1.7;
+            font-size: 14px;
         }
 
         #screen-error code {
             display: block;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
             padding: 16px;
             margin-top: 20px;
             text-align: left;
-            font-size: 13px;
-            color: var(--amber);
+            font-size: 12px;
+            color: var(--gray-800);
             white-space: pre;
             overflow-x: auto;
+        }
+
+        /* ════════════════════════════════════════
+           共用元件
+           ════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        /* Tesla 主要按鈕 — 黑底白字 */
+        .btn-primary {
+            background: var(--black);
+            color: var(--white);
+            padding: 13px 28px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover { background: #222; }
+
+        /* Tesla 次要按鈕 — 白底黑框 */
+        .btn-secondary {
+            background: var(--white);
+            color: var(--black);
+            padding: 13px 28px;
+            border: 1px solid var(--black);
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover { background: var(--gray-100); }
+
+        /* 小型按鈕 */
+        .btn-sm {
+            padding: 9px 18px;
+            font-size: 13px;
+        }
+
+        /* 危險按鈕 */
+        .btn-danger {
+            background: transparent;
+            color: var(--red);
+            padding: 13px 28px;
+            border: 1px solid var(--red);
+        }
+
+        .btn-danger:hover { background: rgba(232,33,39,0.06); }
+
+        /* 紅色主按鈕 */
+        .btn-red {
+            background: var(--red);
+            color: var(--white);
+            padding: 13px 28px;
+        }
+
+        .btn-red:hover { background: var(--red-dark); }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-green {
+            background: rgba(62,145,66,0.1);
+            color: var(--green);
+        }
+
+        .badge-red {
+            background: rgba(232,33,39,0.1);
+            color: var(--red);
+        }
+
+        .badge-gray {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
 
         /* ════════════════════════════════════════
@@ -236,9 +231,16 @@
            ════════════════════════════════════════ */
         #view-kiosk {
             flex-direction: column;
+            background: var(--white);
+        }
+
+        /* ── 頂部導覽 ── */
+        .kiosk-nav {
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
             position: relative;
         }
 
@@ -246,65 +248,86 @@
         #kiosk-landing {
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            gap: 40px;
             min-height: 100vh;
             min-height: 100dvh;
-            padding: 40px 24px;
         }
 
-        .landing-subtitle {
-            font-size: 18px;
-            color: var(--text-2);
-            font-weight: 300;
-        }
-
-        .btn-take {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            font-size: 18px;
-            font-weight: 700;
-            background: radial-gradient(circle at 40% 40%, #f03030, var(--red-dark));
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 50px var(--red-glow), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
-            transition: var(--transition);
+        .hero-section {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            user-select: none;
+            padding: 60px 24px 40px;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .hero-eyebrow {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+        }
+
+        .hero-title {
+            font-size: clamp(28px, 7vw, 48px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--gray-600);
+            font-weight: 400;
+            margin-bottom: 48px;
+        }
+
+        /* 大型CTA按鈕 — Tesla官網風格 */
+        .btn-cta {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 16px 48px;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+            min-width: 220px;
             -webkit-tap-highlight-color: transparent;
-            animation: btn-breathe 3s ease-in-out infinite;
         }
 
-        .btn-take:hover {
-            box-shadow: 0 0 70px rgba(232, 33, 39, 0.4), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
+        .btn-cta:hover {
+            background: #222;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
         }
 
-        .btn-take:active {
-            transform: scale(0.92);
-            animation: none;
+        .btn-cta:active {
+            transform: scale(0.97) translateY(0);
         }
 
-        .btn-take .icon {
-            font-size: 36px;
+        .hero-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--gray-400);
         }
 
-        @keyframes btn-breathe {
-
-            0%,
-            100% {
-                box-shadow: 0 0 40px var(--red-glow), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
-            }
-
-            50% {
-                box-shadow: 0 0 65px rgba(232, 33, 39, 0.4), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
-            }
+        /* 底部資訊欄 */
+        .kiosk-footer-bar {
+            padding: 20px 24px;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray-400);
         }
 
         /* ── 等待畫面 ── */
@@ -313,95 +336,132 @@
             align-items: center;
             min-height: 100vh;
             min-height: 100dvh;
-            padding: 40px 24px;
-            gap: 28px;
         }
 
-        .my-ticket {
+        .waiting-nav {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .ticket-hero {
+            width: 100%;
+            padding: 48px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            padding: 30px;
-            margin-top: 20px;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .my-ticket .label {
-            font-size: 14px;
-            color: var(--text-2);
-            text-transform: uppercase;
+        .ticket-label {
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gray-400);
             margin-bottom: 8px;
         }
 
-        .my-ticket .number {
-            font-size: 80px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #ccc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .ticket-number {
+            font-size: clamp(72px, 20vw, 120px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -4px;
             line-height: 1;
         }
 
-        .queue-info {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+        .ticket-number-prefix {
+            font-size: 0.35em;
+            font-weight: 400;
+            letter-spacing: 0;
+            color: var(--gray-400);
+            vertical-align: super;
+            margin-right: 4px;
+        }
+
+        /* 進度條 */
+        .progress-wrap {
             width: 100%;
-            max-width: 400px;
+            max-width: 480px;
+            padding: 0 24px;
+            margin-top: 20px;
         }
 
-        .info-card {
-            text-align: center;
-            padding: 16px 8px;
-        }
-
-        .info-card .label {
-            font-size: 11px;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-        }
-
-        .info-card .value {
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .info-card .value.red {
-            color: var(--red);
-        }
-
-        .info-card .value.green {
-            color: var(--green);
-        }
-
-        .wake-hint {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-3);
-            padding: 10px 16px;
-            background: var(--surface);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .progress-bar-wrap {
+        .progress-track {
             width: 100%;
-            max-width: 400px;
-            height: 4px;
-            background: var(--surface-2);
+            height: 2px;
+            background: var(--gray-200);
             border-radius: 2px;
             overflow: hidden;
         }
 
-        .progress-bar-fill {
+        .progress-fill {
             height: 100%;
-            background: var(--red);
+            background: var(--black);
             border-radius: 2px;
-            transition: width 0.6s ease;
+            transition: width 0.8s ease;
             width: 0%;
+        }
+
+        /* 統計卡片 */
+        .stats-row {
+            display: flex;
+            width: 100%;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .stat-item {
+            flex: 1;
+            padding: 24px 16px;
+            text-align: center;
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .stat-item:last-child { border-right: none; }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+        }
+
+        .stat-value.highlight { color: var(--red); }
+        .stat-value.green { color: var(--green); }
+
+        .wake-notice {
+            margin: 20px 24px 0;
+            padding: 14px 18px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            font-size: 12px;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 480px;
+            width: calc(100% - 48px);
+        }
+
+        .wake-notice-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
         }
 
         /* ── 叫號畫面 ── */
@@ -412,61 +472,74 @@
             min-height: 100vh;
             min-height: 100dvh;
             text-align: center;
-            gap: 20px;
-            animation: bg-pulse-red 1.2s ease-in-out infinite;
+            padding: 40px 24px;
+            background: var(--black);
+            color: var(--white);
+            animation: called-bg-pulse 2s ease-in-out infinite;
         }
 
-        #kiosk-called .called-icon {
-            font-size: 60px;
-            animation: bounce 0.8s infinite;
+        @keyframes called-bg-pulse {
+            0%, 100% { background: #171a20; }
+            50% { background: #1f0507; }
         }
 
-        #kiosk-called h1 {
-            font-size: 36px;
-            font-weight: 800;
+        .called-badge {
+            display: inline-block;
+            background: var(--red);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            animation: called-badge-appear 0.5s ease;
         }
 
-        #kiosk-called p {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.85);
+        @keyframes called-badge-appear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
-        #kiosk-called .called-num {
-            font-size: 100px;
-            font-weight: 900;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        .called-title {
+            font-size: clamp(28px, 8vw, 48px);
+            font-weight: 300;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 8px;
         }
 
-        @keyframes bg-pulse-red {
-
-            0%,
-            100% {
-                background: #c41922;
-            }
-
-            50% {
-                background: #8b0000;
-            }
+        .called-sub {
+            font-size: 16px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 48px;
         }
 
-        @keyframes bounce {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-12px);
-            }
+        .called-number {
+            font-size: clamp(80px, 22vw, 140px);
+            font-weight: 200;
+            letter-spacing: -6px;
+            line-height: 1;
+            color: var(--white);
         }
 
-        /* ═══════════════════════════════════════
+        .called-number-hash {
+            font-size: 0.35em;
+            font-weight: 400;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0;
+            vertical-align: super;
+            margin-right: 4px;
+        }
+
+        /* ════════════════════════════════════════
            ADMIN / 管理端
-           ═══════════════════════════════════════ */
+           ════════════════════════════════════════ */
         #view-admin {
             flex-direction: column;
             min-height: 100vh;
+            background: var(--white);
         }
 
         /* ── 密碼鎖 ── */
@@ -475,14 +548,39 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            gap: 24px;
+            gap: 28px;
             padding: 24px;
             text-align: center;
         }
 
-        #admin-lock h2 {
+        .admin-lock-title {
             font-size: 22px;
-            font-weight: 600;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            margin-top: 16px;
+        }
+
+        .admin-lock-sub {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 320px;
+            padding: 13px 16px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            color: var(--black);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-field:focus {
+            border-color: var(--black);
         }
 
         .input-group {
@@ -492,25 +590,14 @@
             max-width: 320px;
         }
 
-        .input-group input {
+        .input-group .input-field {
             flex: 1;
-            padding: 12px 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text);
-            font-size: 16px;
-            font-family: inherit;
-            outline: none;
-        }
-
-        .input-group input:focus {
-            border-color: var(--red);
+            max-width: none;
         }
 
         .pwd-error {
             color: var(--red);
-            font-size: 13px;
+            font-size: 12px;
             display: none;
         }
 
@@ -524,350 +611,381 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
+            padding: 0 32px;
+            height: 64px;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        .admin-header h1 {
-            font-size: 18px;
-            font-weight: 600;
+        .admin-header-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--black);
         }
 
         .admin-body {
-            padding: 24px;
+            padding: 32px;
             flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
         }
 
+        /* 統計卡片 */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--gray-200);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 40px;
         }
 
         .stat-card {
+            background: var(--white);
+            padding: 28px 24px;
             text-align: center;
-            padding: 20px;
         }
 
-        .stat-card .label {
-            font-size: 12px;
-            color: var(--text-3);
-            text-transform: uppercase;
+        .stat-card-label {
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray-400);
             margin-bottom: 8px;
         }
 
-        .stat-card .value {
-            font-size: 40px;
-            font-weight: 800;
+        .stat-card-value {
+            font-size: 48px;
+            font-weight: 200;
+            letter-spacing: -2px;
+            color: var(--black);
         }
 
-        .section {
-            margin-bottom: 32px;
+        .stat-card-value.red { color: var(--red); }
+        .stat-card-value.amber { color: var(--amber); }
+
+        /* 區塊 */
+        .admin-section {
+            margin-bottom: 40px;
         }
 
-        .section h3 {
-            font-size: 14px;
-            color: var(--text-2);
-            text-transform: uppercase;
+        .admin-section-title {
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 2px;
-            margin-bottom: 16px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .action-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
-        .btn-call-next {
-            font-size: 20px;
-            padding: 18px 36px;
-        }
-
-        .batch-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .batch-controls input {
-            width: 60px;
-            padding: 10px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text);
-            font-size: 16px;
+        .batch-input {
+            width: 64px;
+            padding: 9px 10px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            color: var(--black);
+            font-size: 14px;
             text-align: center;
             font-family: inherit;
             outline: none;
+            transition: var(--transition);
         }
 
-        .batch-controls input:focus {
-            border-color: var(--red);
-        }
+        .batch-input:focus { border-color: var(--black); }
 
+        /* QR Section */
         .qr-section {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 12px;
+            align-items: flex-start;
+            gap: 16px;
         }
 
         .qr-box {
             padding: 16px;
-            background: #fff;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
             border-radius: var(--radius);
             display: inline-block;
         }
 
         .qr-url {
-            font-size: 13px;
-            color: var(--text-3);
+            font-size: 12px;
+            color: var(--gray-400);
             word-break: break-all;
-            text-align: center;
         }
 
+        /* Admin footer */
         .admin-footer {
-            padding: 12px 24px;
-            border-top: 1px solid var(--border);
+            padding: 16px 32px;
+            border-top: 1px solid var(--gray-200);
             display: flex;
             align-items: center;
             justify-content: space-between;
             font-size: 12px;
-            color: var(--text-3);
+            color: var(--gray-400);
+        }
+
+        .connection-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
         }
 
-        .status-dot.online {
-            background: var(--green);
-            box-shadow: 0 0 6px var(--green);
+        .status-dot.online { background: var(--green); }
+        .status-dot.offline { background: var(--red); }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 32px 0;
         }
 
-        .status-dot.offline {
-            background: var(--red);
-        }
-
-        /* ═══════════════════════════════════════
+        /* ════════════════════════════════════════
            TV DISPLAY / 電視看板
-           ═══════════════════════════════════════ */
+           ════════════════════════════════════════ */
         #view-tv {
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: var(--bg);
+            background: var(--black);
+            color: var(--white);
             position: relative;
             overflow: hidden;
         }
 
-        .tv-bg-glow {
+        /* 細微背景紋理 */
+        #view-tv::before {
+            content: '';
             position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(232, 33, 39, 0.08), transparent 70%);
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%);
             pointer-events: none;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
         }
 
         .tv-header {
             position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
+            top: 48px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
 
-        .tv-header .tesla-wordmark {
-            margin-bottom: 8px;
+        .tv-header-line {
+            width: 32px;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
         }
 
-        .tv-header .divider {
-            width: 60px;
-            height: 2px;
-            background: var(--red);
-            margin: 12px auto 0;
-        }
-
-        .tv-header .sub {
-            font-size: 16px;
-            color: var(--text-3);
-            letter-spacing: 4px;
-            margin-top: 10px;
+        .tv-sub {
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
         }
 
         .tv-main {
             text-align: center;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .tv-label {
-            font-size: 22px;
-            color: var(--text-2);
+        .tv-eyebrow {
+            font-size: 13px;
+            font-weight: 500;
             letter-spacing: 6px;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 8px;
         }
 
         .tv-number {
-            font-size: clamp(120px, 25vw, 280px);
-            font-weight: 900;
+            font-size: clamp(140px, 28vw, 300px);
+            font-weight: 200;
             line-height: 1;
-            color: var(--text);
-            text-shadow: 0 0 60px var(--red-glow);
+            letter-spacing: -8px;
+            color: var(--white);
             transition: opacity 0.3s, transform 0.3s;
         }
 
         .tv-number.flip {
-            animation: tv-flip 0.5s ease-out;
+            animation: tv-flip 0.5s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         @keyframes tv-flip {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(24px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        .tv-next {
-            margin-top: 20px;
-            font-size: 18px;
-            color: var(--text-3);
+        .tv-next-row {
+            margin-top: 16px;
+            font-size: 16px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
         }
 
-        .tv-next span {
-            color: var(--text-2);
-            font-weight: 600;
+        .tv-next-row span {
+            color: rgba(255,255,255,0.6);
+            font-weight: 500;
         }
 
         .tv-footer {
             position: absolute;
-            bottom: 40px;
-            display: flex;
-            gap: 40px;
-            font-size: 16px;
-            color: var(--text-3);
-            z-index: 1;
-        }
-
-        .tv-footer .val {
-            color: var(--text);
-            font-weight: 700;
-        }
-
-        .tv-scanline {
-            position: absolute;
-            top: 0;
+            bottom: 48px;
             left: 0;
             right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+        }
+
+        .tv-stat {
+            text-align: center;
+        }
+
+        .tv-stat-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 4px;
+        }
+
+        .tv-stat-value {
+            font-size: 28px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: -1px;
+        }
+
+        /* 底部細線 */
+        .tv-footer-line {
+            position: absolute;
             bottom: 0;
-            background: repeating-linear-gradient(0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(255, 255, 255, 0.01) 2px,
-                    rgba(255, 255, 255, 0.01) 4px);
-            pointer-events: none;
-            z-index: 2;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--red);
         }
 
-        /* ═══════════════════════════════════════
-           動畫 & 響應式
-           ═══════════════════════════════════════ */
-        .fade-in {
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 確認對話框 */
+        /* ════════════════════════════════════════
+           Modal
+           ════════════════════════════════════════ */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
             align-items: center;
             justify-content: center;
             padding: 24px;
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .modal-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
+            background: var(--white);
             border-radius: var(--radius-lg);
-            padding: 32px;
-            max-width: 360px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 100%;
             text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
         }
 
         .modal-box h3 {
-            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 400;
+            letter-spacing: -0.3px;
+            margin-bottom: 10px;
         }
 
         .modal-box p {
-            color: var(--text-2);
-            margin-bottom: 24px;
+            color: var(--gray-600);
+            margin-bottom: 28px;
             font-size: 14px;
+            line-height: 1.6;
         }
 
         .modal-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
+        }
+
+        /* ════════════════════════════════════════
+           Animations
+           ════════════════════════════════════════ */
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- ════════════════════════════════════════
-         CONFIG ERROR (Firebase 未設定)
-         ════════════════════════════════════════ -->
+    <!-- CONFIG ERROR -->
     <div id="screen-error">
-        <div style="font-size:48px;margin-bottom:20px;">⚙️</div>
+        <svg class="tesla-logo" width="40" height="50" viewBox="0 0 342 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 51.3C57.5 36.5 116.2 28 171 28s113.5 8.5 171 23.3L327.9 95c-45.9-12.7-103.3-22-156.9-22S70 82.3 24.1 95L0 51.3z" fill="#e82127"/>
+            <path d="M171 128c-50.5 0-101.8 8.2-151.2 24.4L0 108.4C55.8 90.6 113.2 82 171 82s115.2 8.6 171 26.4l-19.8 44C272.8 136.2 221.5 128 171 128z" fill="#e82127"/>
+            <path d="M95.4 152.6L171 512l75.6-359.4C223.5 146.4 197.8 143 171 143s-52.5 3.4-75.6 9.6z" fill="#e82127"/>
+        </svg>
         <h1>Firebase 尚未設定</h1>
-        <p>請開啟 <strong>index.html</strong> 檔案，找到最下方 <code>firebaseConfig</code> 區塊，<br>填入您的 Firebase 專案設定：</p>
+        <p>請開啟 <strong>index.html</strong>，找到 <code>firebaseConfig</code> 區塊，填入您的 Firebase 設定值。</p>
         <code>const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "...",
     databaseURL: "...",
-    projectId: "...",
     ...
 };</code>
-        <p style="margin-top:20px;">👉 詳細步驟請參考 <strong>SETUP_GUIDE.md</strong></p>
+        <p style="margin-top:16px;font-size:13px;">詳細步驟請參考 <strong>SETUP_GUIDE.md</strong></p>
     </div>
 
     <!-- ════════════════════════════════════════
@@ -877,57 +995,79 @@
 
         <!-- 領號 -->
         <div id="kiosk-landing" class="screen active">
-            <div class="tesla-wordmark">TESLA</div>
-            <div>
-                <h1 style="font-size:26px;font-weight:300;margin-bottom:8px;">歡迎蒞臨交付中心</h1>
-                <p class="landing-subtitle">請領取您的報到號碼牌</p>
+            <div class="kiosk-nav">
+                <svg class="tesla-logo" width="90" height="11" viewBox="0 0 342 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h43.5v7.8H24.9V42h-6.3V7.8H0V0zM49.1 0h37.7v7.8H55.4v9.8H85v7.8H55.4v8.8h31.4V42H49.1V0zM94.4 0h6.3v34.2h27.1V42H94.4V0zM131.3 34.4l4.4-5.3c4.4 4.2 10.1 6.7 16 6.7 6.2 0 9.9-2.8 9.9-7.1 0-4-2.5-6.1-12.2-8.4-11.3-2.7-16.6-6.7-16.6-15.2C132.8 6.2 140 0 149.9 0c7.1 0 13.3 2.2 18.2 6.5l-4.1 5.5c-4-3.4-9-5.3-14.3-5.3-5.9 0-9.3 2.9-9.3 6.7 0 4.1 2.7 6.2 12.7 8.6 11.2 2.7 16.1 6.9 16.1 14.9 0 9.1-7.4 15-18.8 15-8 0-15.4-2.8-21.1-7.5zM206.3 42h-6.3V7.8h-18.6V0H225v7.8h-18.7V42zM248.1 28.6L228.4 0h7.2l15.2 23.1L266 0h7.1l-19.7 28.6V42h-5.3V28.6zM278 0h6.3v42H278V0zM295.6 0h5.9l28.6 30.4V0h6.2v42h-5.4L301.8 11V42h-6.2V0z" fill="currentColor"/>
+                </svg>
             </div>
-            <button class="btn-take" id="btnTakeTicket" onclick="takeTicket()">
-                <span class="icon">🎫</span>
-                <span>領取號碼牌</span>
-            </button>
-            <p style="font-size:13px;color:var(--text-3);">點擊上方按鈕以領取號碼</p>
+            
+            <div class="hero-section">
+                <p class="hero-eyebrow">Tesla 交付中心</p>
+                <h1 class="hero-title">歡迎蒞臨</h1>
+                <p class="hero-subtitle">請領取您的報到號碼牌</p>
+                
+                <button class="btn-cta" id="btnTakeTicket" onclick="takeTicket()">
+                    領取號碼牌
+                </button>
+                
+                <p class="hero-note">點擊後請保持頁面開啟以接收通知</p>
+            </div>
+
+            <div class="kiosk-footer-bar">
+                © Tesla, Inc. · 交付中心叫號系統
+            </div>
         </div>
 
         <!-- 等待中 -->
         <div id="kiosk-waiting" class="screen">
-            <div class="tesla-wordmark" style="font-size:20px;letter-spacing:8px;text-indent:8px;">TESLA</div>
-
-            <div class="my-ticket card fade-in">
-                <div class="label">您的號碼</div>
-                <div class="number" id="myNumber">#—</div>
+            <div class="waiting-nav">
+                <svg class="tesla-logo" width="80" height="10" viewBox="0 0 342 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h43.5v7.8H24.9V42h-6.3V7.8H0V0zM49.1 0h37.7v7.8H55.4v9.8H85v7.8H55.4v8.8h31.4V42H49.1V0zM94.4 0h6.3v34.2h27.1V42H94.4V0zM131.3 34.4l4.4-5.3c4.4 4.2 10.1 6.7 16 6.7 6.2 0 9.9-2.8 9.9-7.1 0-4-2.5-6.1-12.2-8.4-11.3-2.7-16.6-6.7-16.6-15.2C132.8 6.2 140 0 149.9 0c7.1 0 13.3 2.2 18.2 6.5l-4.1 5.5c-4-3.4-9-5.3-14.3-5.3-5.9 0-9.3 2.9-9.3 6.7 0 4.1 2.7 6.2 12.7 8.6 11.2 2.7 16.1 6.9 16.1 14.9 0 9.1-7.4 15-18.8 15-8 0-15.4-2.8-21.1-7.5zM206.3 42h-6.3V7.8h-18.6V0H225v7.8h-18.7V42zM248.1 28.6L228.4 0h7.2l15.2 23.1L266 0h7.1l-19.7 28.6V42h-5.3V28.6zM278 0h6.3v42H278V0zM295.6 0h5.9l28.6 30.4V0h6.2v42h-5.4L301.8 11V42h-6.2V0z" fill="currentColor"/>
+                </svg>
             </div>
 
-            <div class="progress-bar-wrap">
-                <div class="progress-bar-fill" id="progressBar"></div>
-            </div>
-
-            <div class="queue-info fade-in">
-                <div class="info-card card">
-                    <div class="label">目前叫號</div>
-                    <div class="value red" id="kioskCurrent">#0</div>
-                </div>
-                <div class="info-card card">
-                    <div class="label">前方等待</div>
-                    <div class="value" id="kioskAhead">—</div>
-                </div>
-                <div class="info-card card">
-                    <div class="label">預估等待</div>
-                    <div class="value green" id="kioskETA">—</div>
+            <div class="ticket-hero fade-in">
+                <div class="ticket-label">您的號碼</div>
+                <div class="ticket-number">
+                    <span class="ticket-number-prefix">#</span><span id="myNumber">—</span>
                 </div>
             </div>
 
-            <div class="wake-hint" id="wakeLockHint">
-                💡 為了接收通知，請保持螢幕恆亮
+            <div class="progress-wrap" style="margin-top:24px;">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+            </div>
+
+            <div class="stats-row fade-in" style="max-width:480px;width:100%;margin-top:4px;">
+                <div class="stat-item">
+                    <div class="stat-label">目前叫號</div>
+                    <div class="stat-value highlight" id="kioskCurrent">#0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">前方等待</div>
+                    <div class="stat-value" id="kioskAhead">—</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">預估等待</div>
+                    <div class="stat-value green" id="kioskETA">—</div>
+                </div>
+            </div>
+
+            <div class="wake-notice" id="wakeLockHint">
+                <div class="wake-notice-dot"></div>
+                <span>為了接收叫號通知，請保持螢幕恆亮</span>
             </div>
         </div>
 
-        <!-- 輪到你了 -->
+        <!-- 叫號啦 -->
         <div id="kiosk-called" class="screen">
-            <div class="called-icon">🎉</div>
-            <h1>輪到您了！</h1>
-            <p>請前往櫃台報到</p>
-            <div class="called-num" id="calledMyNumber">#—</div>
+            <div class="called-badge">請前往櫃台</div>
+            <div class="called-title">輪到您了</div>
+            <div class="called-sub">請出示此畫面給工作人員</div>
+            <div class="called-number">
+                <span class="called-number-hash">#</span><span id="calledMyNumber">—</span>
+            </div>
         </div>
     </div>
 
@@ -938,10 +1078,17 @@
 
         <!-- 密碼 -->
         <div id="admin-lock" class="screen active">
-            <div class="tesla-wordmark">TESLA</div>
-            <h2>管理後台登入</h2>
+            <svg width="32" height="40" viewBox="0 0 342 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 51.3C57.5 36.5 116.2 28 171 28s113.5 8.5 171 23.3L327.9 95c-45.9-12.7-103.3-22-156.9-22S70 82.3 24.1 95L0 51.3z" fill="#e82127"/>
+                <path d="M171 128c-50.5 0-101.8 8.2-151.2 24.4L0 108.4C55.8 90.6 113.2 82 171 82s115.2 8.6 171 26.4l-19.8 44C272.8 136.2 221.5 128 171 128z" fill="#e82127"/>
+                <path d="M95.4 152.6L171 512l75.6-359.4C223.5 146.4 197.8 143 171 143s-52.5 3.4-75.6 9.6z" fill="#e82127"/>
+            </svg>
+            <div>
+                <div class="admin-lock-title">管理後台</div>
+                <div class="admin-lock-sub" style="margin-top:4px;">請輸入管理密碼</div>
+            </div>
             <div class="input-group">
-                <input type="password" id="adminPwd" placeholder="請輸入密碼"
+                <input type="password" class="input-field" id="adminPwd" placeholder="密碼"
                     onkeydown="if(event.key==='Enter')adminLogin()">
                 <button class="btn btn-primary" onclick="adminLogin()">進入</button>
             </div>
@@ -951,70 +1098,73 @@
         <!-- 後台面板 -->
         <div id="admin-panel" class="screen">
             <div class="admin-header">
-                <h1>📋 叫號管理</h1>
+                <span class="admin-header-title">叫號管理</span>
                 <span class="badge badge-green" id="adminSession">場次進行中</span>
             </div>
 
             <div class="admin-body">
                 <!-- 統計 -->
                 <div class="stats-grid">
-                    <div class="stat-card card">
-                        <div class="label">已領號</div>
-                        <div class="value" id="statTotal">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">已領號</div>
+                        <div class="stat-card-value" id="statTotal">0</div>
                     </div>
-                    <div class="stat-card card">
-                        <div class="label">已叫號</div>
-                        <div class="value" id="statCalled" style="color:var(--red);">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">已叫號</div>
+                        <div class="stat-card-value red" id="statCalled">0</div>
                     </div>
-                    <div class="stat-card card">
-                        <div class="label">等待中</div>
-                        <div class="value" id="statWaiting" style="color:var(--amber);">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">等待中</div>
+                        <div class="stat-card-value amber" id="statWaiting">0</div>
                     </div>
                 </div>
 
                 <!-- 叫號操作 -->
-                <div class="section">
-                    <h3>叫號操作</h3>
-                    <div class="action-row">
-                        <button class="btn btn-primary btn-call-next" onclick="callNext(1)">
-                            📢 叫下一號
+                <div class="admin-section">
+                    <div class="admin-section-title">叫號操作</div>
+                    <div class="action-row" style="margin-bottom:12px;">
+                        <button class="btn btn-primary" style="padding:16px 40px;font-size:15px;" onclick="callNext(1)">
+                            叫下一號
                         </button>
                     </div>
-                    <div class="action-row" style="margin-top:12px;">
-                        <div class="batch-controls">
-                            <span style="color:var(--text-2);font-size:14px;">批次叫號：</span>
-                            <button class="btn btn-secondary" onclick="callNext(3)">+3</button>
-                            <button class="btn btn-secondary" onclick="callNext(5)">+5</button>
-                            <button class="btn btn-secondary" onclick="callNext(10)">+10</button>
-                            <span style="color:var(--text-3);font-size:13px;margin:0 4px;">或</span>
-                            <input type="number" id="batchSize" value="1" min="1" max="60">
-                            <button class="btn btn-secondary" onclick="callNextCustom()">叫號</button>
-                        </div>
+                    <div class="action-row" style="margin-top:16px;align-items:center;gap:8px;">
+                        <span style="font-size:13px;color:var(--gray-600);">批次叫號</span>
+                        <button class="btn btn-secondary btn-sm" onclick="callNext(3)">+3</button>
+                        <button class="btn btn-secondary btn-sm" onclick="callNext(5)">+5</button>
+                        <button class="btn btn-secondary btn-sm" onclick="callNext(10)">+10</button>
+                        <input type="number" class="batch-input" id="batchSize" value="1" min="1" max="60">
+                        <button class="btn btn-secondary btn-sm" onclick="callNextCustom()">自訂</button>
                     </div>
                 </div>
 
                 <!-- QR Code -->
-                <div class="section">
-                    <h3>車主端 QR Code</h3>
+                <div class="admin-section">
+                    <div class="admin-section-title">車主端 QR Code</div>
                     <div class="qr-section">
                         <div class="qr-box" id="adminQR"></div>
                         <p class="qr-url" id="adminQRUrl">—</p>
-                        <p style="font-size:12px;color:var(--text-3);">列印此 QR Code 放在入口處，車主掃描後即可領號</p>
+                        <p style="font-size:12px;color:var(--gray-400);margin-top:4px;">
+                            列印此 QR Code 放置於入口處，車主掃描即可領號
+                        </p>
                     </div>
                 </div>
 
-                <!-- 重設 -->
-                <div class="section">
-                    <h3>場次管理</h3>
-                    <div class="action-row">
-                        <button class="btn btn-danger" onclick="showResetModal()">🔄 重設場次（清除所有資料）</button>
-                    </div>
+                <!-- 場次管理 -->
+                <div class="admin-section">
+                    <div class="admin-section-title">場次管理</div>
+                    <button class="btn btn-danger" onclick="showResetModal()">重設場次</button>
+                    <p style="font-size:12px;color:var(--gray-400);margin-top:10px;">
+                        清除所有號碼資料，從第 1 號重新開始
+                    </p>
                 </div>
             </div>
 
             <div class="admin-footer">
-                <span><span class="status-dot" id="fbStatusDot"></span><span id="fbStatusText">連線中…</span></span>
-                <span>Tesla Queue System v1.0</span>
+                <div class="connection-indicator">
+                    <div class="status-dot" id="fbStatusDot"></div>
+                    <span id="fbStatusText">連線中…</span>
+                </div>
+                <span>Tesla Queue System v2.0</span>
             </div>
         </div>
     </div>
@@ -1023,37 +1173,43 @@
          TV DISPLAY / 電視看板
          ════════════════════════════════════════ -->
     <div id="view-tv" class="view">
-        <div class="tv-bg-glow"></div>
-        <div class="tv-scanline"></div>
-
         <div class="tv-header">
-            <div class="tesla-wordmark large">TESLA</div>
-            <div class="divider"></div>
-            <div class="sub">交 付 中 心</div>
+            <svg width="100" height="12" viewBox="0 0 342 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h43.5v7.8H24.9V42h-6.3V7.8H0V0zM49.1 0h37.7v7.8H55.4v9.8H85v7.8H55.4v8.8h31.4V42H49.1V0zM94.4 0h6.3v34.2h27.1V42H94.4V0zM131.3 34.4l4.4-5.3c4.4 4.2 10.1 6.7 16 6.7 6.2 0 9.9-2.8 9.9-7.1 0-4-2.5-6.1-12.2-8.4-11.3-2.7-16.6-6.7-16.6-15.2C132.8 6.2 140 0 149.9 0c7.1 0 13.3 2.2 18.2 6.5l-4.1 5.5c-4-3.4-9-5.3-14.3-5.3-5.9 0-9.3 2.9-9.3 6.7 0 4.1 2.7 6.2 12.7 8.6 11.2 2.7 16.1 6.9 16.1 14.9 0 9.1-7.4 15-18.8 15-8 0-15.4-2.8-21.1-7.5zM206.3 42h-6.3V7.8h-18.6V0H225v7.8h-18.7V42zM248.1 28.6L228.4 0h7.2l15.2 23.1L266 0h7.1l-19.7 28.6V42h-5.3V28.6zM278 0h6.3v42H278V0zM295.6 0h5.9l28.6 30.4V0h6.2v42h-5.4L301.8 11V42h-6.2V0z" fill="rgba(255,255,255,0.4)"/>
+            </svg>
+            <div class="tv-header-line"></div>
+            <div class="tv-sub">交 付 中 心</div>
         </div>
 
         <div class="tv-main">
-            <div class="tv-label">目 前 叫 號</div>
+            <div class="tv-eyebrow">目 前 叫 號</div>
             <div class="tv-number" id="tvNumber">0</div>
-            <div class="tv-next" id="tvNext"></div>
+            <div class="tv-next-row" id="tvNext"></div>
         </div>
 
         <div class="tv-footer">
-            <span>已領號 <span class="val" id="tvTotal">0</span></span>
-            <span>等待中 <span class="val" id="tvWaiting">0</span></span>
+            <div class="tv-stat">
+                <div class="tv-stat-label">已領號</div>
+                <div class="tv-stat-value" id="tvTotal">0</div>
+            </div>
+            <div class="tv-stat">
+                <div class="tv-stat-label">等待中</div>
+                <div class="tv-stat-value" id="tvWaiting">0</div>
+            </div>
         </div>
+
+        <div class="tv-footer-line"></div>
     </div>
 
-    <!-- ════════════════════════════════════════
-         重設確認 Modal
-         ════════════════════════════════════════ -->
+    <!-- 重設確認 Modal -->
     <div class="modal-overlay" id="resetModal">
         <div class="modal-box">
-            <h3>⚠️ 確認重設場次？</h3>
-            <p>這將清除所有已領號碼與叫號進度，此操作無法復原。</p>
+            <div class="modal-icon">⚠️</div>
+            <h3>確認重設場次？</h3>
+            <p>這將清除所有已領號碼與叫號進度。此操作無法復原。</p>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="hideResetModal()">取消</button>
-                <button class="btn btn-primary" onclick="resetQueue()">確認重設</button>
+                <button class="btn btn-red" onclick="resetQueue()">確認重設</button>
             </div>
         </div>
     </div>
@@ -1064,12 +1220,6 @@
     <script>
         // ══════════════════════════════════════════
         // 🔥 Firebase 設定 — 請填入您的 Firebase 專案設定
-        // ══════════════════════════════════════════
-        // 📌 步驟：
-        //   1. 前往 https://console.firebase.google.com/
-        //   2. 建立新專案 → 建立 Realtime Database
-        //   3. 在「專案設定」中複製以下設定值
-        //   4. 將下方 "YOUR_..." 替換為您的實際值
         // ══════════════════════════════════════════
         const firebaseConfig = {
   apiKey: "AIzaSyCZzriWUnBIPKd9MuiJd5Ym0T7wKit9ul4",
@@ -1084,11 +1234,9 @@
         // ═════════════════════════════════
         // 管理密碼 (可自由修改)
         // ═════════════════════════════════
-        const ADMIN_PASSWORD = 'tesla';
+        const ADMIN_PASSWORD = '350019';
 
-        // 每位車主平均服務時間 (分鐘)，用於預估等待時間
         const AVG_SERVICE_MIN = 5;
-        // 櫃台數量
         const COUNTER_COUNT = 3;
 
         // ═════════════════════════════════
@@ -1106,39 +1254,32 @@
         // 初始化
         // ═════════════════════════════════
         (function init() {
-            // 偵測模式
             const params = new URLSearchParams(window.location.search);
             currentMode = params.get('mode') || 'kiosk';
 
-            // 驗證 Firebase 設定
             if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'YOUR_API_KEY' ||
                 !firebaseConfig.databaseURL || firebaseConfig.databaseURL === 'YOUR_DATABASE_URL') {
                 document.getElementById('screen-error').classList.add('active');
                 return;
             }
 
-            // 初始化 Firebase
             try {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
                 queueRef = db.ref('queue');
             } catch (e) {
-                console.error('Firebase init error:', e);
                 document.getElementById('screen-error').classList.add('active');
                 return;
             }
 
-            // 顯示對應 view
             const viewEl = document.getElementById('view-' + currentMode);
             if (viewEl) {
                 viewEl.classList.add('active');
             } else {
-                // 預設 kiosk
                 document.getElementById('view-kiosk').classList.add('active');
                 currentMode = 'kiosk';
             }
 
-            // 根據模式啟動
             switch (currentMode) {
                 case 'kiosk': initKiosk(); break;
                 case 'admin': initAdmin(); break;
@@ -1150,18 +1291,14 @@
         // 🎫 KIOSK / 車主端
         // ═════════════════════════════════
         function initKiosk() {
-            // 監聽佇列狀態 (即時更新)
             queueRef.on('value', (snap) => {
                 const data = snap.val() || {};
                 const calledUpTo = data.calledUpTo || 0;
                 const nextTicket = data.nextTicket || 1;
                 const sessionId = data.sessionId || '';
                 const totalTickets = nextTicket - 1;
-
-                // 每次都從 localStorage 讀取，避免閉包舊值問題
                 const localSession = localStorage.getItem('tq_session');
 
-                // 場次已重設 → 清除本地號碼
                 if (localSession && sessionId !== localSession) {
                     localStorage.removeItem('tq_ticket');
                     localStorage.removeItem('tq_session');
@@ -1171,21 +1308,19 @@
                     return;
                 }
 
-                // 若已有號碼 → 更新等待資訊
                 if (myTicketNumber !== null) {
                     updateKioskWaiting(calledUpTo, totalTickets);
                 }
             });
 
-            // 恢復已領號碼 (頁面載入時)
             const saved = localStorage.getItem('tq_ticket');
             const savedSession = localStorage.getItem('tq_session');
             if (saved && savedSession) {
                 queueRef.child('sessionId').once('value', (snap) => {
                     if (snap.val() === savedSession) {
                         myTicketNumber = parseInt(saved);
-                        document.getElementById('myNumber').textContent = '#' + String(myTicketNumber).padStart(3, '0');
-                        document.getElementById('calledMyNumber').textContent = '#' + String(myTicketNumber).padStart(3, '0');
+                        document.getElementById('myNumber').textContent = String(myTicketNumber).padStart(3, '0');
+                        document.getElementById('calledMyNumber').textContent = String(myTicketNumber).padStart(3, '0');
                         switchKioskScreen('kiosk-waiting');
                         requestWakeLock();
                     } else {
@@ -1198,26 +1333,25 @@
 
         function takeTicket() {
             if (myTicketNumber !== null) return;
-
             const btn = document.getElementById('btnTakeTicket');
             btn.style.pointerEvents = 'none';
             btn.style.opacity = '0.6';
+            btn.textContent = '領取中…';
 
-            // 原子性遞增 nextTicket
             queueRef.child('nextTicket').transaction((current) => {
                 return (current || 1) + 1;
             }, (error, committed, snapshot) => {
                 if (error || !committed) {
                     btn.style.pointerEvents = '';
                     btn.style.opacity = '';
+                    btn.textContent = '領取號碼牌';
                     alert('領號失敗，請重試');
                     return;
                 }
 
                 myTicketNumber = snapshot.val() - 1;
-                const formatted = '#' + String(myTicketNumber).padStart(3, '0');
+                const formatted = String(myTicketNumber).padStart(3, '0');
 
-                // 初始化 sessionId (如果是第一位)
                 queueRef.child('sessionId').once('value', (snap) => {
                     let sid = snap.val();
                     if (!sid) {
@@ -1228,13 +1362,11 @@
                     localStorage.setItem('tq_session', sid);
                 });
 
-                // 顯示號碼
                 document.getElementById('myNumber').textContent = formatted;
                 document.getElementById('calledMyNumber').textContent = formatted;
                 switchKioskScreen('kiosk-waiting');
                 requestWakeLock();
 
-                // 觸覺回饋
                 if (navigator.vibrate) navigator.vibrate(100);
             });
         }
@@ -1248,15 +1380,12 @@
             document.getElementById('kioskCurrent').textContent = '#' + String(calledUpTo).padStart(3, '0');
             document.getElementById('kioskAhead').textContent = isCalled ? '—' : ahead + ' 人';
 
-            // 預估等待時間: (前方人數 / 櫃台數) * 平均服務時間
             const etaMin = Math.ceil((ahead / COUNTER_COUNT) * AVG_SERVICE_MIN);
             document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
 
-            // 進度條
             const progress = totalTickets > 0 ? (calledUpTo / totalTickets) * 100 : 0;
             document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
 
-            // 輪到了！
             if (isCalled && calledUpTo > prevCalledUpTo) {
                 switchKioskScreen('kiosk-called');
                 playNotificationSound();
@@ -1271,41 +1400,34 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // ═════════════════════════════════
-        // Wake Lock (防止鎖屏)
-        // ═════════════════════════════════
         async function requestWakeLock() {
             const hint = document.getElementById('wakeLockHint');
             if (!('wakeLock' in navigator)) {
-                hint.textContent = '⚠️ 您的瀏覽器不支援螢幕恆亮，請手動保持螢幕開啟';
+                hint.querySelector('span').textContent = '您的瀏覽器不支援螢幕恆亮，請手動保持螢幕開啟';
                 return;
             }
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
-                hint.textContent = '✅ 螢幕恆亮已啟用，請勿關閉此頁面';
+                hint.querySelector('span').textContent = '螢幕恆亮已啟用，請勿關閉此頁面';
+                hint.querySelector('.wake-notice-dot').style.background = 'var(--green)';
                 wakeLock.addEventListener('release', () => {
-                    hint.textContent = '⚠️ 螢幕恆亮已中斷，請勿鎖定手機';
+                    hint.querySelector('span').textContent = '螢幕恆亮已中斷，請勿鎖定手機';
+                    hint.querySelector('.wake-notice-dot').style.background = 'var(--amber)';
                 });
             } catch (e) {
-                hint.textContent = '⚠️ 無法啟用螢幕恆亮，請手動保持螢幕開啟';
+                hint.querySelector('span').textContent = '無法啟用螢幕恆亮，請手動保持螢幕開啟';
             }
         }
 
-        // 頁面重新可見時重新請求 wake lock
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && currentMode === 'kiosk' && myTicketNumber !== null) {
                 requestWakeLock();
             }
         });
 
-        // ═════════════════════════════════
-        // 🔊 音效 (Web Audio API)
-        // ═════════════════════════════════
         function playNotificationSound() {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-                // 三聲嗶嗶
                 [0, 0.3, 0.6].forEach(delay => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -1318,17 +1440,13 @@
                     osc.start(audioCtx.currentTime + delay);
                     osc.stop(audioCtx.currentTime + delay + 0.2);
                 });
-            } catch (e) {
-                console.warn('Audio play failed:', e);
-            }
+            } catch (e) {}
         }
 
-        // TV 叫號音效 (較低沉的叮咚)
         function playTVChime() {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-                const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+                const notes = [523.25, 659.25, 783.99];
                 notes.forEach((freq, i) => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -1342,16 +1460,13 @@
                     osc.start(t);
                     osc.stop(t + 0.4);
                 });
-            } catch (e) {
-                console.warn('Audio play failed:', e);
-            }
+            } catch (e) {}
         }
 
         // ═════════════════════════════════
         // 🖥️ ADMIN / 管理端
         // ═════════════════════════════════
         function initAdmin() {
-            // 監聽連線狀態
             db.ref('.info/connected').on('value', (snap) => {
                 const dot = document.getElementById('fbStatusDot');
                 const txt = document.getElementById('fbStatusText');
@@ -1364,14 +1479,12 @@
                 }
             });
 
-            // 監聽佇列
             queueRef.on('value', (snap) => {
                 const data = snap.val() || {};
                 const calledUpTo = data.calledUpTo || 0;
                 const nextTicket = data.nextTicket || 1;
                 const total = nextTicket - 1;
                 const waiting = Math.max(0, total - calledUpTo);
-
                 document.getElementById('statTotal').textContent = total;
                 document.getElementById('statCalled').textContent = calledUpTo;
                 document.getElementById('statWaiting').textContent = waiting;
@@ -1397,11 +1510,7 @@
 
         function callNext(count) {
             if (!queueRef) return;
-            queueRef.child('calledUpTo').transaction((current) => {
-                const newVal = (current || 0) + count;
-                // 不超過已領號的數量
-                return newVal;
-            });
+            queueRef.child('calledUpTo').transaction((current) => (current || 0) + count);
         }
 
         function callNextCustom() {
@@ -1412,33 +1521,27 @@
         function generateQR() {
             const container = document.getElementById('adminQR');
             const urlDisplay = document.getElementById('adminQRUrl');
-            const baseUrl = window.location.origin + window.location.pathname;
-            // 車主端 URL (不帶 mode 參數 = 預設 kiosk)
-            const kioskUrl = baseUrl.replace(/\?.*$/, '');
+            const kioskUrl = (window.location.origin + window.location.pathname).replace(/\?.*$/, '');
 
             container.innerHTML = '';
             try {
                 new QRCode(container, {
                     text: kioskUrl,
-                    width: 220,
-                    height: 220,
+                    width: 200,
+                    height: 200,
                     colorDark: '#000000',
                     colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
             } catch (e) {
-                container.innerHTML = '<p style="color:var(--text-3)">QR Code 產生失敗</p>';
+                container.innerHTML = '<p style="color:var(--gray-400)">QR Code 產生失敗</p>';
             }
             urlDisplay.textContent = kioskUrl;
         }
 
-        // 重設
-        function showResetModal() {
-            document.getElementById('resetModal').classList.add('active');
-        }
-        function hideResetModal() {
-            document.getElementById('resetModal').classList.remove('active');
-        }
+        function showResetModal() { document.getElementById('resetModal').classList.add('active'); }
+        function hideResetModal() { document.getElementById('resetModal').classList.remove('active'); }
+
         function resetQueue() {
             hideResetModal();
             queueRef.set({
@@ -1461,28 +1564,24 @@
                 const total = nextTicket - 1;
                 const waiting = Math.max(0, total - calledUpTo);
 
-                // 更新號碼 (有變化時加動畫)
                 const numEl = document.getElementById('tvNumber');
                 if (calledUpTo !== prevNumber) {
                     numEl.classList.remove('flip');
-                    // 觸發 reflow 重新播放動畫
                     void numEl.offsetWidth;
                     numEl.textContent = calledUpTo;
                     numEl.classList.add('flip');
 
-                    // 播放叮咚音效 (只在號碼增加時)
                     if (calledUpTo > prevNumber && prevNumber > 0) {
                         playTVChime();
                     }
                     prevNumber = calledUpTo;
                 }
 
-                // 下一位提示
                 const nextEl = document.getElementById('tvNext');
                 if (calledUpTo < total) {
                     const nextNums = [];
                     for (let i = calledUpTo + 1; i <= Math.min(calledUpTo + 3, total); i++) {
-                        nextNums.push('#' + String(i).padStart(3, '0'));
+                        nextNums.push(String(i).padStart(3, '0'));
                     }
                     nextEl.innerHTML = '下一位：<span>' + nextNums.join('、') + '</span>';
                 } else {
@@ -1493,8 +1592,6 @@
                 document.getElementById('tvWaiting').textContent = waiting;
             });
 
-            // TV 頁面需要使用者互動才能播放音效
-            // 加一個一次性的點擊事件來初始化 AudioContext
             document.addEventListener('click', function initAudio() {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 document.removeEventListener('click', initAudio);
@@ -1503,5 +1600,4 @@
     </script>
 
 </body>
-
 </html>
