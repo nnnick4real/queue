@@ -1252,26 +1252,7 @@
         }
 
         .spot-marker.active {
-            opacity: 1;
-            background: transparent;
-            border: 2.5px solid var(--red);
-            animation: ringPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes ringPulse {
-
-            0%,
-            100% {
-                border-color: rgba(232, 33, 39, 0.9);
-                box-shadow: 0 0 6px rgba(232, 33, 39, 0.4);
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            50% {
-                border-color: rgba(232, 33, 39, 0.5);
-                box-shadow: 0 0 14px rgba(232, 33, 39, 0.6), 0 0 28px rgba(232, 33, 39, 0.2);
-                transform: translate(-50%, -50%) scale(1.15);
-            }
+            display: none;
         }
     </style>
 </head>
@@ -1329,9 +1310,7 @@
                         <button class="search-btn" onclick="searchSpot('landing')">查詢</button>
                     </div>
                     <div class="search-result" id="searchResultLanding"></div>
-                    <div class="map-interactive" id="searchMapLanding" style="display:none;">
-                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
-                    </div>
+
                 </div>
             </div>
 
@@ -1418,9 +1397,7 @@
                         <button class="search-btn" onclick="searchSpot('waiting')">查詢</button>
                     </div>
                     <div class="search-result" id="searchResultWaiting"></div>
-                    <div class="map-interactive" id="searchMapWaiting" style="display:none;">
-                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
-                    </div>
+
                 </div>
             </div>
 
@@ -1853,14 +1830,8 @@
                         ts: Date.now()
                     });
                 } catch (e) { console.log('Lookup write failed:', e); }
-                // 在地圖上點亮
-                const spotNum = parseInt(found.spot);
-                if (SPOT_POSITIONS[spotNum]) {
-                    highlightSpotOnMap(mapEl, spotNum);
-                    mapEl.style.display = '';
-                } else {
-                    mapEl.style.display = 'none';
-                }
+                // 隱藏地圖
+                mapEl.style.display = 'none';
             } else {
                 resultEl.className = 'search-result not-found';
                 resultEl.innerHTML = '<div class="result-not-found-text">❌ 查無此訂單編號，請確認後重試</div>';
