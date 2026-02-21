@@ -1,0 +1,1507 @@
+<!--
+  ╔═══════════════════════════════════════════════╗
+  ║  Tesla 交付中心 | 號碼牌叫號系統              ║
+  ║  Version 1.0                                  ║
+  ╠═══════════════════════════════════════════════╣
+  ║  Views (透過 URL 參數切換):                    ║
+  ║  - 車主端 (預設):  ?mode=kiosk                ║
+  ║  - 管理端:         ?mode=admin                ║
+  ║  - 電視看板:       ?mode=tv                   ║
+  ╚═══════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tesla 交付中心 | 號碼牌系統</title>
+    <meta name="description" content="Tesla 交付中心數位號碼牌叫號系統">
+
+    <!-- Firebase SDK (compat 版本) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        /* ════════════════════════════════════════
+           Tesla Design System — 全域樣式
+           ════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #161616;
+            --surface-2: #1e1e1e;
+            --surface-3: #282828;
+            --border: #333;
+            --red: #e82127;
+            --red-dark: #b91a1f;
+            --red-glow: rgba(232, 33, 39, 0.25);
+            --green: #00c853;
+            --amber: #ffab00;
+            --text: #ffffff;
+            --text-2: #a0a0a0;
+            --text-3: #666;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .view {
+            display: none;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* ── 通用元件 ── */
+        .tesla-wordmark {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            color: var(--text);
+            text-indent: 12px;
+        }
+
+        .tesla-wordmark.large {
+            font-size: 42px;
+            letter-spacing: 18px;
+            text-indent: 18px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
+            color: #fff;
+            font-size: 16px;
+            padding: 14px 28px;
+            box-shadow: 0 4px 15px var(--red-glow);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 30px var(--red-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96) translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            font-size: 14px;
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-3);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--red);
+            font-size: 14px;
+            padding: 10px 20px;
+            border: 1px solid var(--red);
+        }
+
+        .btn-danger:hover {
+            background: rgba(232, 33, 39, 0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: rgba(0, 200, 83, 0.15);
+            color: var(--green);
+        }
+
+        .badge-red {
+            background: rgba(232, 33, 39, 0.15);
+            color: var(--red);
+        }
+
+        .badge-amber {
+            background: rgba(255, 171, 0, 0.15);
+            color: var(--amber);
+        }
+
+        /* ════════════════════════════════════════
+           CONFIG ERROR 畫面
+           ════════════════════════════════════════ */
+        #screen-error {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        #screen-error.active {
+            display: flex;
+        }
+
+        #screen-error h1 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        #screen-error p {
+            color: var(--text-2);
+            max-width: 480px;
+            line-height: 1.7;
+        }
+
+        #screen-error code {
+            display: block;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 13px;
+            color: var(--amber);
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* ════════════════════════════════════════
+           KIOSK / 車主端
+           ════════════════════════════════════════ */
+        #view-kiosk {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+        }
+
+        /* ── 領號畫面 ── */
+        #kiosk-landing {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 40px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 40px 24px;
+        }
+
+        .landing-subtitle {
+            font-size: 18px;
+            color: var(--text-2);
+            font-weight: 300;
+        }
+
+        .btn-take {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: 700;
+            background: radial-gradient(circle at 40% 40%, #f03030, var(--red-dark));
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 50px var(--red-glow), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            animation: btn-breathe 3s ease-in-out infinite;
+        }
+
+        .btn-take:hover {
+            box-shadow: 0 0 70px rgba(232, 33, 39, 0.4), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-take:active {
+            transform: scale(0.92);
+            animation: none;
+        }
+
+        .btn-take .icon {
+            font-size: 36px;
+        }
+
+        @keyframes btn-breathe {
+
+            0%,
+            100% {
+                box-shadow: 0 0 40px var(--red-glow), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 65px rgba(232, 33, 39, 0.4), inset 0 -4px 12px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        /* ── 等待畫面 ── */
+        #kiosk-waiting {
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 40px 24px;
+            gap: 28px;
+        }
+
+        .my-ticket {
+            text-align: center;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .my-ticket .label {
+            font-size: 14px;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .my-ticket .number {
+            font-size: 80px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .queue-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .info-card {
+            text-align: center;
+            padding: 16px 8px;
+        }
+
+        .info-card .label {
+            font-size: 11px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .info-card .value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .info-card .value.red {
+            color: var(--red);
+        }
+
+        .info-card .value.green {
+            color: var(--green);
+        }
+
+        .wake-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-3);
+            padding: 10px 16px;
+            background: var(--surface);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar-wrap {
+            width: 100%;
+            max-width: 400px;
+            height: 4px;
+            background: var(--surface-2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--red);
+            border-radius: 2px;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+
+        /* ── 叫號畫面 ── */
+        #kiosk-called {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            text-align: center;
+            gap: 20px;
+            animation: bg-pulse-red 1.2s ease-in-out infinite;
+        }
+
+        #kiosk-called .called-icon {
+            font-size: 60px;
+            animation: bounce 0.8s infinite;
+        }
+
+        #kiosk-called h1 {
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        #kiosk-called p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        #kiosk-called .called-num {
+            font-size: 100px;
+            font-weight: 900;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes bg-pulse-red {
+
+            0%,
+            100% {
+                background: #c41922;
+            }
+
+            50% {
+                background: #8b0000;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        /* ═══════════════════════════════════════
+           ADMIN / 管理端
+           ═══════════════════════════════════════ */
+        #view-admin {
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── 密碼鎖 ── */
+        #admin-lock {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 24px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        #admin-lock h2 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: var(--red);
+        }
+
+        .pwd-error {
+            color: var(--red);
+            font-size: 13px;
+            display: none;
+        }
+
+        /* ── 管理面板 ── */
+        #admin-panel {
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .admin-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .admin-body {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 40px;
+            font-weight: 800;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section h3 {
+            font-size: 14px;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-call-next {
+            font-size: 20px;
+            padding: 18px 36px;
+        }
+
+        .batch-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .batch-controls input {
+            width: 60px;
+            padding: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-size: 16px;
+            text-align: center;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .batch-controls input:focus {
+            border-color: var(--red);
+        }
+
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qr-box {
+            padding: 16px;
+            background: #fff;
+            border-radius: var(--radius);
+            display: inline-block;
+        }
+
+        .qr-url {
+            font-size: 13px;
+            color: var(--text-3);
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .admin-footer {
+            padding: 12px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-3);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-dot.online {
+            background: var(--green);
+            box-shadow: 0 0 6px var(--green);
+        }
+
+        .status-dot.offline {
+            background: var(--red);
+        }
+
+        /* ═══════════════════════════════════════
+           TV DISPLAY / 電視看板
+           ═══════════════════════════════════════ */
+        #view-tv {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tv-bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(232, 33, 39, 0.08), transparent 70%);
+            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .tv-header {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .tv-header .tesla-wordmark {
+            margin-bottom: 8px;
+        }
+
+        .tv-header .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--red);
+            margin: 12px auto 0;
+        }
+
+        .tv-header .sub {
+            font-size: 16px;
+            color: var(--text-3);
+            letter-spacing: 4px;
+            margin-top: 10px;
+        }
+
+        .tv-main {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .tv-label {
+            font-size: 22px;
+            color: var(--text-2);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .tv-number {
+            font-size: clamp(120px, 25vw, 280px);
+            font-weight: 900;
+            line-height: 1;
+            color: var(--text);
+            text-shadow: 0 0 60px var(--red-glow);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .tv-number.flip {
+            animation: tv-flip 0.5s ease-out;
+        }
+
+        @keyframes tv-flip {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .tv-next {
+            margin-top: 20px;
+            font-size: 18px;
+            color: var(--text-3);
+        }
+
+        .tv-next span {
+            color: var(--text-2);
+            font-weight: 600;
+        }
+
+        .tv-footer {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 40px;
+            font-size: 16px;
+            color: var(--text-3);
+            z-index: 1;
+        }
+
+        .tv-footer .val {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .tv-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.01) 2px,
+                    rgba(255, 255, 255, 0.01) 4px);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* ═══════════════════════════════════════
+           動畫 & 響應式
+           ═══════════════════════════════════════ */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 確認對話框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            max-width: 360px;
+            text-align: center;
+        }
+
+        .modal-box h3 {
+            margin-bottom: 12px;
+        }
+
+        .modal-box p {
+            color: var(--text-2);
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════
+         CONFIG ERROR (Firebase 未設定)
+         ════════════════════════════════════════ -->
+    <div id="screen-error">
+        <div style="font-size:48px;margin-bottom:20px;">⚙️</div>
+        <h1>Firebase 尚未設定</h1>
+        <p>請開啟 <strong>index.html</strong> 檔案，找到最下方 <code>firebaseConfig</code> 區塊，<br>填入您的 Firebase 專案設定：</p>
+        <code>const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "...",
+    databaseURL: "...",
+    projectId: "...",
+    ...
+};</code>
+        <p style="margin-top:20px;">👉 詳細步驟請參考 <strong>SETUP_GUIDE.md</strong></p>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         KIOSK / 車主端
+         ════════════════════════════════════════ -->
+    <div id="view-kiosk" class="view">
+
+        <!-- 領號 -->
+        <div id="kiosk-landing" class="screen active">
+            <div class="tesla-wordmark">TESLA</div>
+            <div>
+                <h1 style="font-size:26px;font-weight:300;margin-bottom:8px;">歡迎蒞臨交付中心</h1>
+                <p class="landing-subtitle">請領取您的報到號碼牌</p>
+            </div>
+            <button class="btn-take" id="btnTakeTicket" onclick="takeTicket()">
+                <span class="icon">🎫</span>
+                <span>領取號碼牌</span>
+            </button>
+            <p style="font-size:13px;color:var(--text-3);">點擊上方按鈕以領取號碼</p>
+        </div>
+
+        <!-- 等待中 -->
+        <div id="kiosk-waiting" class="screen">
+            <div class="tesla-wordmark" style="font-size:20px;letter-spacing:8px;text-indent:8px;">TESLA</div>
+
+            <div class="my-ticket card fade-in">
+                <div class="label">您的號碼</div>
+                <div class="number" id="myNumber">#—</div>
+            </div>
+
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+
+            <div class="queue-info fade-in">
+                <div class="info-card card">
+                    <div class="label">目前叫號</div>
+                    <div class="value red" id="kioskCurrent">#0</div>
+                </div>
+                <div class="info-card card">
+                    <div class="label">前方等待</div>
+                    <div class="value" id="kioskAhead">—</div>
+                </div>
+                <div class="info-card card">
+                    <div class="label">預估等待</div>
+                    <div class="value green" id="kioskETA">—</div>
+                </div>
+            </div>
+
+            <div class="wake-hint" id="wakeLockHint">
+                💡 為了接收通知，請保持螢幕恆亮
+            </div>
+        </div>
+
+        <!-- 輪到你了 -->
+        <div id="kiosk-called" class="screen">
+            <div class="called-icon">🎉</div>
+            <h1>輪到您了！</h1>
+            <p>請前往櫃台報到</p>
+            <div class="called-num" id="calledMyNumber">#—</div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         ADMIN / 管理端
+         ════════════════════════════════════════ -->
+    <div id="view-admin" class="view">
+
+        <!-- 密碼 -->
+        <div id="admin-lock" class="screen active">
+            <div class="tesla-wordmark">TESLA</div>
+            <h2>管理後台登入</h2>
+            <div class="input-group">
+                <input type="password" id="adminPwd" placeholder="請輸入密碼"
+                    onkeydown="if(event.key==='Enter')adminLogin()">
+                <button class="btn btn-primary" onclick="adminLogin()">進入</button>
+            </div>
+            <p class="pwd-error" id="pwdError">密碼錯誤，請重試</p>
+        </div>
+
+        <!-- 後台面板 -->
+        <div id="admin-panel" class="screen">
+            <div class="admin-header">
+                <h1>📋 叫號管理</h1>
+                <span class="badge badge-green" id="adminSession">場次進行中</span>
+            </div>
+
+            <div class="admin-body">
+                <!-- 統計 -->
+                <div class="stats-grid">
+                    <div class="stat-card card">
+                        <div class="label">已領號</div>
+                        <div class="value" id="statTotal">0</div>
+                    </div>
+                    <div class="stat-card card">
+                        <div class="label">已叫號</div>
+                        <div class="value" id="statCalled" style="color:var(--red);">0</div>
+                    </div>
+                    <div class="stat-card card">
+                        <div class="label">等待中</div>
+                        <div class="value" id="statWaiting" style="color:var(--amber);">0</div>
+                    </div>
+                </div>
+
+                <!-- 叫號操作 -->
+                <div class="section">
+                    <h3>叫號操作</h3>
+                    <div class="action-row">
+                        <button class="btn btn-primary btn-call-next" onclick="callNext(1)">
+                            📢 叫下一號
+                        </button>
+                    </div>
+                    <div class="action-row" style="margin-top:12px;">
+                        <div class="batch-controls">
+                            <span style="color:var(--text-2);font-size:14px;">批次叫號：</span>
+                            <button class="btn btn-secondary" onclick="callNext(3)">+3</button>
+                            <button class="btn btn-secondary" onclick="callNext(5)">+5</button>
+                            <button class="btn btn-secondary" onclick="callNext(10)">+10</button>
+                            <span style="color:var(--text-3);font-size:13px;margin:0 4px;">或</span>
+                            <input type="number" id="batchSize" value="1" min="1" max="60">
+                            <button class="btn btn-secondary" onclick="callNextCustom()">叫號</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Code -->
+                <div class="section">
+                    <h3>車主端 QR Code</h3>
+                    <div class="qr-section">
+                        <div class="qr-box" id="adminQR"></div>
+                        <p class="qr-url" id="adminQRUrl">—</p>
+                        <p style="font-size:12px;color:var(--text-3);">列印此 QR Code 放在入口處，車主掃描後即可領號</p>
+                    </div>
+                </div>
+
+                <!-- 重設 -->
+                <div class="section">
+                    <h3>場次管理</h3>
+                    <div class="action-row">
+                        <button class="btn btn-danger" onclick="showResetModal()">🔄 重設場次（清除所有資料）</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-footer">
+                <span><span class="status-dot" id="fbStatusDot"></span><span id="fbStatusText">連線中…</span></span>
+                <span>Tesla Queue System v1.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         TV DISPLAY / 電視看板
+         ════════════════════════════════════════ -->
+    <div id="view-tv" class="view">
+        <div class="tv-bg-glow"></div>
+        <div class="tv-scanline"></div>
+
+        <div class="tv-header">
+            <div class="tesla-wordmark large">TESLA</div>
+            <div class="divider"></div>
+            <div class="sub">交 付 中 心</div>
+        </div>
+
+        <div class="tv-main">
+            <div class="tv-label">目 前 叫 號</div>
+            <div class="tv-number" id="tvNumber">0</div>
+            <div class="tv-next" id="tvNext"></div>
+        </div>
+
+        <div class="tv-footer">
+            <span>已領號 <span class="val" id="tvTotal">0</span></span>
+            <span>等待中 <span class="val" id="tvWaiting">0</span></span>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         重設確認 Modal
+         ════════════════════════════════════════ -->
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal-box">
+            <h3>⚠️ 確認重設場次？</h3>
+            <p>這將清除所有已領號碼與叫號進度，此操作無法復原。</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideResetModal()">取消</button>
+                <button class="btn btn-primary" onclick="resetQueue()">確認重設</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         JavaScript
+         ════════════════════════════════════════ -->
+    <script>
+        // ══════════════════════════════════════════
+        // 🔥 Firebase 設定 — 請填入您的 Firebase 專案設定
+        // ══════════════════════════════════════════
+        // 📌 步驟：
+        //   1. 前往 https://console.firebase.google.com/
+        //   2. 建立新專案 → 建立 Realtime Database
+        //   3. 在「專案設定」中複製以下設定值
+        //   4. 將下方 "YOUR_..." 替換為您的實際值
+        // ══════════════════════════════════════════
+        const firebaseConfig = {
+  apiKey: "AIzaSyCZzriWUnBIPKd9MuiJd5Ym0T7wKit9ul4",
+  authDomain: "new-tesla-queue.firebaseapp.com",
+  databaseURL: "https://new-tesla-queue-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "new-tesla-queue",
+  storageBucket: "new-tesla-queue.firebasestorage.app",
+  messagingSenderId: "612392646704",
+  appId: "1:612392646704:web:667dd0784c72af409695f5"
+        };
+
+        // ═════════════════════════════════
+        // 管理密碼 (可自由修改)
+        // ═════════════════════════════════
+        const ADMIN_PASSWORD = 'tesla';
+
+        // 每位車主平均服務時間 (分鐘)，用於預估等待時間
+        const AVG_SERVICE_MIN = 5;
+        // 櫃台數量
+        const COUNTER_COUNT = 3;
+
+        // ═════════════════════════════════
+        // 全域變數
+        // ═════════════════════════════════
+        let db = null;
+        let queueRef = null;
+        let currentMode = 'kiosk';
+        let myTicketNumber = null;
+        let prevCalledUpTo = 0;
+        let wakeLock = null;
+        let audioCtx = null;
+
+        // ═════════════════════════════════
+        // 初始化
+        // ═════════════════════════════════
+        (function init() {
+            // 偵測模式
+            const params = new URLSearchParams(window.location.search);
+            currentMode = params.get('mode') || 'kiosk';
+
+            // 驗證 Firebase 設定
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'YOUR_API_KEY' ||
+                !firebaseConfig.databaseURL || firebaseConfig.databaseURL === 'YOUR_DATABASE_URL') {
+                document.getElementById('screen-error').classList.add('active');
+                return;
+            }
+
+            // 初始化 Firebase
+            try {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                queueRef = db.ref('queue');
+            } catch (e) {
+                console.error('Firebase init error:', e);
+                document.getElementById('screen-error').classList.add('active');
+                return;
+            }
+
+            // 顯示對應 view
+            const viewEl = document.getElementById('view-' + currentMode);
+            if (viewEl) {
+                viewEl.classList.add('active');
+            } else {
+                // 預設 kiosk
+                document.getElementById('view-kiosk').classList.add('active');
+                currentMode = 'kiosk';
+            }
+
+            // 根據模式啟動
+            switch (currentMode) {
+                case 'kiosk': initKiosk(); break;
+                case 'admin': initAdmin(); break;
+                case 'tv': initTV(); break;
+            }
+        })();
+
+        // ═════════════════════════════════
+        // 🎫 KIOSK / 車主端
+        // ═════════════════════════════════
+        function initKiosk() {
+            // 監聽佇列狀態 (即時更新)
+            queueRef.on('value', (snap) => {
+                const data = snap.val() || {};
+                const calledUpTo = data.calledUpTo || 0;
+                const nextTicket = data.nextTicket || 1;
+                const sessionId = data.sessionId || '';
+                const totalTickets = nextTicket - 1;
+
+                // 每次都從 localStorage 讀取，避免閉包舊值問題
+                const localSession = localStorage.getItem('tq_session');
+
+                // 場次已重設 → 清除本地號碼
+                if (localSession && sessionId !== localSession) {
+                    localStorage.removeItem('tq_ticket');
+                    localStorage.removeItem('tq_session');
+                    myTicketNumber = null;
+                    prevCalledUpTo = 0;
+                    switchKioskScreen('kiosk-landing');
+                    return;
+                }
+
+                // 若已有號碼 → 更新等待資訊
+                if (myTicketNumber !== null) {
+                    updateKioskWaiting(calledUpTo, totalTickets);
+                }
+            });
+
+            // 恢復已領號碼 (頁面載入時)
+            const saved = localStorage.getItem('tq_ticket');
+            const savedSession = localStorage.getItem('tq_session');
+            if (saved && savedSession) {
+                queueRef.child('sessionId').once('value', (snap) => {
+                    if (snap.val() === savedSession) {
+                        myTicketNumber = parseInt(saved);
+                        document.getElementById('myNumber').textContent = '#' + String(myTicketNumber).padStart(3, '0');
+                        document.getElementById('calledMyNumber').textContent = '#' + String(myTicketNumber).padStart(3, '0');
+                        switchKioskScreen('kiosk-waiting');
+                        requestWakeLock();
+                    } else {
+                        localStorage.removeItem('tq_ticket');
+                        localStorage.removeItem('tq_session');
+                    }
+                });
+            }
+        }
+
+        function takeTicket() {
+            if (myTicketNumber !== null) return;
+
+            const btn = document.getElementById('btnTakeTicket');
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.6';
+
+            // 原子性遞增 nextTicket
+            queueRef.child('nextTicket').transaction((current) => {
+                return (current || 1) + 1;
+            }, (error, committed, snapshot) => {
+                if (error || !committed) {
+                    btn.style.pointerEvents = '';
+                    btn.style.opacity = '';
+                    alert('領號失敗，請重試');
+                    return;
+                }
+
+                myTicketNumber = snapshot.val() - 1;
+                const formatted = '#' + String(myTicketNumber).padStart(3, '0');
+
+                // 初始化 sessionId (如果是第一位)
+                queueRef.child('sessionId').once('value', (snap) => {
+                    let sid = snap.val();
+                    if (!sid) {
+                        sid = Date.now().toString(36);
+                        queueRef.child('sessionId').set(sid);
+                    }
+                    localStorage.setItem('tq_ticket', myTicketNumber);
+                    localStorage.setItem('tq_session', sid);
+                });
+
+                // 顯示號碼
+                document.getElementById('myNumber').textContent = formatted;
+                document.getElementById('calledMyNumber').textContent = formatted;
+                switchKioskScreen('kiosk-waiting');
+                requestWakeLock();
+
+                // 觸覺回饋
+                if (navigator.vibrate) navigator.vibrate(100);
+            });
+        }
+
+        function updateKioskWaiting(calledUpTo, totalTickets) {
+            if (myTicketNumber === null) return;
+
+            const ahead = Math.max(0, myTicketNumber - calledUpTo - 1);
+            const isCalled = myTicketNumber <= calledUpTo;
+
+            document.getElementById('kioskCurrent').textContent = '#' + String(calledUpTo).padStart(3, '0');
+            document.getElementById('kioskAhead').textContent = isCalled ? '—' : ahead + ' 人';
+
+            // 預估等待時間: (前方人數 / 櫃台數) * 平均服務時間
+            const etaMin = Math.ceil((ahead / COUNTER_COUNT) * AVG_SERVICE_MIN);
+            document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
+
+            // 進度條
+            const progress = totalTickets > 0 ? (calledUpTo / totalTickets) * 100 : 0;
+            document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
+
+            // 輪到了！
+            if (isCalled && calledUpTo > prevCalledUpTo) {
+                switchKioskScreen('kiosk-called');
+                playNotificationSound();
+                if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
+            }
+
+            prevCalledUpTo = calledUpTo;
+        }
+
+        function switchKioskScreen(id) {
+            document.querySelectorAll('#view-kiosk .screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // ═════════════════════════════════
+        // Wake Lock (防止鎖屏)
+        // ═════════════════════════════════
+        async function requestWakeLock() {
+            const hint = document.getElementById('wakeLockHint');
+            if (!('wakeLock' in navigator)) {
+                hint.textContent = '⚠️ 您的瀏覽器不支援螢幕恆亮，請手動保持螢幕開啟';
+                return;
+            }
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                hint.textContent = '✅ 螢幕恆亮已啟用，請勿關閉此頁面';
+                wakeLock.addEventListener('release', () => {
+                    hint.textContent = '⚠️ 螢幕恆亮已中斷，請勿鎖定手機';
+                });
+            } catch (e) {
+                hint.textContent = '⚠️ 無法啟用螢幕恆亮，請手動保持螢幕開啟';
+            }
+        }
+
+        // 頁面重新可見時重新請求 wake lock
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && currentMode === 'kiosk' && myTicketNumber !== null) {
+                requestWakeLock();
+            }
+        });
+
+        // ═════════════════════════════════
+        // 🔊 音效 (Web Audio API)
+        // ═════════════════════════════════
+        function playNotificationSound() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                // 三聲嗶嗶
+                [0, 0.3, 0.6].forEach(delay => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.value = 880;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delay + 0.2);
+                    osc.start(audioCtx.currentTime + delay);
+                    osc.stop(audioCtx.currentTime + delay + 0.2);
+                });
+            } catch (e) {
+                console.warn('Audio play failed:', e);
+            }
+        }
+
+        // TV 叫號音效 (較低沉的叮咚)
+        function playTVChime() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+                notes.forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    const t = audioCtx.currentTime + i * 0.2;
+                    gain.gain.setValueAtTime(0.2, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+                    osc.start(t);
+                    osc.stop(t + 0.4);
+                });
+            } catch (e) {
+                console.warn('Audio play failed:', e);
+            }
+        }
+
+        // ═════════════════════════════════
+        // 🖥️ ADMIN / 管理端
+        // ═════════════════════════════════
+        function initAdmin() {
+            // 監聽連線狀態
+            db.ref('.info/connected').on('value', (snap) => {
+                const dot = document.getElementById('fbStatusDot');
+                const txt = document.getElementById('fbStatusText');
+                if (snap.val() === true) {
+                    dot.className = 'status-dot online';
+                    txt.textContent = 'Firebase 已連線';
+                } else {
+                    dot.className = 'status-dot offline';
+                    txt.textContent = '連線中斷';
+                }
+            });
+
+            // 監聽佇列
+            queueRef.on('value', (snap) => {
+                const data = snap.val() || {};
+                const calledUpTo = data.calledUpTo || 0;
+                const nextTicket = data.nextTicket || 1;
+                const total = nextTicket - 1;
+                const waiting = Math.max(0, total - calledUpTo);
+
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('statCalled').textContent = calledUpTo;
+                document.getElementById('statWaiting').textContent = waiting;
+            });
+        }
+
+        function adminLogin() {
+            const pwd = document.getElementById('adminPwd').value;
+            if (pwd === ADMIN_PASSWORD) {
+                switchAdminScreen('admin-panel');
+                generateQR();
+            } else {
+                document.getElementById('pwdError').style.display = 'block';
+                document.getElementById('adminPwd').value = '';
+                if (navigator.vibrate) navigator.vibrate(200);
+            }
+        }
+
+        function switchAdminScreen(id) {
+            document.querySelectorAll('#view-admin .screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function callNext(count) {
+            if (!queueRef) return;
+            queueRef.child('calledUpTo').transaction((current) => {
+                const newVal = (current || 0) + count;
+                // 不超過已領號的數量
+                return newVal;
+            });
+        }
+
+        function callNextCustom() {
+            const n = parseInt(document.getElementById('batchSize').value) || 1;
+            callNext(n);
+        }
+
+        function generateQR() {
+            const container = document.getElementById('adminQR');
+            const urlDisplay = document.getElementById('adminQRUrl');
+            const baseUrl = window.location.origin + window.location.pathname;
+            // 車主端 URL (不帶 mode 參數 = 預設 kiosk)
+            const kioskUrl = baseUrl.replace(/\?.*$/, '');
+
+            container.innerHTML = '';
+            try {
+                new QRCode(container, {
+                    text: kioskUrl,
+                    width: 220,
+                    height: 220,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } catch (e) {
+                container.innerHTML = '<p style="color:var(--text-3)">QR Code 產生失敗</p>';
+            }
+            urlDisplay.textContent = kioskUrl;
+        }
+
+        // 重設
+        function showResetModal() {
+            document.getElementById('resetModal').classList.add('active');
+        }
+        function hideResetModal() {
+            document.getElementById('resetModal').classList.remove('active');
+        }
+        function resetQueue() {
+            hideResetModal();
+            queueRef.set({
+                calledUpTo: 0,
+                nextTicket: 1,
+                sessionId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+            });
+        }
+
+        // ═════════════════════════════════
+        // 📺 TV DISPLAY / 電視看板
+        // ═════════════════════════════════
+        function initTV() {
+            let prevNumber = 0;
+
+            queueRef.on('value', (snap) => {
+                const data = snap.val() || {};
+                const calledUpTo = data.calledUpTo || 0;
+                const nextTicket = data.nextTicket || 1;
+                const total = nextTicket - 1;
+                const waiting = Math.max(0, total - calledUpTo);
+
+                // 更新號碼 (有變化時加動畫)
+                const numEl = document.getElementById('tvNumber');
+                if (calledUpTo !== prevNumber) {
+                    numEl.classList.remove('flip');
+                    // 觸發 reflow 重新播放動畫
+                    void numEl.offsetWidth;
+                    numEl.textContent = calledUpTo;
+                    numEl.classList.add('flip');
+
+                    // 播放叮咚音效 (只在號碼增加時)
+                    if (calledUpTo > prevNumber && prevNumber > 0) {
+                        playTVChime();
+                    }
+                    prevNumber = calledUpTo;
+                }
+
+                // 下一位提示
+                const nextEl = document.getElementById('tvNext');
+                if (calledUpTo < total) {
+                    const nextNums = [];
+                    for (let i = calledUpTo + 1; i <= Math.min(calledUpTo + 3, total); i++) {
+                        nextNums.push('#' + String(i).padStart(3, '0'));
+                    }
+                    nextEl.innerHTML = '下一位：<span>' + nextNums.join('、') + '</span>';
+                } else {
+                    nextEl.innerHTML = '';
+                }
+
+                document.getElementById('tvTotal').textContent = total;
+                document.getElementById('tvWaiting').textContent = waiting;
+            });
+
+            // TV 頁面需要使用者互動才能播放音效
+            // 加一個一次性的點擊事件來初始化 AudioContext
+            document.addEventListener('click', function initAudio() {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
+        }
+    </script>
+
+</body>
+
+</html>
