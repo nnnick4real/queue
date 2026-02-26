@@ -281,7 +281,6 @@
             font-size: 12px;
             font-weight: 500;
             letter-spacing: 2px;
-            text-transform: uppercase;
             color: var(--gray-600);
             margin-bottom: 16px;
         }
@@ -1449,7 +1448,7 @@
             </div>
 
             <div class="kiosk-footer-bar">
-                Tesla 台北交付中心叫號系統
+                © Tesla 台北交付中心叫號系統
             </div>
         </div>
 
@@ -1460,12 +1459,15 @@
             </div>
 
             <div class="ticket-hero fade-in">
-                <div class="ticket-label">您的號碼</div>
-                <div class="ticket-number">
-                    <span class="ticket-number-prefix">#</span><span id="myNumber">—</span>
+                <div class="ticket-label" id="kioskTicketLabel">您的梯次</div>
+                <div class="ticket-number" id="kioskTicketDisplay">
+                    <span class="ticket-number-prefix" id="kioskPrefix">第</span><span id="myNumber">—</span><span
+                        id="kioskSuffix"
+                        style="font-size:clamp(28px,7vw,48px);font-weight:300;color:var(--black);">梯次</span>
                 </div>
-                <div style="font-size:12px; color:var(--gray-500); margin-top:6px; line-height:1.6; text-align:center;">
-                    此為報到順序，非車位號碼<br>車位號碼請由下方輸入 RN 查詢
+                <div id="kioskTicketHint"
+                    style="font-size:12px; color:var(--gray-500); margin-top:6px; line-height:1.6; text-align:center;">
+                    同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 RN 查詢
                 </div>
             </div>
 
@@ -1478,10 +1480,10 @@
             <div class="stats-row fade-in" style="max-width:480px;width:100%;margin-top:4px;">
                 <div class="stat-item">
                     <div class="stat-label">目前叫號</div>
-                    <div class="stat-value highlight" id="kioskCurrent">#0</div>
+                    <div class="stat-value highlight" id="kioskCurrent">第 0 梯次</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">前方等待</div>
+                    <div class="stat-label" id="kioskAheadLabel">前方梯次</div>
                     <div class="stat-value" id="kioskAhead">—</div>
                 </div>
                 <div class="stat-item">
@@ -1550,7 +1552,8 @@
             <div class="called-title">輪到您了</div>
             <div class="called-sub">請至門口黑龍處 | 排隊報到領取資料</div>
             <div class="called-number">
-                <span class="called-number-hash">#</span><span id="calledMyNumber">—</span>
+                <span class="called-number-hash" id="calledPrefix">第</span><span id="calledMyNumber">—</span><span
+                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;">梯次</span>
             </div>
             <!-- 車位資訊（若有查詢過） -->
             <div id="calledSpotInfo"
@@ -1608,21 +1611,53 @@
                     </div>
                 </div>
 
+                <!-- 叫號模式切換 -->
+                <div class="admin-section">
+                    <div class="admin-section-title">叫號模式</div>
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                        <span id="modeLabelNum" style="font-size:13px;font-weight:600;color:var(--black);">號碼叫號</span>
+                        <label style="position:relative;display:inline-block;width:52px;height:28px;cursor:pointer;">
+                            <input type="checkbox" id="modeToggle" onchange="toggleCallMode()" style="display:none;">
+                            <span
+                                style="position:absolute;inset:0;background:var(--gray-300);border-radius:28px;transition:background 0.3s;"></span>
+                            <span id="modeToggleDot"
+                                style="position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
+                        </label>
+                        <span id="modeLabelBatch"
+                            style="font-size:13px;font-weight:500;color:var(--gray-400);">梯次叫號</span>
+                    </div>
+                    <p style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">切換後所有車主端與電視看板會即時同步</p>
+                </div>
+
                 <!-- 叫號操作 -->
                 <div class="admin-section">
-                    <div class="admin-section-title">叫號操作</div>
-                    <div class="action-row" style="margin-bottom:12px;">
-                        <button class="btn btn-primary" style="padding:16px 40px;font-size:15px;" onclick="callNext(1)">
-                            叫下一號
+                    <div class="admin-section-title" id="adminCallTitle">叫號操作</div>
+                    <div style="margin-bottom:12px;font-size:14px;color:var(--gray-600);" id="adminCurrentInfo">
+                        目前叫到：<strong style="color:var(--black);font-size:18px;" id="adminCurrentBatch">第 0 梯次</strong>
+                    </div>
+                    <!-- 梯次模式按鈕 -->
+                    <div id="adminBatchBtns" class="action-row" style="margin-bottom:12px;">
+                        <button class="btn btn-primary" style="padding:16px 40px;font-size:15px;"
+                            onclick="callNextBatch()">
+                            📢 叫下一梯次（10人）
                         </button>
                     </div>
-                    <div class="action-row" style="margin-top:16px;align-items:center;gap:8px;">
-                        <span style="font-size:13px;color:var(--gray-600);">批次叫號</span>
-                        <button class="btn btn-secondary btn-sm" onclick="callNext(3)">+3</button>
-                        <button class="btn btn-secondary btn-sm" onclick="callNext(5)">+5</button>
-                        <button class="btn btn-secondary btn-sm" onclick="callNext(10)">+10</button>
-                        <input type="number" class="batch-input" id="batchSize" value="1" min="1" max="60">
-                        <button class="btn btn-secondary btn-sm" onclick="callNextCustom()">自訂</button>
+                    <!-- 號碼模式按鈕 -->
+                    <div id="adminNumBtns" style="display:none;">
+                        <div class="action-row" style="margin-bottom:12px;">
+                            <button class="btn btn-primary" style="padding:16px 40px;font-size:15px;"
+                                onclick="callNext(1)">
+                                叫下一號
+                            </button>
+                        </div>
+                        <div class="action-row" style="margin-top:12px;align-items:center;gap:8px;">
+                            <span style="font-size:13px;color:var(--gray-600);">批次叫號</span>
+                            <button class="btn btn-secondary btn-sm" onclick="callNext(3)">+3</button>
+                            <button class="btn btn-secondary btn-sm" onclick="callNext(5)">+5</button>
+                            <button class="btn btn-secondary btn-sm" onclick="callNext(10)">+10</button>
+                            <input type="number" class="batch-input" id="batchSize" value="1" min="1" max="60">
+                            <button class="btn btn-secondary btn-sm" onclick="callNextCustom()">自訂</button>
+                        </div>
                     </div>
                 </div>
 
@@ -1676,7 +1711,7 @@
                     <div class="admin-section-title">場次管理</div>
                     <button class="btn btn-danger" onclick="showResetModal()">重設場次</button>
                     <p style="font-size:12px;color:var(--gray-400);margin-top:10px;">
-                        清除所有號碼資料，從第 1 號重新開始
+                        清除所有號碼資料，重新開始
                     </p>
                 </div>
             </div>
@@ -1702,7 +1737,13 @@
 
         <div class="tv-main">
             <div class="tv-eyebrow">目 前 叫 號</div>
-            <div class="tv-number" id="tvNumber">0</div>
+            <div style="display:flex;align-items:baseline;justify-content:center;">
+                <span id="tvPrefix"
+                    style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);">第</span>
+                <span class="tv-number" id="tvNumber">0</span>
+                <span id="tvSuffix"
+                    style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);">梯次</span>
+            </div>
             <div class="tv-next-row" id="tvNext"></div>
         </div>
 
@@ -1810,12 +1851,19 @@
         // 🎫 KIOSK / 車主端
         // ═════════════════════════════════
         function initKiosk() {
+            // 監聽叫號模式變化
+            queueRef.child('callMode').on('value', (snap) => {
+                callMode = snap.val() || 'batch';
+                updateKioskDisplayMode();
+            });
+
             queueRef.on('value', (snap) => {
                 const data = snap.val() || {};
                 const calledUpTo = data.calledUpTo || 0;
                 const nextTicket = data.nextTicket || 1;
                 const sessionId = data.sessionId || '';
                 const totalTickets = nextTicket - 1;
+                callMode = data.callMode || 'batch';
                 const localSession = localStorage.getItem('tq_session');
 
                 if (localSession && sessionId !== localSession) {
@@ -1838,8 +1886,9 @@
                 queueRef.child('sessionId').once('value', (snap) => {
                     if (snap.val() === savedSession) {
                         myTicketNumber = parseInt(saved);
-                        document.getElementById('myNumber').textContent = String(myTicketNumber).padStart(3, '0');
-                        document.getElementById('calledMyNumber').textContent = String(myTicketNumber).padStart(3, '0');
+                        const display = formatDisplay(myTicketNumber);
+                        document.getElementById('myNumber').textContent = display;
+                        document.getElementById('calledMyNumber').textContent = display;
                         switchKioskScreen('kiosk-waiting');
                         requestWakeLock();
                     } else {
@@ -2052,6 +2101,47 @@
             mapContainer.appendChild(marker);
         }
 
+        // 每梯次人數
+        const BATCH_SIZE = 10;
+        // 叫號模式: 'batch' = 梯次叫號, 'number' = 號碼叫號
+        let callMode = 'batch';
+
+        // 計算號碼所屬梯次 (1~10=第1梯次, 11~20=第2梯次, ...)
+        function getBatch(ticketNum) {
+            return Math.ceil(ticketNum / BATCH_SIZE);
+        }
+
+        // 根據模式格式化顯示內容
+        function formatDisplay(ticketNum) {
+            if (callMode === 'batch') {
+                return getBatch(ticketNum);
+            } else {
+                return String(ticketNum).padStart(3, '0');
+            }
+        }
+
+        // 更新車主端 UI 顯示模式
+        function updateKioskDisplayMode() {
+            const isBatch = callMode === 'batch';
+            document.getElementById('kioskTicketLabel').textContent = isBatch ? '您的梯次' : '您的號碼';
+            document.getElementById('kioskPrefix').textContent = isBatch ? '第' : '#';
+            document.getElementById('kioskSuffix').textContent = isBatch ? '梯次' : '';
+            document.getElementById('kioskSuffix').style.display = isBatch ? '' : 'none';
+            document.getElementById('kioskTicketHint').innerHTML = isBatch
+                ? '同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 RN 查詢'
+                : '此為報到順序，非車位號碼<br>車位號碼請由下方輸入 RN 查詢';
+            document.getElementById('kioskAheadLabel').textContent = isBatch ? '前方梯次' : '前方等待';
+            document.getElementById('calledPrefix').textContent = isBatch ? '第' : '#';
+            document.getElementById('calledSuffix').textContent = isBatch ? '梯次' : '';
+            document.getElementById('calledSuffix').style.display = isBatch ? '' : 'none';
+            // 更新顯示的號碼
+            if (myTicketNumber !== null) {
+                const display = formatDisplay(myTicketNumber);
+                document.getElementById('myNumber').textContent = display;
+                document.getElementById('calledMyNumber').textContent = display;
+            }
+        }
+
         function takeTicket() {
             if (myTicketNumber !== null) return;
             const btn = document.getElementById('btnTakeTicket');
@@ -2071,7 +2161,6 @@
                 }
 
                 myTicketNumber = snapshot.val() - 1;
-                const formatted = String(myTicketNumber).padStart(3, '0');
 
                 queueRef.child('sessionId').once('value', (snap) => {
                     let sid = snap.val();
@@ -2083,8 +2172,9 @@
                     localStorage.setItem('tq_session', sid);
                 });
 
-                document.getElementById('myNumber').textContent = formatted;
-                document.getElementById('calledMyNumber').textContent = formatted;
+                const display = formatDisplay(myTicketNumber);
+                document.getElementById('myNumber').textContent = display;
+                document.getElementById('calledMyNumber').textContent = display;
                 switchKioskScreen('kiosk-waiting');
                 requestWakeLock();
 
@@ -2095,31 +2185,53 @@
         function updateKioskWaiting(calledUpTo, totalTickets) {
             if (myTicketNumber === null) return;
 
-            const ahead = Math.max(0, myTicketNumber - calledUpTo - 1);
-            const isCalled = myTicketNumber <= calledUpTo;
+            if (callMode === 'batch') {
+                const myBatch = getBatch(myTicketNumber);
+                const currentBatch = calledUpTo;
+                const batchesAhead = Math.max(0, myBatch - currentBatch - 1);
+                const isCalled = myBatch <= currentBatch;
 
-            document.getElementById('kioskCurrent').textContent = '#' + String(calledUpTo).padStart(3, '0');
-            document.getElementById('kioskAhead').textContent = isCalled ? '—' : ahead + ' 人';
+                document.getElementById('kioskCurrent').textContent = '第 ' + currentBatch + ' 梯次';
+                document.getElementById('kioskAhead').textContent = isCalled ? '—' : batchesAhead + ' 梯次';
+                const etaMin = Math.ceil(batchesAhead * AVG_SERVICE_MIN);
+                document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
 
-            const etaMin = Math.ceil((ahead / COUNTER_COUNT) * AVG_SERVICE_MIN);
-            document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
+                const totalBatches = Math.ceil(totalTickets / BATCH_SIZE);
+                const progress = totalBatches > 0 ? (currentBatch / totalBatches) * 100 : 0;
+                document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
 
-            const progress = totalTickets > 0 ? (calledUpTo / totalTickets) * 100 : 0;
-            document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
-
-            if (isCalled && calledUpTo > prevCalledUpTo) {
-                switchKioskScreen('kiosk-called');
-                // 若有查過訂單，顯示車位資訊
-                if (lastSearchResult) {
-                    document.getElementById('calledSpotNum').textContent = lastSearchResult.spot + ' 號';
-                    document.getElementById('calledSpotName').textContent = lastSearchResult.name;
-                    document.getElementById('calledSpotInfo').style.display = '';
+                if (isCalled && calledUpTo > prevCalledUpTo) {
+                    triggerCalledNotification();
                 }
-                playNotificationSound();
-                if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
+            } else {
+                const ahead = Math.max(0, myTicketNumber - calledUpTo - 1);
+                const isCalled = myTicketNumber <= calledUpTo;
+
+                document.getElementById('kioskCurrent').textContent = '#' + String(calledUpTo).padStart(3, '0');
+                document.getElementById('kioskAhead').textContent = isCalled ? '—' : ahead + ' 人';
+                const etaMin = Math.ceil((ahead / COUNTER_COUNT) * AVG_SERVICE_MIN);
+                document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
+
+                const progress = totalTickets > 0 ? (calledUpTo / totalTickets) * 100 : 0;
+                document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
+
+                if (isCalled && calledUpTo > prevCalledUpTo) {
+                    triggerCalledNotification();
+                }
             }
 
             prevCalledUpTo = calledUpTo;
+        }
+
+        function triggerCalledNotification() {
+            switchKioskScreen('kiosk-called');
+            if (lastSearchResult) {
+                document.getElementById('calledSpotNum').textContent = lastSearchResult.spot + ' 號';
+                document.getElementById('calledSpotName').textContent = lastSearchResult.name;
+                document.getElementById('calledSpotInfo').style.display = '';
+            }
+            playNotificationSound();
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
         }
 
         function switchKioskScreen(id) {
@@ -2152,39 +2264,39 @@
             }
         });
 
-                function playNotificationSound() {
+        function playNotificationSound() {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = audioCtx.currentTime;
 
-                // ✈️ 飛機客艙提示音 (Cabin Chime)
-                // 播放兩次，間隔 1.5 秒，確保車主注意到
-                [0, 1.5].forEach(repeat => {
-                    // 「叮～」— 高音 (B5, 988Hz)，清脆明亮
+                // ✈️ 飛機客艙提示音 — 低沉、緩慢、溫暖
+                // 播放兩次，間隔 2 秒
+                [0, 2.0].forEach(repeat => {
+                    // 「叮～」— A4 (440Hz)，溫暖低音，長衰減
                     const osc1 = audioCtx.createOscillator();
                     const gain1 = audioCtx.createGain();
                     osc1.connect(gain1);
                     gain1.connect(audioCtx.destination);
-                    osc1.frequency.value = 988;
+                    osc1.frequency.value = 440; // A4
                     osc1.type = 'sine';
                     const t1 = now + repeat;
                     gain1.gain.setValueAtTime(0.4, t1);
-                    gain1.gain.exponentialRampToValueAtTime(0.001, t1 + 0.8);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, t1 + 1.2);
                     osc1.start(t1);
-                    osc1.stop(t1 + 0.8);
+                    osc1.stop(t1 + 1.2);
 
-                    // 「咚～」— 低音 (F#5, 740Hz)，溫暖沉穩
+                    // 「咚～」— E4 (330Hz)，更低沉，延遲 0.6 秒
                     const osc2 = audioCtx.createOscillator();
                     const gain2 = audioCtx.createGain();
                     osc2.connect(gain2);
                     gain2.connect(audioCtx.destination);
-                    osc2.frequency.value = 740;
+                    osc2.frequency.value = 330; // E4
                     osc2.type = 'sine';
-                    const t2 = now + repeat + 0.45;
+                    const t2 = now + repeat + 0.6;
                     gain2.gain.setValueAtTime(0.4, t2);
-                    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 1.0);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 1.5);
                     osc2.start(t2);
-                    osc2.stop(t2 + 1.0);
+                    osc2.stop(t2 + 1.5);
                 });
             } catch (e) { }
         }
@@ -2225,15 +2337,34 @@
                 }
             });
 
+            // 監聽 callMode
+            queueRef.child('callMode').on('value', (snap) => {
+                callMode = snap.val() || 'batch';
+                updateAdminModeUI();
+            });
+
             queueRef.on('value', (snap) => {
                 const data = snap.val() || {};
                 const calledUpTo = data.calledUpTo || 0;
                 const nextTicket = data.nextTicket || 1;
                 const total = nextTicket - 1;
-                const waiting = Math.max(0, total - calledUpTo);
+                callMode = data.callMode || 'batch';
                 document.getElementById('statTotal').textContent = total;
-                document.getElementById('statCalled').textContent = calledUpTo;
-                document.getElementById('statWaiting').textContent = waiting;
+
+                if (callMode === 'batch') {
+                    const totalBatches = Math.ceil(total / 10) || 0;
+                    const waitingBatches = Math.max(0, totalBatches - calledUpTo);
+                    document.getElementById('statCalled').textContent = '第 ' + calledUpTo + ' 梯次';
+                    document.getElementById('statWaiting').textContent = waitingBatches + ' 梯次';
+                    const batchEl = document.getElementById('adminCurrentBatch');
+                    if (batchEl) batchEl.textContent = '第 ' + calledUpTo + ' 梯次';
+                } else {
+                    const waiting = Math.max(0, total - calledUpTo);
+                    document.getElementById('statCalled').textContent = calledUpTo;
+                    document.getElementById('statWaiting').textContent = waiting;
+                    const batchEl = document.getElementById('adminCurrentBatch');
+                    if (batchEl) batchEl.textContent = '#' + String(calledUpTo).padStart(3, '0');
+                }
             });
 
             // 監聽客戶查詢紀錄
@@ -2275,6 +2406,11 @@
             document.getElementById(id).classList.add('active');
         }
 
+        function callNextBatch() {
+            if (!queueRef) return;
+            queueRef.child('calledUpTo').transaction((current) => (current || 0) + 1);
+        }
+
         function callNext(count) {
             if (!queueRef) return;
             queueRef.child('calledUpTo').transaction((current) => (current || 0) + count);
@@ -2283,6 +2419,35 @@
         function callNextCustom() {
             const n = parseInt(document.getElementById('batchSize').value) || 1;
             callNext(n);
+        }
+
+        function toggleCallMode() {
+            const toggle = document.getElementById('modeToggle');
+            const newMode = toggle.checked ? 'batch' : 'number';
+            queueRef.child('callMode').set(newMode);
+        }
+
+        function updateAdminModeUI() {
+            const isBatch = callMode === 'batch';
+            const toggle = document.getElementById('modeToggle');
+            const dot = document.getElementById('modeToggleDot');
+            if (toggle) toggle.checked = isBatch;
+            if (dot) dot.style.transform = isBatch ? 'translateX(24px)' : 'translateX(0)';
+            // 切換按鈕顯示
+            const batchBtns = document.getElementById('adminBatchBtns');
+            const numBtns = document.getElementById('adminNumBtns');
+            if (batchBtns) batchBtns.style.display = isBatch ? '' : 'none';
+            if (numBtns) numBtns.style.display = isBatch ? 'none' : '';
+            // 更新標題
+            document.getElementById('adminCallTitle').textContent = isBatch ? '叫號操作（梯次制，每梯 10 人）' : '叫號操作（號碼制）';
+            // 更新標籤顏色
+            document.getElementById('modeLabelNum').style.color = isBatch ? 'var(--gray-400)' : 'var(--black)';
+            document.getElementById('modeLabelNum').style.fontWeight = isBatch ? '500' : '600';
+            document.getElementById('modeLabelBatch').style.color = isBatch ? 'var(--black)' : 'var(--gray-400)';
+            document.getElementById('modeLabelBatch').style.fontWeight = isBatch ? '600' : '500';
+            // 切換背景色
+            const toggleBg = toggle ? toggle.nextElementSibling : null;
+            if (toggleBg) toggleBg.style.background = isBatch ? 'var(--red)' : 'var(--gray-300)';
         }
 
         function generateQR() {
@@ -2322,41 +2487,60 @@
         // 📺 TV DISPLAY / 電視看板
         // ═════════════════════════════════
         function initTV() {
-            let prevNumber = 0;
+            let prevVal = 0;
 
             queueRef.on('value', (snap) => {
                 const data = snap.val() || {};
                 const calledUpTo = data.calledUpTo || 0;
                 const nextTicket = data.nextTicket || 1;
                 const total = nextTicket - 1;
-                const waiting = Math.max(0, total - calledUpTo);
+                callMode = data.callMode || 'batch';
+                const isBatch = callMode === 'batch';
+
+                // 更新 TV 前後綴文字
+                document.getElementById('tvPrefix').textContent = isBatch ? '第' : '#';
+                document.getElementById('tvPrefix').style.display = isBatch ? '' : 'none';
+                document.getElementById('tvSuffix').textContent = isBatch ? '梯次' : '';
+                document.getElementById('tvSuffix').style.display = isBatch ? '' : 'none';
 
                 const numEl = document.getElementById('tvNumber');
-                if (calledUpTo !== prevNumber) {
+                if (calledUpTo !== prevVal) {
                     numEl.classList.remove('flip');
                     void numEl.offsetWidth;
-                    numEl.textContent = calledUpTo;
+                    numEl.textContent = isBatch ? calledUpTo : String(calledUpTo).padStart(3, '0');
                     numEl.classList.add('flip');
 
-                    if (calledUpTo > prevNumber && prevNumber > 0) {
+                    if (calledUpTo > prevVal && prevVal > 0) {
                         playTVChime();
                     }
-                    prevNumber = calledUpTo;
+                    prevVal = calledUpTo;
                 }
 
                 const nextEl = document.getElementById('tvNext');
-                if (calledUpTo < total) {
-                    const nextNums = [];
-                    for (let i = calledUpTo + 1; i <= Math.min(calledUpTo + 3, total); i++) {
-                        nextNums.push(String(i).padStart(3, '0'));
+                if (isBatch) {
+                    const totalBatches = Math.ceil(total / 10) || 0;
+                    const waitingBatches = Math.max(0, totalBatches - calledUpTo);
+                    if (calledUpTo < totalBatches) {
+                        nextEl.innerHTML = '下一梯次：<span>第 ' + (calledUpTo + 1) + ' 梯次</span>';
+                    } else {
+                        nextEl.innerHTML = '';
                     }
-                    nextEl.innerHTML = '下一位：<span>' + nextNums.join('、') + '</span>';
+                    document.getElementById('tvTotal').textContent = total;
+                    document.getElementById('tvWaiting').textContent = waitingBatches + ' 梯次';
                 } else {
-                    nextEl.innerHTML = '';
+                    const waiting = Math.max(0, total - calledUpTo);
+                    if (calledUpTo < total) {
+                        const nextNums = [];
+                        for (let i = calledUpTo + 1; i <= Math.min(calledUpTo + 3, total); i++) {
+                            nextNums.push(String(i).padStart(3, '0'));
+                        }
+                        nextEl.innerHTML = '下一位：<span>' + nextNums.join('、') + '</span>';
+                    } else {
+                        nextEl.innerHTML = '';
+                    }
+                    document.getElementById('tvTotal').textContent = total;
+                    document.getElementById('tvWaiting').textContent = waiting;
                 }
-
-                document.getElementById('tvTotal').textContent = total;
-                document.getElementById('tvWaiting').textContent = waiting;
             });
 
             document.addEventListener('click', function initAudio() {
@@ -2369,4 +2553,3 @@
 </body>
 
 </html>
-
