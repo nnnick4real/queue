@@ -1449,7 +1449,7 @@
             </div>
 
             <div class="kiosk-footer-bar">
-                © Tesla 台北交付中心叫號系統
+                Tesla 台北交付中心叫號系統
             </div>
         </div>
 
@@ -2152,39 +2152,39 @@
             }
         });
 
-        function playNotificationSound() {
+                function playNotificationSound() {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = audioCtx.currentTime;
 
-                // 叮咚音效：兩音階上升 (E5 → G5)，柔和正弦波
-                // 播放兩次叮咚，間隔 1 秒，確保車主注意到
-                [0, 1.0].forEach(repeat => {
-                    // 「叮」— E5 (659Hz)
+                // ✈️ 飛機客艙提示音 (Cabin Chime)
+                // 播放兩次，間隔 1.5 秒，確保車主注意到
+                [0, 1.5].forEach(repeat => {
+                    // 「叮～」— 高音 (B5, 988Hz)，清脆明亮
                     const osc1 = audioCtx.createOscillator();
                     const gain1 = audioCtx.createGain();
                     osc1.connect(gain1);
                     gain1.connect(audioCtx.destination);
-                    osc1.frequency.value = 659.25; // E5
+                    osc1.frequency.value = 988;
                     osc1.type = 'sine';
                     const t1 = now + repeat;
-                    gain1.gain.setValueAtTime(0.35, t1);
-                    gain1.gain.exponentialRampToValueAtTime(0.01, t1 + 0.5);
+                    gain1.gain.setValueAtTime(0.4, t1);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, t1 + 0.8);
                     osc1.start(t1);
-                    osc1.stop(t1 + 0.5);
+                    osc1.stop(t1 + 0.8);
 
-                    // 「咚」— G5 (784Hz)，延遲 0.3 秒
+                    // 「咚～」— 低音 (F#5, 740Hz)，溫暖沉穩
                     const osc2 = audioCtx.createOscillator();
                     const gain2 = audioCtx.createGain();
                     osc2.connect(gain2);
                     gain2.connect(audioCtx.destination);
-                    osc2.frequency.value = 783.99; // G5
+                    osc2.frequency.value = 740;
                     osc2.type = 'sine';
-                    const t2 = now + repeat + 0.3;
-                    gain2.gain.setValueAtTime(0.35, t2);
-                    gain2.gain.exponentialRampToValueAtTime(0.01, t2 + 0.6);
+                    const t2 = now + repeat + 0.45;
+                    gain2.gain.setValueAtTime(0.4, t2);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 1.0);
                     osc2.start(t2);
-                    osc2.stop(t2 + 0.6);
+                    osc2.stop(t2 + 1.0);
                 });
             } catch (e) { }
         }
@@ -2369,3 +2369,4 @@
 </body>
 
 </html>
+
