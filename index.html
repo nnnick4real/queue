@@ -696,10 +696,11 @@
         }
 
         .stat-card-value {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 200;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
             color: var(--black);
+            white-space: nowrap;
         }
 
         .stat-card-value.red {
@@ -1463,7 +1464,7 @@
                 <div class="ticket-number" id="kioskTicketDisplay">
                     <span class="ticket-number-prefix" id="kioskPrefix">第</span><span id="myNumber">—</span><span
                         id="kioskSuffix"
-                        style="font-size:clamp(28px,7vw,48px);font-weight:300;color:var(--black);">  梯   次</span>
+                        style="font-size:clamp(28px,7vw,48px);font-weight:300;color:var(--black);">梯次</span>
                 </div>
                 <div id="kioskTicketHint"
                     style="font-size:12px; color:var(--gray-500); margin-top:6px; line-height:1.6; text-align:center;">
@@ -1480,7 +1481,7 @@
             <div class="stats-row fade-in" style="max-width:480px;width:100%;margin-top:4px;">
                 <div class="stat-item">
                     <div class="stat-label">目前叫號</div>
-                    <div class="stat-value highlight" id="kioskCurrent">第 0 梯次</div>
+                    <div class="stat-value highlight" id="kioskCurrent">尚未叫號</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label" id="kioskAheadLabel">前方梯次</div>
@@ -1553,7 +1554,7 @@
             <div class="called-sub">請至門口黑龍處 | 排隊報到領取資料</div>
             <div class="called-number">
                 <span class="called-number-hash" id="calledPrefix">第</span><span id="calledMyNumber">—</span><span
-                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;">  梯   次</span>
+                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;">梯次</span>
             </div>
             <!-- 車位資訊（若有查詢過） -->
             <div id="calledSpotInfo"
@@ -1633,7 +1634,7 @@
                 <div class="admin-section">
                     <div class="admin-section-title" id="adminCallTitle">叫號操作</div>
                     <div style="margin-bottom:12px;font-size:14px;color:var(--gray-600);" id="adminCurrentInfo">
-                        目前叫到：<strong style="color:var(--black);font-size:18px;" id="adminCurrentBatch">第 0 梯次</strong>
+                        目前叫到：<strong style="color:var(--black);font-size:18px;" id="adminCurrentBatch">尚未叫號</strong>
                     </div>
                     <!-- 梯次模式按鈕 -->
                     <div id="adminBatchBtns" class="action-row" style="margin-bottom:12px;">
@@ -1661,15 +1662,23 @@
                     </div>
                 </div>
 
-                <!-- QR Code -->
+                <!-- QR Code (可收合) -->
                 <div class="admin-section">
-                    <div class="admin-section-title">車主端 QR Code</div>
-                    <div class="qr-section">
-                        <div class="qr-box" id="adminQR"></div>
-                        <p class="qr-url" id="adminQRUrl">—</p>
-                        <p style="font-size:12px;color:var(--gray-400);margin-top:4px;">
-                            列印此 QR Code 放置於入口處，車主掃描即可領號
-                        </p>
+                    <div class="admin-section-title"
+                        style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;"
+                        onclick="toggleQR()">
+                        <span>車主端 QR Code</span>
+                        <span id="qrToggleIcon"
+                            style="font-size:18px;color:var(--gray-400);transition:transform 0.3s;">▼</span>
+                    </div>
+                    <div id="qrContent" style="display:none;margin-top:12px;">
+                        <div class="qr-section">
+                            <div class="qr-box" id="adminQR"></div>
+                            <p class="qr-url" id="adminQRUrl">—</p>
+                            <p style="font-size:12px;color:var(--gray-400);margin-top:4px;">
+                                列印此 QR Code 放置於入口處，車主掃描即可領號
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -2132,7 +2141,7 @@
                 : '此為報到順序，非車位號碼<br>車位號碼請由下方輸入 RN 查詢';
             document.getElementById('kioskAheadLabel').textContent = isBatch ? '前方梯次' : '前方等待';
             document.getElementById('calledPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('calledSuffix').textContent = isBatch ? '梯次' : '';
+            document.getElementById('calledSuffix').textContent = isBatch ? '  梯   次' : '';
             document.getElementById('calledSuffix').style.display = isBatch ? '' : 'none';
             // 更新顯示的號碼
             if (myTicketNumber !== null) {
@@ -2191,7 +2200,7 @@
                 const batchesAhead = Math.max(0, myBatch - currentBatch - 1);
                 const isCalled = myBatch <= currentBatch;
 
-                document.getElementById('kioskCurrent').textContent = '第 ' + currentBatch + ' 梯次';
+                document.getElementById('kioskCurrent').textContent = currentBatch === 0 ? '尚未叫號' : '第 ' + currentBatch + '   梯   次';
                 document.getElementById('kioskAhead').textContent = isCalled ? '—' : batchesAhead + ' 梯次';
                 const etaMin = Math.ceil(batchesAhead * AVG_SERVICE_MIN);
                 document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
@@ -2269,15 +2278,15 @@
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = audioCtx.currentTime;
 
-                // ✈️ 飛機客艙提示音 — 低沉、緩慢、溫暖
-                // 播放兩次，間隔 2 秒
-                [0, 2.0].forEach(repeat => {
-                    // 「叮～」— A4 (440Hz)，溫暖低音，長衰減
+                // ✈️ 飛機客艙提示音 — B4 → F#4，稍高一點，間隔更長
+                // 播放兩次，間隔 2.5 秒
+                [0, 2.5].forEach(repeat => {
+                    // 「叮～」— B4 (494Hz)
                     const osc1 = audioCtx.createOscillator();
                     const gain1 = audioCtx.createGain();
                     osc1.connect(gain1);
                     gain1.connect(audioCtx.destination);
-                    osc1.frequency.value = 440; // A4
+                    osc1.frequency.value = 494; // B4
                     osc1.type = 'sine';
                     const t1 = now + repeat;
                     gain1.gain.setValueAtTime(0.4, t1);
@@ -2285,14 +2294,14 @@
                     osc1.start(t1);
                     osc1.stop(t1 + 1.2);
 
-                    // 「咚～」— E4 (330Hz)，更低沉，延遲 0.6 秒
+                    // 「東～」— F#4 (370Hz)，延遲 1.0 秒
                     const osc2 = audioCtx.createOscillator();
                     const gain2 = audioCtx.createGain();
                     osc2.connect(gain2);
                     gain2.connect(audioCtx.destination);
-                    osc2.frequency.value = 330; // E4
+                    osc2.frequency.value = 370; // F#4
                     osc2.type = 'sine';
-                    const t2 = now + repeat + 0.6;
+                    const t2 = now + repeat + 1.0;
                     gain2.gain.setValueAtTime(0.4, t2);
                     gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 1.5);
                     osc2.start(t2);
@@ -2354,10 +2363,10 @@
                 if (callMode === 'batch') {
                     const totalBatches = Math.ceil(total / 10) || 0;
                     const waitingBatches = Math.max(0, totalBatches - calledUpTo);
-                    document.getElementById('statCalled').textContent = '第 ' + calledUpTo + ' 梯次';
+                    document.getElementById('statCalled').textContent = calledUpTo === 0 ? '尚未叫號' : '第 ' + calledUpTo + ' 梯次';
                     document.getElementById('statWaiting').textContent = waitingBatches + ' 梯次';
                     const batchEl = document.getElementById('adminCurrentBatch');
-                    if (batchEl) batchEl.textContent = '第 ' + calledUpTo + ' 梯次';
+                    if (batchEl) batchEl.textContent = calledUpTo === 0 ? '尚未叫號' : '第 ' + calledUpTo + ' 梯次';
                 } else {
                     const waiting = Math.max(0, total - calledUpTo);
                     document.getElementById('statCalled').textContent = calledUpTo;
@@ -2450,6 +2459,14 @@
             if (toggleBg) toggleBg.style.background = isBatch ? 'var(--red)' : 'var(--gray-300)';
         }
 
+        function toggleQR() {
+            const content = document.getElementById('qrContent');
+            const icon = document.getElementById('qrToggleIcon');
+            const isOpen = content.style.display !== 'none';
+            content.style.display = isOpen ? 'none' : 'block';
+            icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
         function generateQR() {
             const container = document.getElementById('adminQR');
             const urlDisplay = document.getElementById('adminQRUrl');
@@ -2498,16 +2515,23 @@
                 const isBatch = callMode === 'batch';
 
                 // 更新 TV 前後綴文字
+                const showBatchLabel = isBatch && calledUpTo > 0;
                 document.getElementById('tvPrefix').textContent = isBatch ? '第' : '#';
-                document.getElementById('tvPrefix').style.display = isBatch ? '' : 'none';
+                document.getElementById('tvPrefix').style.display = showBatchLabel ? '' : (isBatch ? 'none' : 'none');
                 document.getElementById('tvSuffix').textContent = isBatch ? '梯次' : '';
-                document.getElementById('tvSuffix').style.display = isBatch ? '' : 'none';
+                document.getElementById('tvSuffix').style.display = showBatchLabel ? '' : 'none';
 
                 const numEl = document.getElementById('tvNumber');
                 if (calledUpTo !== prevVal) {
                     numEl.classList.remove('flip');
                     void numEl.offsetWidth;
-                    numEl.textContent = isBatch ? calledUpTo : String(calledUpTo).padStart(3, '0');
+                    if (isBatch) {
+                        numEl.textContent = calledUpTo === 0 ? '尚未叫號' : calledUpTo;
+                        numEl.style.fontSize = calledUpTo === 0 ? 'clamp(40px,8vw,80px)' : '';
+                    } else {
+                        numEl.textContent = String(calledUpTo).padStart(3, '0');
+                        numEl.style.fontSize = '';
+                    }
                     numEl.classList.add('flip');
 
                     if (calledUpTo > prevVal && prevVal > 0) {
@@ -2553,5 +2577,3 @@
 </body>
 
 </html>
-
-
