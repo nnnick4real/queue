@@ -1,7 +1,7 @@
 <!--
   ╔═══════════════════════════════════════════════╗
   ║  Tesla 台北交付中心 | 號碼牌叫號系統              ║
-  ║  Version 2.0  — Tesla.com Design              ║
+  ║  Version 2.1  — Tesla.com Design              ║
   ╠═══════════════════════════════════════════════╣
   ║  Views (透過 URL 參數切換):                    ║
   ║  - 車主端 (預設):  ?mode=kiosk                ║
@@ -1226,7 +1226,9 @@
             color: var(--gray-600);
         }
 
-        /* Interactive Map */
+        /* ════════════════════════════════════════
+           Interactive Map with Spot Highlighting
+           ════════════════════════════════════════ */
         .map-interactive {
             position: relative;
             margin-top: 12px;
@@ -1240,19 +1242,142 @@
             display: block;
         }
 
+        /* 車位標記 — 脈衝動畫 */
         .spot-marker {
             position: absolute;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
+            z-index: 5;
         }
 
-        .spot-marker.active {
-            display: none;
+        /* 核心紅點 */
+        .spot-marker-dot {
+            width: 16px;
+            height: 16px;
+            background: var(--red);
+            border-radius: 50%;
+            border: 2.5px solid #fff;
+            box-shadow: 0 0 8px rgba(232, 33, 39, 0.6), 0 0 20px rgba(232, 33, 39, 0.3);
+            position: relative;
+            z-index: 3;
+            animation: spotBounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes spotBounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* 外圈脈衝波紋 */
+        .spot-marker-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--red);
+            animation: spotPulse 1.8s ease-out infinite;
+            z-index: 2;
+        }
+
+        .spot-marker-pulse:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        .spot-marker-pulse:nth-child(3) {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes spotPulse {
+            0% {
+                width: 16px;
+                height: 16px;
+                opacity: 0.8;
+            }
+            100% {
+                width: 56px;
+                height: 56px;
+                opacity: 0;
+            }
+        }
+
+        /* 車位號碼標籤 */
+        .spot-marker-label {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--red);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(232, 33, 39, 0.4);
+            animation: spotLabelIn 0.4s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            z-index: 4;
+        }
+
+        .spot-marker-label::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: var(--red);
+        }
+
+        @keyframes spotLabelIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(4px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* 地圖滾動提示 */
+        .map-scroll-hint {
+            text-align: center;
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-top: 6px;
+            animation: fadeIn 0.5s 0.8s both;
+        }
+
+        /* ════════════════════════════════════════
+           Animations
+           ════════════════════════════════════════ */
+
+        /* ════════════════════════════════════════
+           Responsive
+           ════════════════════════════════════════ */
+        @media (max-width: 480px) {
+            .spot-marker-dot {
+                width: 14px;
+                height: 14px;
+            }
+            .spot-marker-label {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
         }
     </style>
 </head>
@@ -1310,7 +1435,11 @@
                         <button class="search-btn" onclick="searchSpot('landing')">查詢</button>
                     </div>
                     <div class="search-result" id="searchResultLanding"></div>
-
+                    <!-- 領號頁互動地圖 -->
+                    <div class="map-interactive" id="searchMapLanding" style="display:none;">
+                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="map-scroll-hint" id="mapHintLanding" style="display:none;">📍 紅點為您的車位位置</div>
                 </div>
             </div>
 
@@ -1397,15 +1526,16 @@
                         <button class="search-btn" onclick="searchSpot('waiting')">查詢</button>
                     </div>
                     <div class="search-result" id="searchResultWaiting"></div>
-
                 </div>
             </div>
 
-            <!-- Phase 4: 交車位置圖 -->
-            <div class="waiting-card">
-                <div class="waiting-card-title">B4 導覽指引</div>
-                <img src="b4_map.png" alt="B4 交車位置圖" class="waiting-map-img"
-                    onerror="this.parentElement.style.display='none'">
+            <div class="waiting-card" id="waitingMapCard">
+                <div class="waiting-card-title">B4 交車位置圖</div>
+                <div class="map-interactive" id="waitingMapInteractive">
+                    <img src="b4_map.png" alt="B4 交車位置圖"
+                        onerror="this.closest('.waiting-card').style.display='none'">
+                </div>
+                <div class="map-scroll-hint" id="waitingMapHint" style="display:none;">📍 紅點為您的車位位置</div>
             </div>
 
         </div>
@@ -1552,7 +1682,7 @@
                     <div class="status-dot" id="fbStatusDot"></div>
                     <span id="fbStatusText">連線中…</span>
                 </div>
-                <span>Tesla Queue System v2.0</span>
+                <span>Tesla Queue System v2.1</span>
             </div>
         </div>
     </div>
@@ -1761,24 +1891,41 @@
         let deliverySearchData = [];
         let lastSearchResult = null;
 
-        // B4 車位座標 (% 位置，對應 b4_map.png)
+        // B4 車位座標 (% 位置，精確校準對應 b4_map.png)
         const SPOT_POSITIONS = {
-            // Zone A: 上方區域
-            1: { x: 38, y: 37 }, 2: { x: 43, y: 37 }, 3: { x: 48, y: 37 }, 4: { x: 53, y: 37 }, 5: { x: 58, y: 37 },
-            6: { x: 63, y: 37 }, 7: { x: 68, y: 37 }, 8: { x: 73, y: 37 }, 9: { x: 78, y: 37 }, 10: { x: 83, y: 37 },
-            11: { x: 83, y: 28 }, 12: { x: 78, y: 28 }, 13: { x: 73, y: 28 }, 14: { x: 68, y: 28 }, 15: { x: 63, y: 28 },
-            16: { x: 58, y: 28 }, 17: { x: 53, y: 28 }, 18: { x: 48, y: 28 }, 19: { x: 43, y: 28 }, 20: { x: 38, y: 28 },
-            // Zone B: 右上 + 右側
-            21: { x: 95, y: 34 }, 22: { x: 95, y: 29 }, 23: { x: 95, y: 24 }, 24: { x: 95, y: 18 },
-            25: { x: 90, y: 9 }, 26: { x: 85, y: 9 }, 27: { x: 80, y: 9 }, 28: { x: 75, y: 9 }, 29: { x: 70, y: 9 }, 30: { x: 58, y: 9 },
-            // Zone C: 中間區域
-            31: { x: 52, y: 55 }, 32: { x: 57, y: 55 }, 33: { x: 62, y: 55 }, 34: { x: 67, y: 55 }, 35: { x: 72, y: 55 }, 36: { x: 77, y: 55 }, 37: { x: 82, y: 55 },
-            38: { x: 82, y: 62 }, 39: { x: 77, y: 62 }, 50: { x: 67, y: 62 }, 51: { x: 62, y: 62 }, 52: { x: 57, y: 62 }, 53: { x: 52, y: 62 }, 54: { x: 39, y: 60 },
-            // Zone D: 最下排
-            55: { x: 37, y: 87 }, 56: { x: 42, y: 87 }, 57: { x: 47, y: 87 }, 58: { x: 52, y: 87 }, 59: { x: 57, y: 87 }, 60: { x: 62, y: 87 },
-            61: { x: 67, y: 87 }, 62: { x: 72, y: 87 }, 63: { x: 77, y: 87 }, 64: { x: 82, y: 87 }, 65: { x: 87, y: 87 }, 66: { x: 92, y: 87 },
-            // 右側直列
-            67: { x: 95, y: 64 }, 68: { x: 95, y: 61 }, 69: { x: 95, y: 57 }, 70: { x: 95, y: 53 }
+            // Zone A 下排 1-10
+            1: { x: 15.4, y: 39.6 }, 2: { x: 22.0, y: 39.6 }, 3: { x: 28.6, y: 39.6 },
+            4: { x: 35.1, y: 39.6 }, 5: { x: 41.9, y: 39.6 }, 6: { x: 48.4, y: 39.6 },
+            7: { x: 55.0, y: 39.6 }, 8: { x: 61.6, y: 39.6 }, 9: { x: 68.1, y: 39.6 },
+            10: { x: 74.9, y: 39.6 },
+            // Zone A 上排 11-20
+            11: { x: 74.9, y: 30.2 }, 12: { x: 68.1, y: 30.2 }, 13: { x: 61.6, y: 30.2 },
+            14: { x: 55.0, y: 30.2 }, 15: { x: 48.4, y: 30.2 }, 16: { x: 41.9, y: 30.2 },
+            17: { x: 35.1, y: 30.2 }, 18: { x: 28.6, y: 30.2 }, 19: { x: 22.0, y: 30.2 },
+            20: { x: 15.4, y: 30.2 },
+            // Zone B 右側 21-24
+            21: { x: 92.6, y: 40.6 }, 22: { x: 92.6, y: 34.0 },
+            23: { x: 92.6, y: 27.4 }, 24: { x: 92.6, y: 20.9 },
+            // Zone B 上排 25-30
+            25: { x: 87.0, y: 7.1 }, 26: { x: 80.3, y: 7.1 }, 27: { x: 73.5, y: 7.1 },
+            28: { x: 66.7, y: 7.1 }, 29: { x: 59.5, y: 7.1 }, 30: { x: 43.5, y: 7.1 },
+            // Zone C 上排 31-37
+            31: { x: 40.9, y: 59.2 }, 32: { x: 46.8, y: 59.2 }, 33: { x: 52.7, y: 59.2 },
+            34: { x: 58.6, y: 59.2 }, 35: { x: 64.5, y: 59.2 }, 36: { x: 70.4, y: 59.2 },
+            37: { x: 76.4, y: 59.2 },
+            // Zone C 下排 38-53
+            38: { x: 70.4, y: 68.6 }, 39: { x: 64.5, y: 68.6 }, 50: { x: 58.6, y: 68.6 },
+            51: { x: 52.7, y: 68.6 }, 52: { x: 46.8, y: 68.6 }, 53: { x: 40.9, y: 68.6 },
+            // Zone C 獨立 54
+            54: { x: 14.6, y: 67.9 },
+            // Zone D 底部 55-66
+            55: { x: 14.0, y: 92.7 }, 56: { x: 20.4, y: 92.7 }, 57: { x: 26.8, y: 92.7 },
+            58: { x: 33.2, y: 92.7 }, 59: { x: 39.7, y: 92.7 }, 60: { x: 46.1, y: 92.7 },
+            61: { x: 52.5, y: 92.7 }, 62: { x: 58.9, y: 92.7 }, 63: { x: 65.4, y: 92.7 },
+            64: { x: 71.8, y: 92.7 }, 65: { x: 78.3, y: 92.7 }, 66: { x: 84.9, y: 92.7 },
+            // 右側直列 67-70
+            67: { x: 92.6, y: 76.8 }, 68: { x: 92.6, y: 69.9 },
+            69: { x: 92.6, y: 63.1 }, 70: { x: 92.6, y: 56.3 },
         };
 
         // 更新搜尋用資料（從 Firebase deliveryList 同步）
@@ -1799,9 +1946,9 @@
         }
 
         function searchSpot(page) {
-            const input = document.getElementById('searchInput' + (page === 'landing' ? 'Landing' : 'Waiting'));
-            const resultEl = document.getElementById('searchResult' + (page === 'landing' ? 'Landing' : 'Waiting'));
-            const mapEl = document.getElementById('searchMap' + (page === 'landing' ? 'Landing' : 'Waiting'));
+            const suffix = page === 'landing' ? 'Landing' : 'Waiting';
+            const input = document.getElementById('searchInput' + suffix);
+            const resultEl = document.getElementById('searchResult' + suffix);
             const query = input.value.trim().toUpperCase();
 
             if (!query) { input.focus(); return; }
@@ -1819,6 +1966,7 @@
                 `;
                 // 儲存搜尋結果，叫號頁也顯示
                 lastSearchResult = { spot: found.spot, name: found.name };
+
                 // 寫入 Firebase 讓管理後台可以看到
                 try {
                     const ticketNum = myTicketNumber || '—';
@@ -1830,24 +1978,73 @@
                         ts: Date.now()
                     });
                 } catch (e) { console.log('Lookup write failed:', e); }
-                // 隱藏地圖
-                mapEl.style.display = 'none';
+
+                // ★ 地圖標記邏輯
+                const spotNum = parseInt(found.spot);
+                if (SPOT_POSITIONS[spotNum]) {
+                    if (page === 'waiting') {
+                        // 等待頁：直接在底部那張地圖上標記
+                        const mapEl = document.getElementById('waitingMapInteractive');
+                        const hintEl = document.getElementById('waitingMapHint');
+                        if (mapEl) {
+                            highlightSpotOnMap(mapEl, spotNum);
+                            if (hintEl) hintEl.style.display = '';
+                            setTimeout(() => {
+                                mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 300);
+                        }
+                    } else {
+                        // 領號頁：用搜尋區自帶的地圖
+                        const mapEl = document.getElementById('searchMapLanding');
+                        const hintEl = document.getElementById('mapHintLanding');
+                        if (mapEl) {
+                            mapEl.style.display = '';
+                            highlightSpotOnMap(mapEl, spotNum);
+                            if (hintEl) hintEl.style.display = '';
+                            setTimeout(() => {
+                                mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 300);
+                        }
+                    }
+                }
+
             } else {
                 resultEl.className = 'search-result not-found';
                 resultEl.innerHTML = '<div class="result-not-found-text">❌ 查無此訂單編號，請確認後重試</div>';
-                mapEl.style.display = 'none';
             }
         }
 
         function highlightSpotOnMap(mapContainer, spotNum) {
             // 移除舊的 marker
             mapContainer.querySelectorAll('.spot-marker').forEach(m => m.remove());
+
             const pos = SPOT_POSITIONS[spotNum];
             if (!pos) return;
+
+            // 建立 marker 容器
             const marker = document.createElement('div');
-            marker.className = 'spot-marker active';
+            marker.className = 'spot-marker';
             marker.style.left = pos.x + '%';
             marker.style.top = pos.y + '%';
+
+            // 脈衝波紋 (3 層)
+            for (let i = 0; i < 3; i++) {
+                const pulse = document.createElement('div');
+                pulse.className = 'spot-marker-pulse';
+                marker.appendChild(pulse);
+            }
+
+            // 核心紅點
+            const dot = document.createElement('div');
+            dot.className = 'spot-marker-dot';
+            marker.appendChild(dot);
+
+            // 車位號碼標籤
+            const label = document.createElement('div');
+            label.className = 'spot-marker-label';
+            label.textContent = spotNum + ' 號';
+            marker.appendChild(label);
+
             mapContainer.appendChild(marker);
         }
 
@@ -2149,6 +2346,3 @@
 </body>
 
 </html>
-
-
-
