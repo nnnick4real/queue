@@ -696,11 +696,17 @@
         }
 
         .stat-card-value {
-            font-size: 36px;
-            font-weight: 200;
-            letter-spacing: -1px;
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 0;
             color: var(--black);
             white-space: nowrap;
+        }
+
+        .stat-card-value.num-only {
+            font-size: 48px;
+            font-weight: 200;
+            letter-spacing: -2px;
         }
 
         .stat-card-value.red {
@@ -1464,7 +1470,8 @@
                 <div class="ticket-number" id="kioskTicketDisplay">
                     <span class="ticket-number-prefix" id="kioskPrefix">第</span><span id="myNumber">—</span><span
                         id="kioskSuffix"
-                        style="font-size:clamp(28px,7vw,48px);font-weight:300;color:var(--black);">  梯   次</span>
+                        style="font-size:clamp(28px,7vw,48px);font-weight:300;color:var(--black);letter-spacing:0.3em;">梯
+                        次</span>
                 </div>
                 <div id="kioskTicketHint"
                     style="font-size:12px; color:var(--gray-500); margin-top:6px; line-height:1.6; text-align:center;">
@@ -1554,7 +1561,8 @@
             <div class="called-sub">請至門口黑龍處 | 排隊報到領取資料</div>
             <div class="called-number">
                 <span class="called-number-hash" id="calledPrefix">第</span><span id="calledMyNumber">—</span><span
-                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;">  梯   次</span>
+                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;letter-spacing:0.3em;">梯
+                    次</span>
             </div>
             <!-- 車位資訊（若有查詢過） -->
             <div id="calledSpotInfo"
@@ -1600,7 +1608,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-card-label">已領號</div>
-                        <div class="stat-card-value" id="statTotal">0</div>
+                        <div class="stat-card-value num-only" id="statTotal">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-label">已叫號</div>
@@ -1751,7 +1759,8 @@
                     style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);">第</span>
                 <span class="tv-number" id="tvNumber">0</span>
                 <span id="tvSuffix"
-                    style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);">梯次</span>
+                    style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);letter-spacing:0.3em;">梯
+                    次</span>
             </div>
             <div class="tv-next-row" id="tvNext"></div>
         </div>
@@ -2134,14 +2143,14 @@
             const isBatch = callMode === 'batch';
             document.getElementById('kioskTicketLabel').textContent = isBatch ? '您的梯次' : '您的號碼';
             document.getElementById('kioskPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('kioskSuffix').textContent = isBatch ? '梯次' : '';
+            document.getElementById('kioskSuffix').textContent = isBatch ? '梯 次' : '';
             document.getElementById('kioskSuffix').style.display = isBatch ? '' : 'none';
             document.getElementById('kioskTicketHint').innerHTML = isBatch
                 ? '同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 RN 查詢'
                 : '此為報到順序，非車位號碼<br>車位號碼請由下方輸入 RN 查詢';
             document.getElementById('kioskAheadLabel').textContent = isBatch ? '前方梯次' : '前方等待';
             document.getElementById('calledPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('calledSuffix').textContent = isBatch ? '  梯次' : '';
+            document.getElementById('calledSuffix').textContent = isBatch ? '梯 次' : '';
             document.getElementById('calledSuffix').style.display = isBatch ? '' : 'none';
             // 更新顯示的號碼
             if (myTicketNumber !== null) {
@@ -2153,6 +2162,8 @@
 
         function takeTicket() {
             if (myTicketNumber !== null) return;
+            // 確保 audioCtx 已初始化（需要使用者互動觸發）
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const btn = document.getElementById('btnTakeTicket');
             btn.style.pointerEvents = 'none';
             btn.style.opacity = '0.6';
@@ -2273,39 +2284,55 @@
             }
         });
 
+        // 確保 audioCtx 在使用者第一次互動時初始化（恢復的 session 需要）
+        function ensureAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            document.removeEventListener('click', ensureAudioCtx);
+            document.removeEventListener('touchstart', ensureAudioCtx);
+        }
+        document.addEventListener('click', ensureAudioCtx);
+        document.addEventListener('touchstart', ensureAudioCtx);
+
         function playNotificationSound() {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 const now = audioCtx.currentTime;
 
-                // ✈️ 飛機客艙提示音 — B4 → F#4，稍高一點，間隔更長
-                // 播放兩次，間隔 2.5 秒
-                [0, 2.5].forEach(repeat => {
-                    // 「叮～」— B4 (494Hz)
+                // ✈️ 飛機客艙提示音 — ARINC 715-3 標準
+                // High: D5 (587Hz), Low: B4 (494Hz), 間隔 900ms
+                // 播放兩次，間隔 3 秒
+                [0, 3.0].forEach(repeat => {
+                    // 「叮～」— D5 (587Hz)
                     const osc1 = audioCtx.createOscillator();
                     const gain1 = audioCtx.createGain();
                     osc1.connect(gain1);
                     gain1.connect(audioCtx.destination);
-                    osc1.frequency.value = 494; // B4
+                    osc1.frequency.value = 587; // D5
                     osc1.type = 'sine';
                     const t1 = now + repeat;
-                    gain1.gain.setValueAtTime(0.4, t1);
-                    gain1.gain.exponentialRampToValueAtTime(0.001, t1 + 1.2);
+                    gain1.gain.setValueAtTime(0.45, t1);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, t1 + 0.9);
                     osc1.start(t1);
-                    osc1.stop(t1 + 1.2);
+                    osc1.stop(t1 + 0.9);
 
-                    // 「東～」— F#4 (370Hz)，延遲 1.0 秒
+                    // 「東～」— B4 (494Hz)，延遲 0.9 秒
                     const osc2 = audioCtx.createOscillator();
                     const gain2 = audioCtx.createGain();
                     osc2.connect(gain2);
                     gain2.connect(audioCtx.destination);
-                    osc2.frequency.value = 370; // F#4
+                    osc2.frequency.value = 494; // B4
                     osc2.type = 'sine';
-                    const t2 = now + repeat + 1.0;
-                    gain2.gain.setValueAtTime(0.4, t2);
-                    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 1.5);
+                    const t2 = now + repeat + 0.9;
+                    gain2.gain.setValueAtTime(0.45, t2);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.9);
                     osc2.start(t2);
-                    osc2.stop(t2 + 1.5);
+                    osc2.stop(t2 + 0.9);
                 });
             } catch (e) { }
         }
@@ -2518,7 +2545,7 @@
                 const showBatchLabel = isBatch && calledUpTo > 0;
                 document.getElementById('tvPrefix').textContent = isBatch ? '第' : '#';
                 document.getElementById('tvPrefix').style.display = showBatchLabel ? '' : (isBatch ? 'none' : 'none');
-                document.getElementById('tvSuffix').textContent = isBatch ? '梯次' : '';
+                document.getElementById('tvSuffix').textContent = isBatch ? '梯 次' : '';
                 document.getElementById('tvSuffix').style.display = showBatchLabel ? '' : 'none';
 
                 const numEl = document.getElementById('tvNumber');
@@ -2577,4 +2604,3 @@
 </body>
 
 </html>
-
