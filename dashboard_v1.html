@@ -211,13 +211,23 @@
         }
 
         .queue-progress .qp-waiting {
-            color: var(--tesla-blue);
+            color: #9CA3AF;
             font-size: 20px;
         }
 
         .queue-progress .qp-waiting-num {
+            color: var(--tesla-blue);
             font-weight: 900;
         }
+
+        .queue-progress .qp-msg {
+            color: #4ADE80;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+
 
         @keyframes queueFlip {
             0% {
@@ -974,8 +984,10 @@
                     <div class="queue-progress" id="queue-progress">
                         <span class="qp-label">目前叫號</span>
                         <span class="qp-number" id="qp-current">---</span>
-                        <span class="qp-divider">|</span>
-                        <span class="qp-waiting">等待 <span class="qp-waiting-num" id="qp-waiting">-</span> 人</span>
+                        <span class="qp-divider" id="qp-divider">|</span>
+                        <span class="qp-waiting" id="qp-waiting-wrap">等待 <span class="qp-waiting-num"
+                                id="qp-waiting">-</span> 人</span>
+                        <span class="qp-msg" id="qp-msg" style="display:none;"></span>
                     </div>
                     <button class="btn-update" onclick="openModal()">⚙️</button>
                 </div>
@@ -1155,8 +1167,8 @@
                     const calledUpTo = data.calledUpTo || 0;
                     const nextTicket = data.nextTicket || 1;
                     const total = nextTicket - 1;
-                    const waiting = Math.max(0, total - calledUpTo);
-                    updateQueueDisplay(calledUpTo, waiting);
+                    const currentCallMode = data.callMode || 'batch';
+                    updateQueueDisplay(calledUpTo, total, currentCallMode);
                 });
                 // 監聽交車名單 (Phase 3)
                 fbBoardRef.child('deliveryList').on('value', (snap) => {
@@ -1201,26 +1213,75 @@
 
         // ═══ 叫號進度顯示 ═══
         let prevQueueNum = -1;
-        function updateQueueDisplay(calledUpTo, waiting) {
+        function updateQueueDisplay(calledUpTo, total, mode) {
             const numEl = document.getElementById('qp-current');
+            const waitWrap = document.getElementById('qp-waiting-wrap');
             const waitEl = document.getElementById('qp-waiting');
+            const divider = document.getElementById('qp-divider');
+            const msgEl = document.getElementById('qp-msg');
+            const isBatch = mode === 'batch';
+
+            // === 更新叫號顯示 ===
             if (calledUpTo !== prevQueueNum) {
                 numEl.classList.remove('qp-flip');
                 void numEl.offsetWidth;
-                // 判斷單筆叫號 or 批次叫號
-                const from = (prevQueueNum >= 0) ? prevQueueNum + 1 : 1;
-                const to = calledUpTo;
-                if (to > 0 && from < to) {
-                    // 批次叫號：顯示範圍
-                    numEl.textContent = '#' + String(from).padStart(3, '0') + '~' + String(to).padStart(3, '0');
+
+                if (calledUpTo === 0) {
+                    numEl.textContent = '尚未叫號';
+                    numEl.style.fontSize = '20px';
+                    numEl.style.color = '#9CA3AF';
+                } else if (isBatch) {
+                    numEl.textContent = '第 ' + calledUpTo + ' 梯次';
+                    numEl.style.fontSize = '22px';
+                    numEl.style.color = 'var(--tesla-red)';
                 } else {
-                    // 單筆叫號
-                    numEl.textContent = '#' + String(to).padStart(3, '0');
+                    // 號碼模式
+                    const from = (prevQueueNum >= 0 && prevQueueNum > 0) ? prevQueueNum + 1 : 1;
+                    const to = calledUpTo;
+                    if (to > 0 && from < to) {
+                        numEl.textContent = '#' + String(from).padStart(3, '0') + '~' + String(to).padStart(3, '0');
+                    } else {
+                        numEl.textContent = '#' + String(to).padStart(3, '0');
+                    }
+                    numEl.style.fontSize = '28px';
+                    numEl.style.color = 'var(--tesla-red)';
                 }
                 numEl.classList.add('qp-flip');
                 prevQueueNum = calledUpTo;
             }
-            waitEl.textContent = waiting;
+
+            // === 更新等待/訊息顯示 ===
+            if (isBatch) {
+                const totalBatches = Math.ceil(total / 10) || 0;
+                const waitingBatches = Math.max(0, totalBatches - calledUpTo);
+                if (waitingBatches === 0 && calledUpTo > 0) {
+                    // 所有梯次已叫完
+                    waitWrap.style.display = 'none';
+                    divider.style.display = 'none';
+                    msgEl.style.display = '';
+                    msgEl.textContent = '請至門口處依序報到';
+                } else {
+                    waitWrap.style.display = '';
+                    divider.style.display = '';
+                    msgEl.style.display = 'none';
+                    waitEl.textContent = waitingBatches;
+                    // 更新文字為 梯次
+                    waitWrap.innerHTML = '等待 <span class="qp-waiting-num" id="qp-waiting">' + waitingBatches + '</span> 梯次';
+                }
+            } else {
+                const waiting = Math.max(0, total - calledUpTo);
+                if (waiting === 0 && calledUpTo > 0) {
+                    waitWrap.style.display = 'none';
+                    divider.style.display = 'none';
+                    msgEl.style.display = '';
+                    msgEl.textContent = '請至門口處依序報到';
+                } else {
+                    waitWrap.style.display = '';
+                    divider.style.display = '';
+                    msgEl.style.display = 'none';
+                    waitWrap.innerHTML = '等待 <span class="qp-waiting-num" id="qp-waiting">' + waiting + '</span> 人';
+                }
+            }
         }
         function getActiveSessionHour(endOffset) {
             const now = new Date();
