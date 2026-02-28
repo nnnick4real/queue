@@ -696,7 +696,7 @@
         }
 
         .stat-card-value {
-            font-size: 20px;
+            font-size: 23px;
             font-weight: 300;
             letter-spacing: 0;
             color: var(--black);
@@ -1448,7 +1448,7 @@
                     <div class="search-result" id="searchResultLanding"></div>
                     <!-- 領號頁互動地圖 -->
                     <div class="map-interactive" id="searchMapLanding" style="display:none;">
-                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
+                        <img src="b4_map.png" alt="B4 交車導覽指引" onerror="this.parentElement.style.display='none'">
                     </div>
                     <div class="map-scroll-hint" id="mapHintLanding" style="display:none;">📍 紅點為您的車位位置</div>
                 </div>
@@ -1513,12 +1513,12 @@
 
             <!-- Phase 4: 報到名單 -->
             <div class="waiting-card" id="waitingDeliveryCard" style="display:none;">
-                <div class="waiting-card-title">📋 本場次報到名單</div>
+                <div class="waiting-card-title">本場次報到名單</div>
                 <div class="delivery-list-scroll">
                     <table class="dl-table">
                         <thead>
                             <tr>
-                                <th>車位</th>
+                                <th style="width:60px;">車位</th>
                                 <th>時間</th>
                                 <th>姓名</th>
                             </tr>
@@ -1560,7 +1560,7 @@
             <div class="called-sub">請至門口黑龍處 | 排隊報到領取資料</div>
             <div class="called-number">
                 <span class="called-number-hash" id="calledPrefix">第</span><span id="calledMyNumber">—</span><span
-                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;">   梯次</span>
+                    id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;"> 梯次</span>
             </div>
             <!-- 車位資訊（若有查詢過） -->
             <div id="calledSpotInfo"
@@ -1606,7 +1606,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-card-label">已領號</div>
-                        <div class="stat-card-value num-only" id="statTotal">0</div>
+                        <div class="stat-card-value" id="statTotal">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-label">已叫號</div>
@@ -1741,40 +1741,6 @@
         </div>
     </div>
 
-    <!-- ════════════════════════════════════════
-         TV DISPLAY / 電視看板
-         ════════════════════════════════════════ -->
-    <div id="view-tv" class="view">
-        <div class="tv-header">
-            <div class="tv-header-line"></div>
-            <div class="tv-sub">交 付 中 心</div>
-        </div>
-
-        <div class="tv-main">
-            <div class="tv-eyebrow">目 前 叫 號</div>
-            <div style="display:flex;align-items:baseline;justify-content:center;">
-                <span id="tvPrefix"
-                    style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);">第</span>
-                <span class="tv-number" id="tvNumber">0</span>
-                <span id="tvSuffix"
-                    style="font-size:clamp(40px,8vw,80px);font-weight:300;color:var(--gray-600);">   梯次</span>
-            </div>
-            <div class="tv-next-row" id="tvNext"></div>
-        </div>
-
-        <div class="tv-footer">
-            <div class="tv-stat">
-                <div class="tv-stat-label">已領號</div>
-                <div class="tv-stat-value" id="tvTotal">0</div>
-            </div>
-            <div class="tv-stat">
-                <div class="tv-stat-label">等待中</div>
-                <div class="tv-stat-value" id="tvWaiting">0</div>
-            </div>
-        </div>
-
-        <div class="tv-footer-line"></div>
-    </div>
 
     <!-- 重設確認 Modal -->
     <div class="modal-overlay" id="resetModal">
@@ -1858,7 +1824,6 @@
             switch (currentMode) {
                 case 'kiosk': initKiosk(); break;
                 case 'admin': initAdmin(); break;
-                case 'tv': initTV(); break;
             }
         })();
 
@@ -1971,29 +1936,29 @@
             14: { x: 55.0, y: 30.2 }, 15: { x: 48.4, y: 30.2 }, 16: { x: 41.9, y: 30.2 },
             17: { x: 35.1, y: 30.2 }, 18: { x: 28.6, y: 30.2 }, 19: { x: 22.0, y: 30.2 },
             20: { x: 15.4, y: 30.2 },
-            // Zone B 右側 21-24
-            21: { x: 92.6, y: 40.6 }, 22: { x: 92.6, y: 34.0 },
-            23: { x: 92.6, y: 27.4 }, 24: { x: 92.6, y: 20.9 },
-            // Zone B 上排 25-30
-            25: { x: 87.0, y: 7.1 }, 26: { x: 80.3, y: 7.1 }, 27: { x: 73.5, y: 7.1 },
-            28: { x: 66.7, y: 7.1 }, 29: { x: 59.5, y: 7.1 }, 30: { x: 43.5, y: 7.1 },
-            // Zone C 上排 31-37
-            31: { x: 40.9, y: 59.2 }, 32: { x: 46.8, y: 59.2 }, 33: { x: 52.7, y: 59.2 },
-            34: { x: 58.6, y: 59.2 }, 35: { x: 64.5, y: 59.2 }, 36: { x: 70.4, y: 59.2 },
-            37: { x: 76.4, y: 59.2 },
-            // Zone C 下排 38-53
-            38: { x: 70.4, y: 68.6 }, 39: { x: 64.5, y: 68.6 }, 50: { x: 58.6, y: 68.6 },
-            51: { x: 52.7, y: 68.6 }, 52: { x: 46.8, y: 68.6 }, 53: { x: 40.9, y: 68.6 },
+            // Zone B 右側 21-24 (修正：往左下校準)
+            21: { x: 89.0, y: 42.5 }, 22: { x: 89.0, y: 36.0 },
+            23: { x: 89.0, y: 29.0 }, 24: { x: 89.0, y: 22.5 },
+            // Zone B 上排 25-30 (修正：往左下校準，防溢出)
+            25: { x: 82.0, y: 10.5 }, 26: { x: 75.5, y: 10.5 }, 27: { x: 69.0, y: 10.5 },
+            28: { x: 62.5, y: 10.5 }, 29: { x: 55.5, y: 10.5 }, 30: { x: 45.5, y: 10.5 },
+            // Zone C 上排 31-37 (修正：往右校準)
+            31: { x: 43.5, y: 59.2 }, 32: { x: 49.0, y: 59.2 }, 33: { x: 55.0, y: 59.2 },
+            34: { x: 60.0, y: 59.2 }, 35: { x: 64.5, y: 59.2 }, 36: { x: 70.0, y: 59.2 },
+            37: { x: 75.0, y: 59.2 },
+            // Zone C 下排 38-53 (修正：大幅右移校準)
+            38: { x: 78.0, y: 68.6 }, 39: { x: 72.0, y: 68.6 }, 50: { x: 66.0, y: 68.6 },
+            51: { x: 60.0, y: 68.6 }, 52: { x: 54.0, y: 68.6 }, 53: { x: 48.0, y: 68.6 },
             // Zone C 獨立 54
             54: { x: 14.6, y: 67.9 },
-            // Zone D 底部 55-66
-            55: { x: 14.0, y: 92.7 }, 56: { x: 20.4, y: 92.7 }, 57: { x: 26.8, y: 92.7 },
-            58: { x: 33.2, y: 92.7 }, 59: { x: 39.7, y: 92.7 }, 60: { x: 46.1, y: 92.7 },
-            61: { x: 52.5, y: 92.7 }, 62: { x: 58.9, y: 92.7 }, 63: { x: 65.4, y: 92.7 },
-            64: { x: 71.8, y: 92.7 }, 65: { x: 78.3, y: 92.7 }, 66: { x: 84.9, y: 92.7 },
-            // 右側直列 67-70
-            67: { x: 92.6, y: 76.8 }, 68: { x: 92.6, y: 69.9 },
-            69: { x: 92.6, y: 63.1 }, 70: { x: 92.6, y: 56.3 },
+            // Zone D 底部 55-66 (修正：往右上校準)
+            55: { x: 15.5, y: 90.0 }, 56: { x: 21.5, y: 90.0 }, 57: { x: 27.5, y: 90.0 },
+            58: { x: 33.2, y: 90.0 }, 59: { x: 39.7, y: 90.0 }, 60: { x: 45.0, y: 90.0 },
+            61: { x: 51.5, y: 90.0 }, 62: { x: 57.5, y: 90.0 }, 63: { x: 63.5, y: 90.0 },
+            64: { x: 69.5, y: 90.0 }, 65: { x: 75.5, y: 90.0 }, 66: { x: 82.0, y: 90.0 },
+            // 右側直列 67-70 (修正：往左下校準)
+            67: { x: 89.0, y: 79.0 }, 68: { x: 89.0, y: 72.0 },
+            69: { x: 89.0, y: 65.0 }, 70: { x: 89.5, y: 58.0 },
         };
 
         // 更新搜尋用資料（從 Firebase deliveryList 同步）
@@ -2334,26 +2299,6 @@
             } catch (e) { }
         }
 
-        function playTVChime() {
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const notes = [523.25, 659.25, 783.99];
-                notes.forEach((freq, i) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    const t = audioCtx.currentTime + i * 0.2;
-                    gain.gain.setValueAtTime(0.2, t);
-                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
-                    osc.start(t);
-                    osc.stop(t + 0.4);
-                });
-            } catch (e) { }
-        }
-
         // ═════════════════════════════════
         // 🖥️ ADMIN / 管理端
         // ═════════════════════════════════
@@ -2524,88 +2469,8 @@
             });
         }
 
-        // ═════════════════════════════════
-        // 📺 TV DISPLAY / 電視看板
-        // ═════════════════════════════════
-        function initTV() {
-            let prevVal = 0;
-
-            queueRef.on('value', (snap) => {
-                const data = snap.val() || {};
-                const calledUpTo = data.calledUpTo || 0;
-                const nextTicket = data.nextTicket || 1;
-                const total = nextTicket - 1;
-                callMode = data.callMode || 'batch';
-                const isBatch = callMode === 'batch';
-
-                // 更新 TV 前後綴文字
-                const showBatchLabel = isBatch && calledUpTo > 0;
-                document.getElementById('tvPrefix').textContent = isBatch ? '第' : '#';
-                document.getElementById('tvPrefix').style.display = showBatchLabel ? '' : (isBatch ? 'none' : 'none');
-                document.getElementById('tvSuffix').textContent = isBatch ? '梯 次' : '';
-                document.getElementById('tvSuffix').style.display = showBatchLabel ? '' : 'none';
-
-                const numEl = document.getElementById('tvNumber');
-                if (calledUpTo !== prevVal) {
-                    numEl.classList.remove('flip');
-                    void numEl.offsetWidth;
-                    if (isBatch) {
-                        numEl.textContent = calledUpTo === 0 ? '尚未叫號' : calledUpTo;
-                        numEl.style.fontSize = calledUpTo === 0 ? 'clamp(40px,8vw,80px)' : '';
-                    } else {
-                        numEl.textContent = String(calledUpTo).padStart(3, '0');
-                        numEl.style.fontSize = '';
-                    }
-                    numEl.classList.add('flip');
-
-                    if (calledUpTo > prevVal && prevVal > 0) {
-                        playTVChime();
-                    }
-                    prevVal = calledUpTo;
-                }
-
-                const nextEl = document.getElementById('tvNext');
-                if (isBatch) {
-                    const totalBatches = Math.ceil(total / 10) || 0;
-                    const waitingBatches = Math.max(0, totalBatches - calledUpTo);
-                    if (calledUpTo < totalBatches) {
-                        nextEl.innerHTML = '下一梯次：<span>第 ' + (calledUpTo + 1) + ' 梯次</span>';
-                    } else {
-                        nextEl.innerHTML = '';
-                    }
-                    document.getElementById('tvTotal').textContent = total;
-                    document.getElementById('tvWaiting').textContent = waitingBatches + ' 梯次';
-                } else {
-                    const waiting = Math.max(0, total - calledUpTo);
-                    if (calledUpTo < total) {
-                        const nextNums = [];
-                        for (let i = calledUpTo + 1; i <= Math.min(calledUpTo + 3, total); i++) {
-                            nextNums.push(String(i).padStart(3, '0'));
-                        }
-                        nextEl.innerHTML = '下一位：<span>' + nextNums.join('、') + '</span>';
-                    } else {
-                        nextEl.innerHTML = '';
-                    }
-                    document.getElementById('tvTotal').textContent = total;
-                    document.getElementById('tvWaiting').textContent = waiting;
-                }
-            });
-
-            document.addEventListener('click', function initAudio() {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                document.removeEventListener('click', initAudio);
-            }, { once: true });
-        }
     </script>
 
 </body>
 
 </html>
-
-
-
-
-
-
-
-
