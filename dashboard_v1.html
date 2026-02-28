@@ -181,17 +181,19 @@
         /* 叫號進度 */
         .queue-progress {
             display: flex;
-            align-items: center;
+            align-items: baseline;
             gap: 16px;
             font-size: 20px;
             font-weight: 700;
             color: #fff;
+            line-height: 50px;
         }
 
         .queue-progress .qp-label {
             color: #9CA3AF;
             font-weight: 500;
             font-size: 18px;
+            line-height: 50px;
         }
 
         .queue-progress .qp-number {
@@ -203,16 +205,19 @@
             min-width: 60px;
             text-align: center;
             transition: all 0.3s ease;
+            line-height: 50px;
         }
 
         .queue-progress .qp-divider {
             color: #555;
             font-weight: 300;
+            line-height: 50px;
         }
 
         .queue-progress .qp-waiting {
             color: #9CA3AF;
             font-size: 20px;
+            line-height: 50px;
         }
 
         .queue-progress .qp-waiting-num {
@@ -225,6 +230,7 @@
             font-size: 19px;
             font-weight: 600;
             letter-spacing: 0.5px;
+            line-height: 50px;
         }
 
 
@@ -251,22 +257,7 @@
             font-weight: 400;
         }
 
-        .btn-update {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid #444;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 20px;
-            transition: 0.3s;
-        }
-
-        .btn-update:hover {
-            border-color: var(--text-main);
-            color: var(--text-main);
-        }
+        /* btn-update 已移除，改用 Logo 秘密點擊 */
 
         /* --- Card Common --- */
         .card {
@@ -978,7 +969,7 @@
         <div class="left-panel">
             <div class="local-header">
                 <div class="header-left">
-                    <span id="header-title">Tesla 台北堤頂交付中心</span>
+                    <span id="header-title" style="cursor:default; user-select:none;">Tesla 台北堤頂交付中心</span>
                 </div>
                 <div class="header-right">
                     <div class="queue-progress" id="queue-progress">
@@ -989,7 +980,7 @@
                                 id="qp-waiting">-</span> 人</span>
                         <span class="qp-msg" id="qp-msg" style="display:none;"></span>
                     </div>
-                    <button class="btn-update" onclick="openModal()">⚙️</button>
+                    <!-- 設定按鈕已移至 Logo 秘密點擊 -->
                 </div>
             </div>
             <section id="section-list" class="card">
@@ -1138,6 +1129,18 @@
             updateClock(); setInterval(updateClock, 1000);
             // 初始化 Firebase
             initFirebase();
+            // Logo 秘密點擊：5 次觸發設定
+            let logoClickCount = 0;
+            let logoClickTimer = null;
+            document.getElementById('header-title').addEventListener('click', () => {
+                logoClickCount++;
+                if (logoClickTimer) clearTimeout(logoClickTimer);
+                logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+                if (logoClickCount >= 5) {
+                    logoClickCount = 0;
+                    openModal();
+                }
+            });
             // 先從 LocalStorage 載入（fallback）
             try {
                 const savedList = localStorage.getItem('tesla_full_data_v116');
@@ -1231,10 +1234,9 @@
                     numEl.style.fontSize = '20px';
                     numEl.style.color = '#FFFFFF';
                 } else if (isBatch) {
-                    numEl.textContent = '';
-                    numEl.innerHTML = '第 <span style="font-size:32px;font-weight:900;color:var(--tesla-red);">' + calledUpTo + '</span> 梯次';
-                    numEl.style.fontSize = '22px';
-                    numEl.style.color = 'var(--tesla-red)';
+                    numEl.innerHTML = '第 <span style="font-weight:900;color:var(--tesla-red);">' + calledUpTo + '</span> 梯次';
+                    numEl.style.fontSize = '26px';
+                    numEl.style.color = '#FFFFFF';
                 } else {
                     // 號碼模式
                     const from = (prevQueueNum >= 0 && prevQueueNum > 0) ? prevQueueNum + 1 : 1;
