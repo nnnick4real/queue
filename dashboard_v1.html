@@ -985,7 +985,7 @@
                         <span class="qp-label">目前叫號</span>
                         <span class="qp-number" id="qp-current">---</span>
                         <span class="qp-divider" id="qp-divider">|</span>
-                        <span class="qp-waiting" id="qp-waiting-wrap">等待 <span class="qp-waiting-num"
+                        <span class="qp-waiting" id="qp-waiting-wrap">等待共 <span class="qp-waiting-num"
                                 id="qp-waiting">-</span> 人</span>
                         <span class="qp-msg" id="qp-msg" style="display:none;"></span>
                     </div>
@@ -1229,7 +1229,7 @@
                 if (calledUpTo === 0) {
                     numEl.textContent = '尚未叫號';
                     numEl.style.fontSize = '20px';
-                    numEl.style.color = '#9CA3AF';
+                    numEl.style.color = '#FFFFFF';
                 } else if (isBatch) {
                     numEl.textContent = '第 ' + calledUpTo + ' 梯次';
                     numEl.style.fontSize = '22px';
@@ -1266,7 +1266,7 @@
                     msgEl.style.display = 'none';
                     waitEl.textContent = waitingBatches;
                     // 更新文字為 梯次
-                    waitWrap.innerHTML = '等待 <span class="qp-waiting-num" id="qp-waiting">' + waitingBatches + '</span> 梯次';
+                    waitWrap.innerHTML = '等待共 <span class="qp-waiting-num" id="qp-waiting">' + waitingBatches + '</span> 梯次';
                 }
             } else {
                 const waiting = Math.max(0, total - calledUpTo);
@@ -1279,7 +1279,7 @@
                     waitWrap.style.display = '';
                     divider.style.display = '';
                     msgEl.style.display = 'none';
-                    waitWrap.innerHTML = '等待 <span class="qp-waiting-num" id="qp-waiting">' + waiting + '</span> 人';
+                    waitWrap.innerHTML = '等待共 <span class="qp-waiting-num" id="qp-waiting">' + waiting + '</span> 人';
                 }
             }
         }
