@@ -2140,14 +2140,14 @@
             const isBatch = callMode === 'batch';
             document.getElementById('kioskTicketLabel').textContent = isBatch ? '您的梯次' : '您的號碼';
             document.getElementById('kioskPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('kioskSuffix').textContent = isBatch ? '梯次' : '';
+            document.getElementById('kioskSuffix').textContent = isBatch ? ' 梯 次' : '';
             document.getElementById('kioskSuffix').style.display = isBatch ? '' : 'none';
             document.getElementById('kioskTicketHint').innerHTML = isBatch
                 ? '同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 RN 查詢'
                 : '此為報到順序，非車位號碼<br>車位號碼請由下方輸入 RN 查詢';
             document.getElementById('kioskAheadLabel').textContent = isBatch ? '前方梯次' : '前方等待';
             document.getElementById('calledPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('calledSuffix').textContent = isBatch ? '梯次' : '';
+            document.getElementById('calledSuffix').textContent = isBatch ? ' 梯 次' : '';
             document.getElementById('calledSuffix').style.display = isBatch ? '' : 'none';
             // 更新顯示的號碼
             if (myTicketNumber !== null) {
@@ -2601,6 +2601,7 @@
 </body>
 
 </html>
+
 
 
 
