@@ -200,7 +200,6 @@
             color: var(--tesla-red);
             font-size: 28px;
             font-weight: 900;
-            font-family: monospace;
             letter-spacing: 1px;
             min-width: 60px;
             text-align: center;
@@ -249,6 +248,50 @@
 
         .qp-flip {
             animation: queueFlip 0.4s ease;
+        }
+
+        /* ── 持續性動畫：呼吸光暈 + 光澤掃過 ── */
+        .qp-glow {
+            animation: qpBreathGlow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* A: 呼吸光暈 — 像 Tesla 充電口呼吸燈 */
+        @keyframes qpBreathGlow {
+            0%, 100% {
+                text-shadow: 0 0 8px rgba(232, 33, 39, 0.3), 0 0 20px rgba(232, 33, 39, 0.1);
+            }
+            50% {
+                text-shadow: 0 0 16px rgba(232, 33, 39, 0.7), 0 0 40px rgba(232, 33, 39, 0.25);
+            }
+        }
+
+        /* B: 光澤掃過 — 像車漆上的光影流動 */
+        .qp-glow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.08) 30%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.08) 70%,
+                transparent 100%
+            );
+            animation: qpShimmer 4s ease-in-out infinite;
+            animation-delay: 1.5s;
+            pointer-events: none;
+        }
+
+        @keyframes qpShimmer {
+            0% { left: -100%; }
+            40% { left: 120%; }
+            100% { left: 120%; }
         }
 
         .queue-offline {
@@ -1233,10 +1276,12 @@
                     numEl.textContent = '尚未叫號';
                     numEl.style.fontSize = '20px';
                     numEl.style.color = '#FFFFFF';
+                    numEl.classList.remove('qp-glow');
                 } else if (isBatch) {
-                    numEl.innerHTML = '第 <span style="font-weight:900;color:var(--tesla-red);">' + calledUpTo + '</span> 梯次';
+                    numEl.innerHTML = '第 ' + calledUpTo + ' 梯次';
                     numEl.style.fontSize = '26px';
-                    numEl.style.color = '#FFFFFF';
+                    numEl.style.color = 'var(--tesla-red)';
+                    numEl.classList.add('qp-glow');
                 } else {
                     // 號碼模式
                     const from = (prevQueueNum >= 0 && prevQueueNum > 0) ? prevQueueNum + 1 : 1;
@@ -1248,6 +1293,7 @@
                     }
                     numEl.style.fontSize = '28px';
                     numEl.style.color = 'var(--tesla-red)';
+                    numEl.classList.add('qp-glow');
                 }
                 numEl.classList.add('qp-flip');
                 prevQueueNum = calledUpTo;
