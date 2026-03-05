@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tesla 台北交付中心 | 交車流程</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --white: #ffffff;
+            --black: #171a20;
+            --gray-100: #f4f4f4;
+            --gray-200: #e0e0e0;
+            --gray-400: #999;
+            --gray-600: #5c5e62;
+            --gray-800: #3e4044;
+            --red: #e82127;
+            --red-dark: #cc171d;
+            --green: #3e9142;
+            --amber: #b36200;
+            --radius-sm: 4px;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ Nav ═══ */
+        .flow-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 10;
+        }
+
+        .flow-nav-text {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* ═══ Hero ═══ */
+        .flow-hero {
+            width: 100%;
+            padding: 40px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .flow-hero-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            margin-bottom: 10px;
+        }
+
+        .flow-hero-title {
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .flow-session-badge {
+            display: inline-block;
+            background: var(--black);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 1px;
+        }
+
+        /* ═══ Section label ═══ */
+        .section-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            padding: 24px 24px 14px;
+        }
+
+        /* ═══ Timeline ═══ */
+        .timeline {
+            padding: 0 24px 24px;
+        }
+
+        .tl-item {
+            display: flex;
+            gap: 14px;
+        }
+
+        .tl-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 16px;
+            flex-shrink: 0;
+            padding-top: 16px;
+        }
+
+        .tl-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .tl-line {
+            width: 1px;
+            flex: 1;
+            background: var(--gray-200);
+        }
+
+        .tl-item:last-child .tl-line {
+            display: none;
+        }
+
+        .tl-card {
+            flex: 1;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .tl-item:last-child .tl-card {
+            border-bottom: none;
+        }
+
+        .tl-time {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+
+        .tl-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--black);
+            margin-bottom: 3px;
+        }
+
+        .tl-desc {
+            font-size: 12px;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .tl-item.done .tl-dot {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .tl-item.done .tl-title,
+        .tl-item.done .tl-desc,
+        .tl-item.done .tl-time {
+            opacity: 0.4;
+        }
+
+        .tl-item.active .tl-dot {
+            background: var(--red);
+            border-color: var(--red);
+            box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15);
+            animation: activePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes activePulse {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15); }
+            50% { box-shadow: 0 0 0 8px rgba(232, 33, 39, 0.06); }
+        }
+
+        .tl-item.active .tl-time {
+            color: var(--red);
+        }
+
+        .tl-item.active .tl-title {
+            font-weight: 600;
+        }
+
+        .tl-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+        }
+
+        .tl-badge.now {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .tl-badge.completed {
+            background: var(--gray-100);
+            color: var(--gray-400);
+        }
+
+        /* ═══ Divider ═══ */
+        .flow-divider {
+            height: 8px;
+            background: var(--gray-100);
+        }
+
+        /* ═══ Card ═══ */
+        .flow-card {
+            margin: 0 24px;
+            padding: 16px 20px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+        }
+
+        .flow-card-title {
+            font-weight: 600;
+            color: var(--black);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .flow-card-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        .flow-card-highlight {
+            color: var(--red);
+            font-weight: 600;
+        }
+
+        /* ═══ 配件 ═══ */
+        .acc-list {
+            margin: 0 24px;
+        }
+
+        .acc-group-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            padding: 16px 0 8px;
+        }
+
+        .acc-group-label:first-child {
+            padding-top: 0;
+        }
+
+        .acc-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            gap: 12px;
+        }
+
+        .acc-row:last-child {
+            border-bottom: none;
+        }
+
+        .acc-img {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-100);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .acc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .acc-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--black);
+        }
+
+        .acc-sub {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-top: 1px;
+        }
+
+        .acc-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--red);
+            margin-top: 2px;
+        }
+
+        /* ═══ ETAG ═══ */
+        .etag-card {
+            margin: 0 24px;
+            padding: 16px 20px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+        }
+
+        .etag-title {
+            font-weight: 600;
+            color: var(--black);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .etag-addr {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .etag-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--black);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+        }
+
+        /* ═══ 恭喜 ═══ */
+        .flow-congrats {
+            text-align: center;
+            padding: 48px 24px 60px;
+        }
+
+        .flow-congrats-title {
+            font-size: clamp(22px, 5vw, 32px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .flow-congrats-sub {
+            font-size: 14px;
+            color: var(--gray-400);
+            line-height: 1.7;
+        }
+
+        .flow-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="flow-nav">
+        <span class="flow-nav-text">Tesla 台北交付中心</span>
+    </div>
+
+    <div class="flow-hero">
+        <div class="flow-hero-label">交車流程導覽</div>
+        <h1 class="flow-hero-title">今日行程一覽</h1>
+        <div class="flow-session-badge" id="sessionBadge">10:00 場次</div>
+    </div>
+
+    <div class="section-label">流程時間</div>
+    <div class="timeline" id="timeline"></div>
+
+    <div class="flow-divider"></div>
+
+    <div class="section-label">限定活動</div>
+    <div style="padding:0 24px 24px;">
+        <div class="flow-card">
+            <div class="flow-card-title">📸 打卡 PO 文 贈限量禮品</div>
+            <div class="flow-card-desc">
+                在交付中心拍照並 PO 文至社群平台<br>
+                出示貼文畫面即可兌換 <span class="flow-card-highlight">Tesla 限量禮品</span><br>
+                <span style="color:var(--gray-400);font-size:12px;">數量有限，換完為止</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-divider"></div>
+
+    <div class="section-label">現場限定配件</div>
+    <div style="padding:0 24px 4px;">
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:8px;">
+            以下配件現場限量供應，可於教學空檔或等待交車時至配件區選購
+        </div>
+    </div>
+
+    <div class="acc-list">
+        <div class="acc-group-label">Model Y</div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_my_floor.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 20,000</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_my_sun.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 5,780</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_my_storage.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ —</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_my_light.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ —</div></div>
+        </div>
+
+        <div class="acc-group-label">Model 3 煥新版</div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_m3_floor.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 14,060</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_m3_sun.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 6,735</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_m3_storage.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ —</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_m3_light.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model 3 專用</div><div class="acc-price">NT$ 1,000</div></div>
+        </div>
+
+        <div class="acc-group-label">通用配件</div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_charger.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">第二代 旅行用 Type 2 充電座套件</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 10,800</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_key.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">遙控鑰匙</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ —</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="acc_pillow.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車用頸枕 & 靠墊 2 件組</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ —</div></div>
+        </div>
+    </div>
+
+    <div class="flow-divider" style="margin-top:24px;"></div>
+
+    <div class="section-label">離場資訊</div>
+    <div style="padding:0 24px 24px;">
+        <div class="etag-card" style="margin-bottom:12px;">
+            <div class="etag-title">eTag 申辦地點</div>
+            <div style="font-size:12px;color:var(--red);font-weight:500;margin-bottom:12px;line-height:1.6;">
+                需由車主本人攜帶行照、證件開車前往辦理
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">車麗屋汽車百貨 內湖行忠店</div>
+                <div class="etag-addr">台北市內湖區行忠路 88 號</div>
+                <a class="etag-link" href="https://maps.google.com/?q=車麗屋汽車百貨內湖行忠店" target="_blank" rel="noopener">
+                    開啟 Google Maps
+                </a>
+            </div>
+
+            <div style="border-top:1px solid var(--gray-200);padding-top:14px;">
+                <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">麗車坊汽車百貨 內湖門市</div>
+                <div class="etag-addr">台北市內湖區新湖三路 23 號</div>
+                <a class="etag-link" href="https://maps.google.com/?q=麗車坊汽車百貨內湖門市" target="_blank" rel="noopener">
+                    開啟 Google Maps
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div style="border-top:1px solid var(--gray-200);">
+        <div class="flow-congrats">
+            <div class="flow-congrats-title">恭喜成為 Tesla 車主</div>
+            <div class="flow-congrats-sub">祝您用車愉快，歡迎加入 Tesla 大家庭</div>
+        </div>
+    </div>
+
+    <div class="flow-footer">© Tesla 台北交付中心</div>
+
+    <script>
+        const SESSIONS = {
+            10: {
+                label: '10:00 場次',
+                steps: [
+                    { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '10:20', end: '10:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:30', end: '10:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:35', end: '10:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:45', end: '11:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:50', end: '11:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '11:00', end: '11:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 11:10' },
+                ]
+            },
+            12: {
+                label: '12:00 場次',
+                steps: [
+                    { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '12:20', end: '12:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:30', end: '12:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:35', end: '12:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:45', end: '13:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:50', end: '13:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '13:00', end: '13:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 13:10' },
+                ]
+            },
+            14: {
+                label: '14:00 場次',
+                steps: [
+                    { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '14:20', end: '14:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:30', end: '14:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:35', end: '14:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:45', end: '15:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:50', end: '15:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '15:00', end: '15:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 15:10' },
+                ]
+            },
+            16: {
+                label: '16:00 場次',
+                steps: [
+                    { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '16:20', end: '16:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:30', end: '16:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:35', end: '16:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:45', end: '17:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:50', end: '17:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '17:00', end: '17:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 17:10' },
+                ]
+            }
+        };
+
+        function toMin(str) {
+            const [h, m] = str.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        function detectSession() {
+            const now = new Date();
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            const ranges = [
+                { h: 10, start: toMin('09:40'), end: toMin('12:00') },
+                { h: 12, start: toMin('11:40'), end: toMin('14:00') },
+                { h: 14, start: toMin('13:40'), end: toMin('16:00') },
+                { h: 16, start: toMin('15:40'), end: toMin('18:00') },
+            ];
+            for (const r of ranges) {
+                if (nowMin >= r.start && nowMin < r.end) return r.h;
+            }
+            for (const r of ranges) {
+                if (nowMin < r.start) return r.h;
+            }
+            return 10;
+        }
+
+        function renderTimeline() {
+            const sessionH = detectSession();
+            const session = SESSIONS[sessionH];
+            if (!session) return;
+
+            document.getElementById('sessionBadge').textContent = session.label;
+
+            const now = new Date();
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            const container = document.getElementById('timeline');
+            let html = '';
+
+            session.steps.forEach((step) => {
+                const startMin = toMin(step.time);
+                const endMin = toMin(step.end);
+                let status = 'upcoming';
+
+                if (nowMin >= endMin) {
+                    status = 'done';
+                } else if (nowMin >= startMin && nowMin < endMin) {
+                    status = 'active';
+                }
+
+                let badgeHtml = '';
+                if (status === 'active') badgeHtml = '<span class="tl-badge now">進行中</span>';
+                else if (status === 'done') badgeHtml = '<span class="tl-badge completed">已完成</span>';
+
+                html += `
+                    <div class="tl-item ${status}">
+                        <div class="tl-left">
+                            <div class="tl-dot"></div>
+                            <div class="tl-line"></div>
+                        </div>
+                        <div class="tl-card">
+                            <div class="tl-time">${step.time}</div>
+                            <div class="tl-title">${step.title}</div>
+                            <div class="tl-desc">${step.desc}</div>
+                            ${badgeHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            setTimeout(() => {
+                const activeEl = document.querySelector('.tl-item.active');
+                if (activeEl) {
+                    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+        renderTimeline();
+        setInterval(renderTimeline, 30000);
+    </script>
+</body>
+
+</html>
