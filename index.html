@@ -1435,25 +1435,6 @@
                 </p>
             </div>
 
-            <!-- 訂單查車位（領號頁面） -->
-            <div class="search-section">
-                <div class="search-card">
-                    <div class="search-card-title">🔍 輸入訂單編號查詢車位</div>
-                    <div class="search-input-row">
-                        <input class="search-input" id="searchInputLanding" type="text" placeholder="例：RN123456789"
-                            maxlength="11" inputmode="text" autocomplete="off"
-                            onkeydown="if(event.key==='Enter')searchSpot('landing')">
-                        <button class="search-btn" onclick="searchSpot('landing')">查詢</button>
-                    </div>
-                    <div class="search-result" id="searchResultLanding"></div>
-                    <!-- 領號頁互動地圖 -->
-                    <div class="map-interactive" id="searchMapLanding" style="display:none;">
-                        <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.style.display='none'">
-                    </div>
-                    <div class="map-scroll-hint" id="mapHintLanding" style="display:none;">紅點為您的車位位置</div>
-                </div>
-            </div>
-
             <div class="kiosk-footer-bar">
                 © Tesla 台北交付中心叫號系統
             </div>
@@ -1979,9 +1960,8 @@
         }
 
         function searchSpot(page) {
-            const suffix = page === 'landing' ? 'Landing' : 'Waiting';
-            const input = document.getElementById('searchInput' + suffix);
-            const resultEl = document.getElementById('searchResult' + suffix);
+            const input = document.getElementById('searchInputWaiting');
+            const resultEl = document.getElementById('searchResultWaiting');
             const query = input.value.trim().toUpperCase();
 
             if (!query) { input.focus(); return; }
@@ -2012,32 +1992,17 @@
                     });
                 } catch (e) { console.log('Lookup write failed:', e); }
 
-                // ★ 地圖標記邏輯
+                // ★ 在底部地圖上標記
                 const spotNum = parseInt(found.spot);
                 if (SPOT_POSITIONS[spotNum]) {
-                    if (page === 'waiting') {
-                        // 等待頁：直接在底部那張地圖上標記
-                        const mapEl = document.getElementById('waitingMapInteractive');
-                        const hintEl = document.getElementById('waitingMapHint');
-                        if (mapEl) {
-                            highlightSpotOnMap(mapEl, spotNum);
-                            if (hintEl) hintEl.style.display = '';
-                            setTimeout(() => {
-                                mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }, 300);
-                        }
-                    } else {
-                        // 領號頁：用搜尋區自帶的地圖
-                        const mapEl = document.getElementById('searchMapLanding');
-                        const hintEl = document.getElementById('mapHintLanding');
-                        if (mapEl) {
-                            mapEl.style.display = '';
-                            highlightSpotOnMap(mapEl, spotNum);
-                            if (hintEl) hintEl.style.display = '';
-                            setTimeout(() => {
-                                mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }, 300);
-                        }
+                    const mapEl = document.getElementById('waitingMapInteractive');
+                    const hintEl = document.getElementById('waitingMapHint');
+                    if (mapEl) {
+                        highlightSpotOnMap(mapEl, spotNum);
+                        if (hintEl) hintEl.style.display = '';
+                        setTimeout(() => {
+                            mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
                     }
                 }
 
@@ -2474,29 +2439,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
