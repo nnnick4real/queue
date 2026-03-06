@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 
 <head>
@@ -17,847 +16,821 @@
             box-sizing: border-box;
         }
 
-
-    :root {
-        --white: #ffffff;
-        --black: #171a20;
-        --gray-100: #f4f4f4;
-        --gray-200: #e0e0e0;
-        --gray-400: #999;
-        --gray-600: #5c5e62;
-        --gray-800: #3e4044;
-        --red: #e82127;
-        --red-dark: #cc171d;
-        --green: #3e9142;
-        --amber: #b36200;
-        --radius-sm: 4px;
-        --radius: 8px;
-        --radius-lg: 12px;
-        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body {
-        font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
-        background: var(--white);
-        color: var(--black);
-        min-height: 100vh;
-        min-height: 100dvh;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-    }
-
-    /* ═══ Nav ═══ */
-    .flow-nav {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px 24px;
-        border-bottom: 1px solid var(--gray-200);
-        position: sticky;
-        top: 0;
-        background: var(--white);
-        z-index: 10;
-    }
-
-    .flow-nav-text {
-        font-size: 15px;
-        font-weight: 500;
-        letter-spacing: 1px;
-    }
-
-    /* ═══ Hero ═══ */
-    .flow-hero {
-        width: 100%;
-        padding: 40px 24px 32px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        border-bottom: 1px solid var(--gray-200);
-    }
-
-    .flow-hero-label {
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: var(--gray-400);
-        margin-bottom: 10px;
-    }
-
-    .flow-hero-title {
-        font-size: clamp(24px, 6vw, 36px);
-        font-weight: 300;
-        color: var(--black);
-        letter-spacing: -0.5px;
-        line-height: 1.2;
-        margin-bottom: 12px;
-    }
-
-    .flow-session-badge {
-        display: inline-block;
-        background: var(--black);
-        color: var(--white);
-        font-size: 12px;
-        font-weight: 600;
-        padding: 6px 16px;
-        border-radius: var(--radius-sm);
-        letter-spacing: 1px;
-    }
-
-    /* ═══ Section label ═══ */
-    .section-label {
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--gray-400);
-        padding: 24px 24px 14px;
-    }
-
-    /* ═══ Timeline ═══ */
-    .timeline {
-        padding: 0 24px 24px;
-    }
-
-    .tl-item {
-        display: flex;
-        gap: 14px;
-    }
-
-    .tl-left {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 16px;
-        flex-shrink: 0;
-        padding-top: 16px;
-    }
-
-    .tl-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        border: 2px solid var(--gray-200);
-        background: var(--white);
-        flex-shrink: 0;
-        z-index: 2;
-    }
-
-    .tl-line {
-        width: 1px;
-        flex: 1;
-        background: var(--gray-200);
-    }
-
-    .tl-item:last-child .tl-line {
-        display: none;
-    }
-
-    .tl-card {
-        flex: 1;
-        padding: 14px 0;
-        border-bottom: 1px solid var(--gray-200);
-    }
-
-    .tl-item:last-child .tl-card {
-        border-bottom: none;
-    }
-
-    .tl-time {
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        color: var(--gray-400);
-        margin-bottom: 4px;
-    }
-
-    .tl-title {
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--black);
-        margin-bottom: 3px;
-    }
-
-    .tl-desc {
-        font-size: 12px;
-        color: var(--gray-600);
-        line-height: 1.6;
-    }
-
-    .tl-item.done .tl-dot {
-        background: var(--green);
-        border-color: var(--green);
-    }
-
-    .tl-item.done .tl-title,
-    .tl-item.done .tl-desc,
-    .tl-item.done .tl-time {
-        opacity: 0.4;
-    }
-
-    .tl-item.active .tl-dot {
-        background: var(--red);
-        border-color: var(--red);
-        box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15);
-        animation: activePulse 2s ease-in-out infinite;
-    }
-
-    @keyframes activePulse {
-        0%, 100% { box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15); }
-        50% { box-shadow: 0 0 0 8px rgba(232, 33, 39, 0.06); }
-    }
-
-    .tl-item.active .tl-time {
-        color: var(--red);
-    }
-
-    .tl-item.active .tl-title {
-        font-weight: 600;
-    }
-
-    .tl-badge {
-        display: inline-block;
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        padding: 3px 10px;
-        border-radius: 20px;
-        margin-top: 6px;
-    }
-
-    .tl-badge.now {
-        background: var(--red);
-        color: var(--white);
-    }
-
-    .tl-badge.completed {
-        background: var(--gray-100);
-        color: var(--gray-400);
-    }
-
-    /* ═══ Divider ═══ */
-    .flow-divider {
-        height: 8px;
-        background: var(--gray-100);
-    }
-
-    /* ═══ Card ═══ */
-    .flow-card {
-        margin: 0 24px;
-        padding: 16px 20px;
-        background: var(--gray-100);
-        border-radius: var(--radius);
-    }
-
-    .flow-card-title {
-        font-weight: 600;
-        color: var(--black);
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .flow-card-desc {
-        font-size: 13px;
-        color: var(--gray-600);
-        line-height: 1.7;
-    }
-
-    .flow-card-highlight {
-        color: var(--red);
-        font-weight: 600;
-    }
-
-    /* ═══ 配件 ═══ */
-    .acc-list {
-        margin: 0 24px;
-    }
-
-    .acc-group-label {
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        color: var(--gray-400);
-        padding: 16px 0 8px;
-    }
-
-    .acc-group-label:first-child {
-        padding-top: 0;
-    }
-
-    .acc-row {
-        display: flex;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--gray-200);
-        gap: 12px;
-    }
-
-    a.acc-row {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .acc-row:last-child {
-        border-bottom: none;
-    }
-
-    .acc-img {
-        width: 56px;
-        height: 56px;
-        border-radius: var(--radius-sm);
-        background: var(--gray-100);
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-
-    .acc-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .acc-name {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--black);
-    }
-
-    .acc-sub {
-        font-size: 11px;
-        color: var(--gray-400);
-        margin-top: 1px;
-    }
-
-    .acc-price {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--red);
-        margin-top: 2px;
-    }
-
-    /* ═══ ETAG ═══ */
-    .etag-card {
-        margin: 0 24px;
-        padding: 16px 20px;
-        background: var(--gray-100);
-        border-radius: var(--radius);
-    }
-
-    .etag-title {
-        font-weight: 600;
-        color: var(--black);
-        font-size: 14px;
-        margin-bottom: 6px;
-    }
-
-    .etag-addr {
-        font-size: 13px;
-        color: var(--gray-600);
-        line-height: 1.6;
-        margin-bottom: 12px;
-    }
-
-    .etag-link {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: var(--black);
-        color: var(--white);
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 500;
-        padding: 10px 20px;
-        border-radius: var(--radius-sm);
-        text-decoration: none;
-        letter-spacing: 0.3px;
-    }
-
-    /* ═══ 恭喜 ═══ */
-    .flow-congrats {
-        text-align: center;
-        padding: 48px 24px 60px;
-    }
-
-    .flow-congrats-title {
-        font-size: clamp(22px, 5vw, 32px);
-        font-weight: 300;
-        color: var(--black);
-        letter-spacing: -0.5px;
-        line-height: 1.3;
-        margin-bottom: 8px;
-    }
-
-    .flow-congrats-sub {
-        font-size: 14px;
-        color: var(--gray-400);
-        line-height: 1.7;
-    }
-
-    .flow-footer {
-        padding: 20px 24px;
-        border-top: 1px solid var(--gray-200);
-        text-align: center;
-        font-size: 12px;
-        color: var(--gray-400);
-    }
-
-    /* ═══ 地圖 + 車位標記 ═══ */
-    .flow-map-wrap {
-        position: relative;
-        background: var(--gray-100);
-        border-radius: var(--radius);
-        overflow: hidden;
-    }
-
-    .spot-marker {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        z-index: 5;
-    }
-
-    .spot-marker-dot {
-        width: 16px;
-        height: 16px;
-        background: var(--red);
-        border-radius: 50%;
-        border: 2.5px solid #fff;
-        box-shadow: 0 0 8px rgba(232, 33, 39, 0.6), 0 0 20px rgba(232, 33, 39, 0.3);
-        position: relative;
-        z-index: 3;
-        animation: spotBounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-
-    @keyframes spotBounceIn {
-        0% { transform: scale(0); opacity: 0; }
-        60% { transform: scale(1.3); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    .spot-marker-pulse {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        border: 2px solid var(--red);
-        animation: spotPulse 1.8s ease-out infinite;
-        z-index: 2;
-    }
-
-    .spot-marker-pulse:nth-child(2) { animation-delay: 0.6s; }
-    .spot-marker-pulse:nth-child(3) { animation-delay: 1.2s; }
-
-    @keyframes spotPulse {
-        0% { width: 16px; height: 16px; opacity: 0.8; }
-        100% { width: 56px; height: 56px; opacity: 0; }
-    }
-
-    .spot-marker-label {
-        position: absolute;
-        bottom: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--red);
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 4px;
-        white-space: nowrap;
-        box-shadow: 0 2px 8px rgba(232, 33, 39, 0.4);
-        animation: spotLabelIn 0.4s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        z-index: 4;
-    }
-
-    .spot-marker-label::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 4px solid transparent;
-        border-top-color: var(--red);
-    }
-
-    @keyframes spotLabelIn {
-        0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
-        100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-</style>
-
-
+        :root {
+            --white: #ffffff;
+            --black: #171a20;
+            --gray-100: #f4f4f4;
+            --gray-200: #e0e0e0;
+            --gray-400: #999;
+            --gray-600: #5c5e62;
+            --gray-800: #3e4044;
+            --red: #e82127;
+            --red-dark: #cc171d;
+            --green: #3e9142;
+            --amber: #b36200;
+            --radius-sm: 4px;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ Nav ═══ */
+        .flow-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 10;
+        }
+
+        .flow-nav-text {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* ═══ Hero ═══ */
+        .flow-hero {
+            width: 100%;
+            padding: 40px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .flow-hero-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            margin-bottom: 10px;
+        }
+
+        .flow-hero-title {
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .flow-session-badge {
+            display: inline-block;
+            background: var(--black);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 1px;
+        }
+
+        /* ═══ Section label ═══ */
+        .section-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            padding: 24px 24px 14px;
+        }
+
+        /* ═══ Timeline ═══ */
+        .timeline {
+            padding: 0 24px 24px;
+        }
+
+        .tl-item {
+            display: flex;
+            gap: 14px;
+        }
+
+        .tl-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 16px;
+            flex-shrink: 0;
+            padding-top: 16px;
+        }
+
+        .tl-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .tl-line {
+            width: 1px;
+            flex: 1;
+            background: var(--gray-200);
+        }
+
+        .tl-item:last-child .tl-line {
+            display: none;
+        }
+
+        .tl-card {
+            flex: 1;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .tl-item:last-child .tl-card {
+            border-bottom: none;
+        }
+
+        .tl-time {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+
+        .tl-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--black);
+            margin-bottom: 3px;
+        }
+
+        .tl-desc {
+            font-size: 12px;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .tl-item.done .tl-dot {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .tl-item.done .tl-title,
+        .tl-item.done .tl-desc,
+        .tl-item.done .tl-time {
+            opacity: 0.4;
+        }
+
+        .tl-item.active .tl-dot {
+            background: var(--red);
+            border-color: var(--red);
+            box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15);
+            animation: activePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes activePulse {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15); }
+            50% { box-shadow: 0 0 0 8px rgba(232, 33, 39, 0.06); }
+        }
+
+        .tl-item.active .tl-time {
+            color: var(--red);
+        }
+
+        .tl-item.active .tl-title {
+            font-weight: 600;
+        }
+
+        .tl-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+        }
+
+        .tl-badge.now {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .tl-badge.completed {
+            background: var(--gray-100);
+            color: var(--gray-400);
+        }
+
+        /* ═══ Divider ═══ */
+        .flow-divider {
+            height: 8px;
+            background: var(--gray-100);
+        }
+
+        /* ═══ Card ═══ */
+        .flow-card {
+            margin: 0 24px;
+            padding: 16px 20px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+        }
+
+        .flow-card-title {
+            font-weight: 600;
+            color: var(--black);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .flow-card-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        .flow-card-highlight {
+            color: var(--red);
+            font-weight: 600;
+        }
+
+        /* ═══ 配件 ═══ */
+        .acc-list {
+            margin: 0 24px;
+        }
+
+        .acc-group-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            padding: 16px 0 8px;
+        }
+
+        .acc-group-label:first-child {
+            padding-top: 0;
+        }
+
+        .acc-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            gap: 12px;
+        }
+
+        .acc-row:last-child {
+            border-bottom: none;
+        }
+
+        .acc-img {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-100);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .acc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .acc-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--black);
+        }
+
+        .acc-sub {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-top: 1px;
+        }
+
+        .acc-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--red);
+            margin-top: 2px;
+        }
+
+        /* ═══ ETAG ═══ */
+        .etag-card {
+            margin: 0 24px;
+            padding: 16px 20px;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+        }
+
+        .etag-title {
+            font-weight: 600;
+            color: var(--black);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .etag-addr {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .etag-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--black);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+        }
+
+        /* ═══ 恭喜 ═══ */
+        .flow-congrats {
+            text-align: center;
+            padding: 48px 24px 60px;
+        }
+
+        .flow-congrats-title {
+            font-size: clamp(22px, 5vw, 32px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .flow-congrats-sub {
+            font-size: 14px;
+            color: var(--gray-400);
+            line-height: 1.7;
+        }
+
+        .flow-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        /* ═══ 地圖 + 車位標記 ═══ */
+        .flow-map-wrap {
+            position: relative;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .spot-marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .spot-marker-dot {
+            width: 16px;
+            height: 16px;
+            background: var(--red);
+            border-radius: 50%;
+            border: 2.5px solid #fff;
+            box-shadow: 0 0 8px rgba(232, 33, 39, 0.6), 0 0 20px rgba(232, 33, 39, 0.3);
+            position: relative;
+            z-index: 3;
+            animation: spotBounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes spotBounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .spot-marker-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--red);
+            animation: spotPulse 1.8s ease-out infinite;
+            z-index: 2;
+        }
+
+        .spot-marker-pulse:nth-child(2) { animation-delay: 0.6s; }
+        .spot-marker-pulse:nth-child(3) { animation-delay: 1.2s; }
+
+        @keyframes spotPulse {
+            0% { width: 16px; height: 16px; opacity: 0.8; }
+            100% { width: 56px; height: 56px; opacity: 0; }
+        }
+
+        .spot-marker-label {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--red);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(232, 33, 39, 0.4);
+            animation: spotLabelIn 0.4s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            z-index: 4;
+        }
+
+        .spot-marker-label::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: var(--red);
+        }
+
+        @keyframes spotLabelIn {
+            0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    </style>
 </head>
 
 <body>
 
-
-<div class="flow-nav">
-    <span class="flow-nav-text">Tesla 台北交付中心</span>
-</div>
-
-<div class="flow-hero">
-    <div class="flow-hero-label">交車流程導覽</div>
-    <h1 class="flow-hero-title">今日行程一覽</h1>
-    <div class="flow-session-badge" id="sessionBadge">10:00 場次</div>
-</div>
-
-<!-- B4 車位圖 -->
-<div class="section-label">B4 交車位置圖</div>
-<div style="padding:0 24px 4px;">
-    <div class="flow-map-wrap" id="flowMapWrap">
-        <img src="b4_map.png" alt="B4 交車位置圖" style="width:100%;display:block;"
-            onerror="this.parentElement.parentElement.style.display='none';">
+    <div class="flow-nav">
+        <span class="flow-nav-text">Tesla 台北交付中心</span>
     </div>
-    <div id="flowMapHint" style="display:none;text-align:center;font-size:11px;color:var(--gray-400);margin-top:6px;">📍 紅點為您的車位位置</div>
-</div>
 
-<div class="flow-divider"></div>
+    <div class="flow-hero">
+        <div class="flow-hero-label">交車流程導覽</div>
+        <h1 class="flow-hero-title">今日行程一覽</h1>
+        <div class="flow-session-badge" id="sessionBadge">10:00 場次</div>
+    </div>
 
-<div class="section-label">流程時間</div>
-<div class="timeline" id="timeline"></div>
+    <!-- B4 車位圖 -->
+    <div class="section-label">B4 交車位置圖</div>
+    <div style="padding:0 24px 4px;">
+        <div class="flow-map-wrap" id="flowMapWrap">
+            <img src="b4_map.png" alt="B4 交車位置圖" style="width:100%;display:block;"
+                onerror="this.parentElement.parentElement.style.display='none';">
+        </div>
+        <div id="flowMapHint" style="display:none;text-align:center;font-size:11px;color:var(--gray-400);margin-top:6px;">📍 紅點為您的車位位置</div>
+    </div>
 
-<div class="flow-divider"></div>
+    <div class="flow-divider"></div>
 
-<div class="section-label">限定活動</div>
-<div style="padding:0 24px 24px;">
-    <div class="flow-card">
-        <div class="flow-card-title">📸 打卡 PO 文 贈限量禮品</div>
-        <div class="flow-card-desc">
-            在交付中心拍照並現場 PO 文至社群平台<br>
-            出示貼文畫面即可兌換 <span class="flow-card-highlight">Tesla 限量禮品</span><br>
-            <span style="color:var(--gray-400);font-size:12px;">數量有限，兌完為止</span>
+    <div class="section-label">流程時間</div>
+    <div class="timeline" id="timeline"></div>
+
+    <div class="flow-divider"></div>
+
+    <div class="section-label">限定活動</div>
+    <div style="padding:0 24px 24px;">
+        <div class="flow-card">
+            <div class="flow-card-title">📸 打卡 PO 文 贈限量禮品</div>
+            <div class="flow-card-desc">
+                在交付中心拍照並 PO 文至社群平台<br>
+                出示貼文畫面即可兌換 <span class="flow-card-highlight">Tesla 限量禮品</span><br>
+                <span style="color:var(--gray-400);font-size:12px;">數量有限，換完為止</span>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="flow-divider"></div>
+    <div class="flow-divider"></div>
 
-<div class="section-label">現場販售配件</div>
-<div style="padding:0 24px 4px;">
-    <div style="font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:8px;">
-        以下配件現場限量供應，可於教學空檔或交車完成後至配件區選購
-    </div>
-</div>
-
-<div class="acc-list">
-    <div class="acc-group-label">Model Y</div>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/new-model-y-all-weather-liners-set" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_my_floor.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 20,000</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/new-model-y-sunshade-bundle" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_my_sun.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 5,780</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-y-console-_-pocket-organizer-set" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_my_storage.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ —</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-y-projection-lights" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_my_light.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ —</div></div>
-    </a>
-
-    <div class="acc-group-label">Model 3 煥新版</div>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-all-weather-liners-set" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_m3_floor.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 14,060</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-sunshade-bundle" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_m3_sun.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 6,735</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3-console-_-pocket-organizer-set" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_m3_storage.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ —</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3-projection-lights" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_m3_light.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model 3 專用</div><div class="acc-price">NT$ 1,000</div></div>
-    </a>
-
-    <div class="acc-group-label">通用配件</div>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_charger.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">第二代 旅行用 Type 2 充電座套件</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 10,800</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_key.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">遙控鑰匙</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ —</div></div>
-    </a>
-    <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set" target="_blank" rel="noopener">
-        <img class="acc-img" src="acc_pillow.jpg" alt="" onerror="this.style.display='none'">
-        <div class="acc-info"><div class="acc-name">車用頸枕 & 靠墊 2 件組</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ —</div></div>
-    </a>
-</div>
-
-<div class="flow-divider" style="margin-top:24px;"></div>
-
-<div class="section-label">離場資訊</div>
-<div style="padding:0 24px 24px;">
-    <div class="etag-card" style="margin-bottom:12px;">
-        <div class="etag-title">eTag 申辦地點</div>
-        <div style="font-size:12px;color:var(--red);font-weight:500;margin-bottom:12px;line-height:1.6;">
-            需由車主本人攜帶行照、證件開車前往辦理
-        </div>
-
-        <div style="margin-bottom:14px;">
-            <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">車麗屋汽車百貨 內湖行忠店</div>
-            <div class="etag-addr">台北市內湖區行忠路 88 號</div>
-            <a class="etag-link" href="https://maps.google.com/?q=車麗屋汽車百貨內湖行忠店" target="_blank" rel="noopener">
-                開啟 Google Maps
-            </a>
-        </div>
-
-        <div style="border-top:1px solid var(--gray-200);padding-top:14px;">
-            <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">麗車坊汽車百貨 內湖門市</div>
-            <div class="etag-addr">台北市內湖區新湖三路 23 號</div>
-            <a class="etag-link" href="https://maps.google.com/?q=麗車坊汽車百貨內湖門市" target="_blank" rel="noopener">
-                開啟 Google Maps
-            </a>
+    <div class="section-label">現場限定配件</div>
+    <div style="padding:0 24px 4px;">
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:8px;">
+            以下配件現場限量供應，可於教學空檔或等待交車時至配件區選購
         </div>
     </div>
-</div>
 
-<div style="border-top:1px solid var(--gray-200);">
-    <div class="flow-congrats">
-        <div class="flow-congrats-title">恭喜成為 Tesla 車主</div>
-        <div class="flow-congrats-sub">祝您用車愉快，歡迎加入 Tesla 大家庭</div>
+    <div class="acc-list">
+        <div class="acc-group-label">Model Y</div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2048569-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 17,000</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2073497-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 4,913</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1977818-00-A_01_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 2,520</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/EXTERIOR/2097852-00-A-1-01.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 1,000</div></div>
+        </div>
+
+        <div class="acc-group-label">Model 3 煥新版</div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1974087-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 11,951</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1135832-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 5,725</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1977818-00-A_01_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 2,490</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/EXTERIOR/2097851-00-A-1-01.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model 3 專用</div><div class="acc-price">NT$ 1,000</div></div>
+        </div>
+
+        <div class="acc-group-label">通用配件</div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">第二代 旅行用 Type 2 充電座套件</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 9,500</div></div>
+            <div class="acc-info"><div class="acc-name">第二代 旅行用 Type 2 充電座套件</div><div class="acc-sub">Model 3 / Y / S / X 通用</div><div class="acc-price">NT$ 9,500</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/studio/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_0_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">遙控鑰匙</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 5,520</div></div>
+        </div>
+        <div class="acc-row">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車用頸枕 & 靠墊 2 件組</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 2,430</div></div>
+        </div>
     </div>
-</div>
 
-<div class="flow-footer">© Tesla 台北交付中心</div>
+    <div class="flow-divider" style="margin-top:24px;"></div>
 
-<script>
-    const SESSIONS = {
-        10: {
-            label: '10:00 場次',
-            alldone: '11:30',
-            steps: [
-                { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '10:20', end: '10:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '10:30', end: '10:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '10:35', end: '10:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '10:45', end: '11:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '10:50', end: '11:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                { time: '11:00', end: '11:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 11:10' },
-            ]
-        },
-        12: {
-            label: '12:00 場次',
-            alldone: '13:30',
-            steps: [
-                { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '12:20', end: '12:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '12:30', end: '12:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '12:35', end: '12:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '12:45', end: '13:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '12:50', end: '13:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                { time: '13:00', end: '13:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 13:10' },
-            ]
-        },
-        14: {
-            label: '14:00 場次',
-            alldone: '15:30',
-            steps: [
-                { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '14:20', end: '14:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '14:30', end: '14:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '14:35', end: '14:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '14:45', end: '15:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '14:50', end: '15:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                { time: '15:00', end: '15:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 15:10' },
-            ]
-        },
-        16: {
-            label: '16:00 場次',
-            alldone: '17:30',
-            steps: [
-                { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                { time: '16:20', end: '16:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '16:30', end: '16:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                { time: '16:35', end: '16:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '16:45', end: '17:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                { time: '16:50', end: '17:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                { time: '17:00', end: '17:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 17:10' },
-            ]
-        }
-    };
+    <div class="section-label">離場資訊</div>
+    <div style="padding:0 24px 24px;">
+        <div class="etag-card" style="margin-bottom:12px;">
+            <div class="etag-title">eTag 申辦地點</div>
+            <div style="font-size:12px;color:var(--red);font-weight:500;margin-bottom:12px;line-height:1.6;">
+                需由車主本人攜帶行照、證件開車前往辦理
+            </div>
 
-    function toMin(str) {
-        const [h, m] = str.split(':').map(Number);
-        return h * 60 + m;
-    }
+            <div style="margin-bottom:14px;">
+                <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">車麗屋汽車百貨 內湖行忠店</div>
+                <div class="etag-addr">台北市內湖區行忠路 88 號</div>
+                <a class="etag-link" href="https://maps.google.com/?q=車麗屋汽車百貨內湖行忠店" target="_blank" rel="noopener">
+                    開啟 Google Maps
+                </a>
+            </div>
 
-    function detectSession() {
-        const now = new Date();
-        const nowMin = now.getHours() * 60 + now.getMinutes();
-        const ranges = [
-            { h: 10, start: toMin('09:40'), end: toMin('12:00') },
-            { h: 12, start: toMin('11:40'), end: toMin('14:00') },
-            { h: 14, start: toMin('13:40'), end: toMin('16:00') },
-            { h: 16, start: toMin('15:40'), end: toMin('18:00') },
-        ];
-        for (const r of ranges) {
-            if (nowMin >= r.start && nowMin < r.end) return r.h;
-        }
-        for (const r of ranges) {
-            if (nowMin < r.start) return r.h;
-        }
-        return 10;
-    }
+            <div style="border-top:1px solid var(--gray-200);padding-top:14px;">
+                <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">麗車坊汽車百貨 內湖門市</div>
+                <div class="etag-addr">台北市內湖區新湖三路 23 號</div>
+                <a class="etag-link" href="https://maps.google.com/?q=麗車坊汽車百貨內湖門市" target="_blank" rel="noopener">
+                    開啟 Google Maps
+                </a>
+            </div>
+        </div>
+    </div>
 
-    function renderTimeline() {
-        const sessionH = detectSession();
-        const session = SESSIONS[sessionH];
-        if (!session) return;
+    <div style="border-top:1px solid var(--gray-200);">
+        <div class="flow-congrats">
+            <div class="flow-congrats-title">恭喜成為 Tesla 車主</div>
+            <div class="flow-congrats-sub">祝您用車愉快，歡迎加入 Tesla 大家庭</div>
+        </div>
+    </div>
 
-        document.getElementById('sessionBadge').textContent = session.label;
+    <div class="flow-footer">© Tesla 台北交付中心</div>
 
-        const now = new Date();
-        const nowMin = now.getHours() * 60 + now.getMinutes();
-        const container = document.getElementById('timeline');
-        let html = '';
-
-        session.steps.forEach((step) => {
-          const startMin = toMin(step.time);
-          const endMin = toMin(step.end);
-          const allDoneMin = toMin(session.allDone);
-        let status = 'upcoming';
-
-        if (nowMin >= allDoneMin) {
-        status = 'done';
-       } else if (nowMin >= endMin) {
-        status = 'done';
-       } else if (nowMin >= startMin && nowMin < endMin) {
-        status = 'active';
-       }
-
-
-            let badgeHtml = '';
-            if (status === 'active') badgeHtml = '<span class="tl-badge now">進行中</span>';
-            else if (status === 'done') badgeHtml = '<span class="tl-badge completed">已完成</span>';
-
-            html += `
-                <div class="tl-item ${status}">
-                    <div class="tl-left">
-                        <div class="tl-dot"></div>
-                        <div class="tl-line"></div>
-                    </div>
-                    <div class="tl-card">
-                        <div class="tl-time">${step.time}</div>
-                        <div class="tl-title">${step.title}</div>
-                        <div class="tl-desc">${step.desc}</div>
-                        ${badgeHtml}
-                    </div>
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
-
-        setTimeout(() => {
-            const activeEl = document.querySelector('.tl-item.active');
-            if (activeEl) {
-                activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    <script>
+        const SESSIONS = {
+            10: {
+                label: '10:00 場次',
+                steps: [
+                    { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '10:20', end: '10:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:30', end: '10:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:35', end: '10:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:45', end: '11:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:50', end: '11:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '11:00', end: '11:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 11:10' },
+                ]
+            },
+            12: {
+                label: '12:00 場次',
+                steps: [
+                    { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '12:20', end: '12:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:30', end: '12:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:35', end: '12:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:45', end: '13:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:50', end: '13:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '13:00', end: '13:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 13:10' },
+                ]
+            },
+            14: {
+                label: '14:00 場次',
+                steps: [
+                    { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '14:20', end: '14:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:30', end: '14:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:35', end: '14:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:45', end: '15:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:50', end: '15:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '15:00', end: '15:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 15:10' },
+                ]
+            },
+            16: {
+                label: '16:00 場次',
+                steps: [
+                    { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '16:20', end: '16:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:30', end: '16:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:35', end: '16:50', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:45', end: '17:00', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:50', end: '17:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '17:00', end: '17:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 17:10' },
+                ]
             }
-        }, 300);
-    }
+        };
 
-    renderTimeline();
-    setInterval(renderTimeline, 30000);
+        function toMin(str) {
+            const [h, m] = str.split(':').map(Number);
+            return h * 60 + m;
+        }
 
-    // ═══════════════════════════════════
-    // 車位標記（從 index.html 帶入 ?spot=XX）
-    // ═══════════════════════════════════
-    const SPOT_POSITIONS = {
+        function detectSession() {
+            const now = new Date();
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            const ranges = [
+                { h: 10, start: toMin('09:40'), end: toMin('12:00') },
+                { h: 12, start: toMin('11:40'), end: toMin('14:00') },
+                { h: 14, start: toMin('13:40'), end: toMin('16:00') },
+                { h: 16, start: toMin('15:40'), end: toMin('18:00') },
+            ];
+            for (const r of ranges) {
+                if (nowMin >= r.start && nowMin < r.end) return r.h;
+            }
+            for (const r of ranges) {
+                if (nowMin < r.start) return r.h;
+            }
+            return 10;
+        }
+
+        function renderTimeline() {
+            const sessionH = detectSession();
+            const session = SESSIONS[sessionH];
+            if (!session) return;
+
+            document.getElementById('sessionBadge').textContent = session.label;
+
+            const now = new Date();
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            const container = document.getElementById('timeline');
+            let html = '';
+
+            session.steps.forEach((step) => {
+                const startMin = toMin(step.time);
+                const endMin = toMin(step.end);
+                let status = 'upcoming';
+
+                if (nowMin >= endMin) {
+                    status = 'done';
+                } else if (nowMin >= startMin && nowMin < endMin) {
+                    status = 'active';
+                }
+
+                let badgeHtml = '';
+                if (status === 'active') badgeHtml = '<span class="tl-badge now">進行中</span>';
+                else if (status === 'done') badgeHtml = '<span class="tl-badge completed">已完成</span>';
+
+                html += `
+                    <div class="tl-item ${status}">
+                        <div class="tl-left">
+                            <div class="tl-dot"></div>
+                            <div class="tl-line"></div>
+                        </div>
+                        <div class="tl-card">
+                            <div class="tl-time">${step.time}</div>
+                            <div class="tl-title">${step.title}</div>
+                            <div class="tl-desc">${step.desc}</div>
+                            ${badgeHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            setTimeout(() => {
+                const activeEl = document.querySelector('.tl-item.active');
+                if (activeEl) {
+                    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+        renderTimeline();
+        setInterval(renderTimeline, 30000);
+
+        // ═══════════════════════════════════
+        // 車位標記（從 index.html 帶入 ?spot=XX）
+        // ═══════════════════════════════════
+        const SPOT_POSITIONS = {
             1: { x: 15.4, y: 39.6 }, 2: { x: 22.0, y: 39.6 }, 3: { x: 28.6, y: 39.6 },
             4: { x: 35.1, y: 39.6 }, 5: { x: 41.9, y: 39.6 }, 6: { x: 48.4, y: 39.6 },
             7: { x: 55.0, y: 39.6 }, 8: { x: 61.6, y: 39.6 }, 9: { x: 68.1, y: 39.6 },
             10: { x: 74.9, y: 39.6 },
-            // Zone A 上排 11-20
             11: { x: 74.9, y: 30.2 }, 12: { x: 68.1, y: 30.2 }, 13: { x: 61.6, y: 30.2 },
             14: { x: 55.0, y: 30.2 }, 15: { x: 48.4, y: 30.2 }, 16: { x: 41.9, y: 30.2 },
             17: { x: 35.1, y: 30.2 }, 18: { x: 28.6, y: 30.2 }, 19: { x: 22.0, y: 30.2 },
             20: { x: 15.4, y: 30.2 },
-            // Zone B 右側 21-24 (修正：往左下校準)
-            21: { x: 90.7, y: 43.2 }, 22: { x: 90.7, y: 35.8 },
-            23: { x: 90.7, y: 28.3 }, 24: { x: 90.7, y: 20.8 },
-            // Zone B 上排 25-30 (修正：往左下校準，防溢出)
-            25: { x: 82.8, y: 10.8 }, 26: { x: 76.5, y: 10.8 }, 27: { x: 70.5, y: 10.8 },
-            28: { x: 64.5, y: 10.8 }, 29: { x: 58.5, y: 10.8 }, 30: { x: 44.6, y: 10.8 },
-            // Zone C 上排 31-37 (修正：往右校準)
-            31: { x: 43.1, y: 60.0 }, 32: { x: 48.6, y: 60.0 }, 33: { x: 54.1, y: 60.0 },
-            34: { x: 59.5, y: 60.0 }, 35: { x: 64.5, y: 60.0 }, 36: { x: 70.0, y: 60.0 },
-            37: { x: 75.25, y: 60.0 },
-            // Zone C 下排 38-53 (修正：大幅右移校準)
-            38: { x: 75.9, y: 69.3 }, 39: { x: 69.9, y: 69.3 }, 50: { x: 64.1, y: 69.3 },
-            51: { x: 58.0, y: 69.3 }, 52: { x: 52.0, y: 69.3 }, 53: { x: 45.9, y: 69.3 },
-            // Zone C 獨立 54
-            54: { x: 14.6, y: 69.0 },
-            // Zone D 底部 55-66 (修正：往右上校準)
-            55: { x: 15.2, y: 90.0 }, 56: { x: 21.2, y: 90.0 }, 57: { x: 27.3, y: 90.0 },
-            58: { x: 33.2, y: 90.0 }, 59: { x: 39.7, y: 90.0 }, 60: { x: 45.25, y: 90.0 },
-            61: { x: 51.65, y: 90.0 }, 62: { x: 57.75, y: 90.0 }, 63: { x: 63.8, y: 90.0 },
-            64: { x: 70.0, y: 90.0 }, 65: { x: 76.1, y: 90.0 }, 66: { x: 82.5, y: 90.0 },
-            // 右側直列 67-70 (修正：往左下校準)
-            67: { x: 90.6, y: 79.0 }, 68: { x: 90.6, y: 71.6 },
-            69: { x: 90.6, y: 64.0 }, 70: { x: 90.6, y: 56.6 },
-    };
-
-    (function initSpotHighlight() {
-        const params = new URLSearchParams(window.location.search);
-        const spotStr = params.get('spot');
-        if (!spotStr) return;
-
-        const spotNum = parseInt(spotStr);
-        const pos = SPOT_POSITIONS[spotNum];
-        if (!pos) return;
-
-        const mapWrap = document.getElementById('flowMapWrap');
-        const hint = document.getElementById('flowMapHint');
-        if (!mapWrap) return;
-
-        // 等圖片載入後再標記
-        const img = mapWrap.querySelector('img');
-        const doMark = () => {
-            const marker = document.createElement('div');
-            marker.className = 'spot-marker';
-            marker.style.left = pos.x + '%';
-            marker.style.top = pos.y + '%';
-
-            for (let i = 0; i < 3; i++) {
-                const pulse = document.createElement('div');
-                pulse.className = 'spot-marker-pulse';
-                marker.appendChild(pulse);
-            }
-
-            const dot = document.createElement('div');
-            dot.className = 'spot-marker-dot';
-            marker.appendChild(dot);
-
-            const label = document.createElement('div');
-            label.className = 'spot-marker-label';
-            label.textContent = spotNum + ' 號';
-            marker.appendChild(label);
-
-            mapWrap.appendChild(marker);
-            if (hint) hint.style.display = '';
+            21: { x: 92.6, y: 40.6 }, 22: { x: 92.6, y: 34.0 },
+            23: { x: 92.6, y: 27.4 }, 24: { x: 92.6, y: 20.9 },
+            25: { x: 87.0, y: 7.1 }, 26: { x: 80.3, y: 7.1 }, 27: { x: 73.5, y: 7.1 },
+            28: { x: 66.7, y: 7.1 }, 29: { x: 59.5, y: 7.1 }, 30: { x: 43.5, y: 7.1 },
+            31: { x: 40.9, y: 59.2 }, 32: { x: 46.8, y: 59.2 }, 33: { x: 52.7, y: 59.2 },
+            34: { x: 58.6, y: 59.2 }, 35: { x: 64.5, y: 59.2 }, 36: { x: 70.4, y: 59.2 },
+            37: { x: 76.4, y: 59.2 },
+            38: { x: 70.4, y: 68.6 }, 39: { x: 64.5, y: 68.6 }, 50: { x: 58.6, y: 68.6 },
+            51: { x: 52.7, y: 68.6 }, 52: { x: 46.8, y: 68.6 }, 53: { x: 40.9, y: 68.6 },
+            54: { x: 14.6, y: 67.9 },
+            55: { x: 14.0, y: 92.7 }, 56: { x: 20.4, y: 92.7 }, 57: { x: 26.8, y: 92.7 },
+            58: { x: 33.2, y: 92.7 }, 59: { x: 39.7, y: 92.7 }, 60: { x: 46.1, y: 92.7 },
+            61: { x: 52.5, y: 92.7 }, 62: { x: 58.9, y: 92.7 }, 63: { x: 65.4, y: 92.7 },
+            64: { x: 71.8, y: 92.7 }, 65: { x: 78.3, y: 92.7 }, 66: { x: 84.9, y: 92.7 },
+            67: { x: 92.6, y: 76.8 }, 68: { x: 92.6, y: 69.9 },
+            69: { x: 92.6, y: 63.1 }, 70: { x: 92.6, y: 56.3 },
         };
 
-        if (img.complete) { doMark(); } else { img.onload = doMark; }
-    })();
-</script>
+        (function initSpotHighlight() {
+            const params = new URLSearchParams(window.location.search);
+            const spotStr = params.get('spot');
+            if (!spotStr) return;
 
+            const spotNum = parseInt(spotStr);
+            const pos = SPOT_POSITIONS[spotNum];
+            if (!pos) return;
 
+            const mapWrap = document.getElementById('flowMapWrap');
+            const hint = document.getElementById('flowMapHint');
+            if (!mapWrap) return;
+
+            // 等圖片載入後再標記
+            const img = mapWrap.querySelector('img');
+            const doMark = () => {
+                const marker = document.createElement('div');
+                marker.className = 'spot-marker';
+                marker.style.left = pos.x + '%';
+                marker.style.top = pos.y + '%';
+
+                for (let i = 0; i < 3; i++) {
+                    const pulse = document.createElement('div');
+                    pulse.className = 'spot-marker-pulse';
+                    marker.appendChild(pulse);
+                }
+
+                const dot = document.createElement('div');
+                dot.className = 'spot-marker-dot';
+                marker.appendChild(dot);
+
+                const label = document.createElement('div');
+                label.className = 'spot-marker-label';
+                label.textContent = spotNum + ' 號';
+                marker.appendChild(label);
+
+                mapWrap.appendChild(marker);
+                if (hint) hint.style.display = '';
+            };
+
+            if (img.complete) { doMark(); } else { img.onload = doMark; }
+        })();
+    </script>
 </body>
 
 </html>
