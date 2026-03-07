@@ -818,148 +818,6 @@
             margin: 32px 0;
         }
 
-        /* ════════════════════════════════════════
-           TV DISPLAY / 電視看板
-           ════════════════════════════════════════ */
-        #view-tv {
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: var(--black);
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 細微背景紋理 */
-        #view-tv::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .tv-header {
-            position: absolute;
-            top: 48px;
-            left: 0;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .tv-header-line {
-            width: 32px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .tv-sub {
-            font-size: 13px;
-            font-weight: 400;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .tv-main {
-            text-align: center;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .tv-eyebrow {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.4);
-            margin-bottom: 8px;
-        }
-
-        .tv-number {
-            font-size: clamp(140px, 28vw, 300px);
-            font-weight: 200;
-            line-height: 1;
-            letter-spacing: -8px;
-            color: var(--white);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        .tv-number.flip {
-            animation: tv-flip 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        @keyframes tv-flip {
-            0% {
-                opacity: 0;
-                transform: translateY(24px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .tv-next-row {
-            margin-top: 16px;
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 1px;
-        }
-
-        .tv-next-row span {
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 500;
-        }
-
-        .tv-footer {
-            position: absolute;
-            bottom: 48px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-        }
-
-        .tv-stat {
-            text-align: center;
-        }
-
-        .tv-stat-label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 4px;
-        }
-
-        .tv-stat-value {
-            font-size: 28px;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: -1px;
-        }
-
-        /* 底部細線 */
-        .tv-footer-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--red);
-        }
 
         /* ════════════════════════════════════════
            Modal
@@ -1454,8 +1312,15 @@
                         style="font-size:clamp(28px,7vw,48px);font-weight:300;color:var(--black);">梯次</span>
                 </div>
                 <div id="kioskTicketHint"
-                    style="font-size:12px; color:var(--gray-500); margin-top:6px; line-height:1.6; text-align:center;">
-                    同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 RN 查詢
+                    style="font-size:14px; color:var(--gray-600); margin-top:10px; line-height:1.8; text-align:center; font-weight:400;">
+                    同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 <strong style="color:var(--red);">RN</strong> 查詢
+                </div>
+                <div id="wakeLockHint"
+                    style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--gray-600);font-weight:500;">
+                    <span
+                        style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"
+                        id="wakeDot"></span>
+                    <span style="color:var(--red);font-weight:600;">請保持螢幕恆亮</span>以接收叫號通知
                 </div>
             </div>
 
@@ -1478,11 +1343,6 @@
                     <div class="stat-label">預估等待</div>
                     <div class="stat-value green" id="kioskETA">—</div>
                 </div>
-            </div>
-
-            <div class="wake-notice" id="wakeLockHint">
-                <div class="wake-notice-dot"></div>
-                <span>為了接收叫號通知，請保持螢幕恆亮</span>
             </div>
 
             <div
@@ -2211,20 +2071,20 @@
 
         async function requestWakeLock() {
             const hint = document.getElementById('wakeLockHint');
+            const wakeDot = document.getElementById('wakeDot');
             if (!('wakeLock' in navigator)) {
-                hint.querySelector('span').textContent = '您的瀏覽器不支援螢幕恆亮，請手動保持螢幕開啟';
+                hint.lastChild.textContent = '瀏覽器不支援螢幕恆亮';
+                if (wakeDot) wakeDot.style.background = 'var(--amber)';
                 return;
             }
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
-                hint.querySelector('span').textContent = '螢幕恆亮已啟用，請勿關閉此頁面';
-                hint.querySelector('.wake-notice-dot').style.background = 'var(--green)';
+                if (wakeDot) wakeDot.style.background = 'var(--green)';
                 wakeLock.addEventListener('release', () => {
-                    hint.querySelector('span').textContent = '螢幕恆亮已中斷，請勿鎖定手機';
-                    hint.querySelector('.wake-notice-dot').style.background = 'var(--amber)';
+                    if (wakeDot) wakeDot.style.background = 'var(--amber)';
                 });
             } catch (e) {
-                hint.querySelector('span').textContent = '無法啟用螢幕恆亮，請手動保持螢幕開啟';
+                if (wakeDot) wakeDot.style.background = 'var(--amber)';
             }
         }
 
@@ -2456,6 +2316,46 @@
                 sessionId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
             });
         }
+
+        // ═════════════════════════════════
+        // ⏰ 自動重設場次
+        // 每天 08:00 / 10:30 / 12:30 / 14:30 / 16:30 自動重設
+        // ═════════════════════════════════
+        (function initAutoReset() {
+            const RESET_TIMES = [
+                { h: 8, m: 0 },   // 08:00 — 每日早晨重設
+                { h: 10, m: 30 },   // 10:30 — 第1場後
+                { h: 12, m: 30 },   // 12:30 — 第2場後
+                { h: 14, m: 30 },   // 14:30 — 第3場後
+                { h: 16, m: 30 },   // 16:30 — 第4場後
+            ];
+            let lastResetKey = '';
+
+            function checkAutoReset() {
+                if (!queueRef) return;
+                const now = new Date();
+                const h = now.getHours();
+                const m = now.getMinutes();
+                const key = h + ':' + m;  // 同一分鐘只觸發一次
+
+                if (key === lastResetKey) return;
+
+                const match = RESET_TIMES.find(t => t.h === h && t.m === m);
+                if (match) {
+                    lastResetKey = key;
+                    console.log('[AutoReset] 觸發自動重設 @', key);
+                    queueRef.set({
+                        calledUpTo: 0,
+                        nextTicket: 1,
+                        sessionId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+                    });
+                }
+            }
+
+            // 每 30 秒檢查一次
+            setInterval(checkAutoReset, 30000);
+            checkAutoReset(); // 啟動時立即檢查一次
+        })();
 
     </script>
 
