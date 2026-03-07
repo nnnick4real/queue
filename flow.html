@@ -563,6 +563,180 @@
             background: var(--white);
         }
 
+        /* ═══ Model Filter Buttons ═══ */
+        .model-filter {
+            display: flex;
+            gap: 8px;
+            padding: 0 4px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .model-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .model-btn {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 0;
+            text-align: center;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-600);
+            background: var(--white);
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .model-btn:active {
+            transform: scale(0.97);
+        }
+
+        .model-btn.active {
+            color: var(--white);
+            background: var(--black);
+            border-color: var(--black);
+            font-weight: 600;
+        }
+
+        .acc-model-group {
+            display: none;
+        }
+
+        .acc-model-group.active {
+            display: block;
+        }
+
+        /* ═══ Checklist ═══ */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 14px;
+            color: var(--black);
+            line-height: 1.5;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist li::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--green-light);
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ═══ Contact Card ═══ */
+        .contact-card {
+            background: var(--black);
+            color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .contact-card-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .contact-card-number {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .contact-card-number a {
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .contact-card-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ═══ Supercharger Card ═══ */
+        .sc-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-100);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background: var(--red-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sc-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .sc-addr {
+            font-size: 12px;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        .sc-link {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--red);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
         /* ═══ Spot Marker ═══ */
         .spot-marker {
             position: absolute;
@@ -692,7 +866,6 @@
 
     <!-- 當前步驟 Hero -->
     <div class="now-hero" id="nowHero">
-        <div class="now-hero-session" id="sessionBadge">10:00 場次</div>
         <div class="now-hero-label" id="nowLabel">目前進行</div>
         <div class="now-hero-title" id="nowTitle">交車流程導覽</div>
         <div class="now-hero-desc" id="nowDesc">自動偵測場次與時間，即時顯示當前步驟</div>
@@ -750,148 +923,312 @@
                 </div>
             </div>
 
-            <!-- Model Y -->
-            <div class="acc-group-title">Model Y</div>
-            <div class="acc-grid">
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/new-model-y-all-weather-liners-set"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2048569-SET.png"
-                        alt="全天候地墊" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">全天候地墊 4 件組</div>
-                        <div class="acc-card-sub">Model Y 專用</div>
-                        <div class="acc-card-price">NT$ 17,000</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/new-model-y-sunshade-bundle"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2073497-SET.png"
-                        alt="抗曬組" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">抗曬 2 件組</div>
-                        <div class="acc-card-sub">Model Y 專用</div>
-                        <div class="acc-card-price">NT$ 4,913</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-y-console-_-pocket-organizer-set"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/1977818-SET_1_2000.png"
-                        alt="儲物組" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">車內儲物 2 件組</div>
-                        <div class="acc-card-sub">Model Y 專用</div>
-                        <div class="acc-card-price">NT$ 2,520</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-y-projection-lights"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/EXTERIOR/2097852-00-A-1-01.png"
-                        alt="迎賓燈" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">迎賓燈</div>
-                        <div class="acc-card-sub">Model Y 專用</div>
-                        <div class="acc-card-price">NT$ 1,000</div>
-                    </div>
-                </a>
+            <!-- 車型篩選按鈕 -->
+            <div class="model-filter">
+                <button class="model-btn active" data-model="model-y" onclick="filterModel('model-y')">Model Y</button>
+                <button class="model-btn" data-model="model-3" onclick="filterModel('model-3')">Model 3</button>
+                <button class="model-btn" data-model="model-s" onclick="filterModel('model-s')">Model S</button>
+                <button class="model-btn" data-model="model-x" onclick="filterModel('model-x')">Model X</button>
             </div>
 
-            <!-- Model 3 -->
-            <div class="acc-group-title">Model 3</div>
-            <div class="acc-grid">
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-all-weather-liners-set"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1974087-SET.png"
-                        alt="全天候地墊" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">全天候地墊 4 件組</div>
-                        <div class="acc-card-sub">Model 3 煥新版專用</div>
-                        <div class="acc-card-price">NT$ 11,951</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-sunshade-bundle"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1135832-SET.png"
-                        alt="抗曬組" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">抗曬 2 件組</div>
-                        <div class="acc-card-sub">Model 3 煥新版專用</div>
-                        <div class="acc-card-price">NT$ 5,725</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3-console-_-pocket-organizer-set"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2097835-SET_1_2000.png"
-                        alt="儲物組" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">車內儲物 2 件組</div>
-                        <div class="acc-card-sub">Model 3 煥新版專用</div>
-                        <div class="acc-card-price">NT$ 2,490</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3-projection-lights"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/EXTERIOR/2097851-00-A-1-01.png"
-                        alt="迎賓燈" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">迎賓燈</div>
-                        <div class="acc-card-sub">Model 3 專用</div>
-                        <div class="acc-card-price">NT$ 1,000</div>
-                    </div>
-                </a>
+            <!-- Model Y 配件 -->
+            <div class="acc-model-group active" id="acc-model-y">
+                <div class="acc-grid">
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/new-model-y-all-weather-liners-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2048569-SET.png"
+                            alt="全天候地墊" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">全天候地墊 4 件組</div>
+                            <div class="acc-card-sub">Model Y 專用</div>
+                            <div class="acc-card-price">NT$ 17,000</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/new-model-y-sunshade-bundle"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2073497-SET.png"
+                            alt="抗曬組" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">抗曬 2 件組</div>
+                            <div class="acc-card-sub">Model Y 專用</div>
+                            <div class="acc-card-price">NT$ 4,913</div>
+                        </div>
+                    </a>
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/model-y-console-_-pocket-organizer-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/1977818-SET_1_2000.png"
+                            alt="儲物組" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">車內儲物 2 件組</div>
+                            <div class="acc-card-sub">Model Y 專用</div>
+                            <div class="acc-card-price">NT$ 2,520</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-y-projection-lights"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/EXTERIOR/2097852-00-A-1-01.png"
+                            alt="迎賓燈" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">迎賓燈</div>
+                            <div class="acc-card-sub">Model Y 專用</div>
+                            <div class="acc-card-price">NT$ 1,000</div>
+                        </div>
+                    </a>
+                </div>
+                <!-- 通用配件 (Model Y 也適用) -->
+                <div class="acc-group-title">通用配件</div>
+                <div class="acc-grid">
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
+                            alt="充電座套件" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">第二代 旅行用 Type 2 充電座套件</div>
+                            <div class="acc-card-sub">Model 3 / Y 通用</div>
+                            <div class="acc-card-price">NT$ 9,500</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank"
+                        rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_1_2000.jpg"
+                            alt="遙控鑰匙" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">遙控鑰匙</div>
+                            <div class="acc-card-sub">Model 3 / Y 通用</div>
+                            <div class="acc-card-price">NT$ 5,520</div>
+                        </div>
+                    </a>
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg"
+                            alt="頸枕靠墊" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">車用頸枕 & 靠墊 2 件組</div>
+                            <div class="acc-card-sub">Model 3 / Y 通用</div>
+                            <div class="acc-card-price">NT$ 2,430</div>
+                        </div>
+                    </a>
+                </div>
             </div>
 
-            <!-- 通用配件 -->
-            <div class="acc-group-title">通用配件</div>
-            <div class="acc-grid">
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
-                        alt="充電座套件" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">第二代 旅行用 Type 2 充電座套件</div>
-                        <div class="acc-card-sub">Model 3 / Y 通用</div>
-                        <div class="acc-card-price">NT$ 9,500</div>
-                    </div>
-                </a>
-                <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank"
-                    rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_1_2000.jpg"
-                        alt="遙控鑰匙" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">遙控鑰匙</div>
-                        <div class="acc-card-sub">Model 3 / Y 通用</div>
-                        <div class="acc-card-price">NT$ 5,520</div>
-                    </div>
-                </a>
-                <a class="acc-card"
-                    href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set"
-                    target="_blank" rel="noopener">
-                    <img class="acc-card-img"
-                        src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg"
-                        alt="頸枕靠墊" onerror="this.style.display='none'">
-                    <div class="acc-card-body">
-                        <div class="acc-card-name">車用頸枕 & 靠墊 2 件組</div>
-                        <div class="acc-card-sub">Model 3 / Y 通用</div>
-                        <div class="acc-card-price">NT$ 2,430</div>
-                    </div>
-                </a>
+            <!-- Model 3 配件 -->
+            <div class="acc-model-group" id="acc-model-3">
+                <div class="acc-grid">
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-all-weather-liners-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1974087-SET.png"
+                            alt="全天候地墊" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">全天候地墊 4 件組</div>
+                            <div class="acc-card-sub">Model 3 煥新版專用</div>
+                            <div class="acc-card-price">NT$ 11,951</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-sunshade-bundle"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1135832-SET.png"
+                            alt="抗曬組" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">抗曬 2 件組</div>
+                            <div class="acc-card-sub">Model 3 煥新版專用</div>
+                            <div class="acc-card-price">NT$ 5,725</div>
+                        </div>
+                    </a>
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/model-3-console-_-pocket-organizer-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2097835-SET_1_2000.png"
+                            alt="儲物組" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">車內儲物 2 件組</div>
+                            <div class="acc-card-sub">Model 3 煥新版專用</div>
+                            <div class="acc-card-price">NT$ 2,490</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3-projection-lights"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/EXTERIOR/2097851-00-A-1-01.png"
+                            alt="迎賓燈" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">迎賓燈</div>
+                            <div class="acc-card-sub">Model 3 專用</div>
+                            <div class="acc-card-price">NT$ 1,000</div>
+                        </div>
+                    </a>
+                </div>
+                <!-- 通用配件 -->
+                <div class="acc-group-title">通用配件</div>
+                <div class="acc-grid">
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
+                            alt="充電座套件" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">第二代 旅行用 Type 2 充電座套件</div>
+                            <div class="acc-card-sub">Model 3 / Y 通用</div>
+                            <div class="acc-card-price">NT$ 9,500</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank"
+                        rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_1_2000.jpg"
+                            alt="遙控鑰匙" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">遙控鑰匙</div>
+                            <div class="acc-card-sub">Model 3 / Y 通用</div>
+                            <div class="acc-card-price">NT$ 5,520</div>
+                        </div>
+                    </a>
+                    <a class="acc-card"
+                        href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg"
+                            alt="頸枕靠墊" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">車用頸枕 & 靠墊 2 件組</div>
+                            <div class="acc-card-sub">Model 3 / Y 通用</div>
+                            <div class="acc-card-price">NT$ 2,430</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Model S 配件 -->
+            <div class="acc-model-group" id="acc-model-s">
+                <div class="acc-grid">
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s-all-weather-liners-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1507178-SET.png"
+                            alt="全天候地墊" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">全天候地墊組</div>
+                            <div class="acc-card-sub">Model S 專用</div>
+                            <div class="acc-card-price">前往 Tesla Shop 查看</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s-key-fob" target="_blank"
+                        rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1107681-00-A_1_2000.jpg"
+                            alt="遙控鑰匙" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">遙控鑰匙</div>
+                            <div class="acc-card-sub">Model S 專用</div>
+                            <div class="acc-card-price">前往 Tesla Shop 查看</div>
+                        </div>
+                    </a>
+                </div>
+                <div style="padding:20px 4px;text-align:center;">
+                    <a href="https://shop.tesla.com/zh_tw/category/model-s" target="_blank" rel="noopener"
+                        style="font-size:13px;color:var(--red);font-weight:500;text-decoration:none;">查看所有 Model S 配件
+                        →</a>
+                </div>
+            </div>
+
+            <!-- Model X 配件 -->
+            <div class="acc-model-group" id="acc-model-x">
+                <div class="acc-grid">
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-x-all-weather-liners-set"
+                        target="_blank" rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1507179-SET.png"
+                            alt="全天候地墊" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">全天候地墊組</div>
+                            <div class="acc-card-sub">Model X 專用</div>
+                            <div class="acc-card-price">前往 Tesla Shop 查看</div>
+                        </div>
+                    </a>
+                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-x-key-fob" target="_blank"
+                        rel="noopener">
+                        <img class="acc-card-img" loading="lazy" width="600" height="600"
+                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1107681-00-A_1_2000.jpg"
+                            alt="遙控鑰匙" onerror="this.style.display='none'">
+                        <div class="acc-card-body">
+                            <div class="acc-card-name">遙控鑰匙</div>
+                            <div class="acc-card-sub">Model X 專用</div>
+                            <div class="acc-card-price">前往 Tesla Shop 查看</div>
+                        </div>
+                    </a>
+                </div>
+                <div style="padding:20px 4px;text-align:center;">
+                    <a href="https://shop.tesla.com/zh_tw/category/model-x" target="_blank" rel="noopener"
+                        style="font-size:13px;color:var(--red);font-weight:500;text-decoration:none;">查看所有 Model X 配件
+                        →</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════ TAB 3: 離場資訊 ═══════════ -->
+    <!-- ═══════════ TAB 3: 啟程準備 ═══════════ -->
     <div class="tab-panel" id="panel-info">
-        <div class="section" style="padding-bottom:24px;">
+
+        <!-- 離場前確認 -->
+        <div class="section">
+            <div class="section-title">離場前最後確認</div>
+            <div class="info-card">
+                <ul class="checklist">
+                    <li>已完成充電教學與車內語音教學</li>
+                    <li>已確認車輛外觀無瑕疵</li>
+                    <li>已領取交付資料袋（含行照、保險卡）</li>
+                    <li>已設定手機 Tesla App 並配對車輛</li>
+                    <li>已確認充電孔位置與充電方式</li>
+                    <li>已了解 eTag 申辦方式</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 鄰近超級充電站 -->
+        <div class="section">
+            <div class="section-title">鄰近超級充電站</div>
+            <div class="sc-card">
+                <div class="sc-icon">⚡</div>
+                <div class="sc-info">
+                    <div class="sc-name">Tesla 內湖超級充電站</div>
+                    <div class="sc-addr">台北市內湖區舊宗路二段 181 巷 2 號 B2</div>
+                </div>
+                <a class="sc-link" href="https://maps.google.com/?q=Tesla+內湖超級充電站" target="_blank" rel="noopener">導航</a>
+            </div>
+            <div class="sc-card">
+                <div class="sc-icon">⚡</div>
+                <div class="sc-info">
+                    <div class="sc-name">Tesla 南港超級充電站</div>
+                    <div class="sc-addr">台北市南港區忠孝東路七段 369 號 B3</div>
+                </div>
+                <a class="sc-link" href="https://maps.google.com/?q=Tesla+南港超級充電站" target="_blank" rel="noopener">導航</a>
+            </div>
+            <div class="sc-card">
+                <div class="sc-icon">⚡</div>
+                <div class="sc-info">
+                    <div class="sc-name">Tesla 信義超級充電站</div>
+                    <div class="sc-addr">台北市信義區松德路 25 號 B2</div>
+                </div>
+                <a class="sc-link" href="https://maps.google.com/?q=Tesla+信義超級充電站" target="_blank" rel="noopener">導航</a>
+            </div>
+        </div>
+
+        <!-- eTag 申辦 -->
+        <div class="section">
             <div class="section-title">eTag 申辦</div>
 
             <div class="etag-note">
@@ -915,6 +1252,21 @@
             </div>
         </div>
 
+        <!-- 客服專線 -->
+        <div class="section" style="padding-bottom:24px;">
+            <div class="section-title">Tesla 道路救援與客服</div>
+            <div class="contact-card" style="margin-bottom:12px;">
+                <div class="contact-card-label">道路救援專線</div>
+                <div class="contact-card-number"><a href="tel:0809-007-518">0809-007-518</a></div>
+                <div class="contact-card-sub">24 小時免費服務</div>
+            </div>
+            <div class="contact-card">
+                <div class="contact-card-label">Tesla 客服專線</div>
+                <div class="contact-card-number"><a href="tel:0809-007-518">0809-007-518</a></div>
+                <div class="contact-card-sub">服務時間 09:00 – 18:00</div>
+            </div>
+        </div>
+
         <div class="flow-congrats">
             <div class="flow-congrats-title">歡迎加入 Tesla Family</div>
             <div class="flow-congrats-sub">恭喜您即將展開屬於您的純電生活！</div>
@@ -931,6 +1283,16 @@
             });
             document.querySelectorAll('.tab-panel').forEach(p => {
                 p.classList.toggle('active', p.id === 'panel-' + tabId);
+            });
+        }
+
+        // ═══ 車型篩選 ═══
+        function filterModel(modelId) {
+            document.querySelectorAll('.model-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.model === modelId);
+            });
+            document.querySelectorAll('.acc-model-group').forEach(g => {
+                g.classList.toggle('active', g.id === 'acc-' + modelId);
             });
         }
 
