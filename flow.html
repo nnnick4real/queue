@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla 台北交付中心 | 交車流程</title>
+    <title>Tesla 台北交付中心 | 交付流程</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -704,9 +704,9 @@
 
     <!-- Tab 導覽 -->
     <div class="tab-bar">
-        <button class="tab-btn active" data-tab="flow" onclick="switchTab('flow')">流程</button>
-        <button class="tab-btn" data-tab="acc" onclick="switchTab('acc')">限定配件</button>
-        <button class="tab-btn" data-tab="info" onclick="switchTab('info')">離場資訊</button>
+        <button class="tab-btn active" data-tab="flow" onclick="switchTab('flow')">交付流程</button>
+        <button class="tab-btn" data-tab="acc" onclick="switchTab('acc')">原廠配件</button>
+        <button class="tab-btn" data-tab="info" onclick="switchTab('info')">啟程準備</button>
     </div>
 
     <!-- ═══════════ TAB 1: 流程 ═══════════ -->
@@ -718,12 +718,12 @@
             <div class="flow-map-wrap" id="flowMapWrap">
                 <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.parentElement.style.display='none';">
             </div>
-            <div class="map-hint" id="flowMapHint" style="display:none;">📍 紅點為您的車位位置</div>
+            <div class="map-hint" id="flowMapHint" style="display:none;">紅點為您的車位位置</div>
         </div>
 
         <!-- 流程時間軸 -->
         <div class="section">
-            <div class="section-title">流程時間</div>
+            <div class="section-title">交付流程</div>
             <div class="timeline" id="timeline"></div>
         </div>
 
@@ -731,22 +731,22 @@
         <div class="section" style="padding-bottom:24px;">
             <div class="section-title" style="margin-bottom:8px;">限定活動</div>
             <div class="info-card highlight">
-                <div class="info-card-title">📸 打卡發文 贈限量禮品</div>
+                <div class="info-card-title">打卡發布貼文 贈限量禮品</div>
                 <div class="info-card-desc">
-                    在交付中心拍照並現場 PO 文至社群平台<br>
+                    在交付中心拍照並現場發布貼文至社群平台<br>
                     出示貼文畫面即可兌換 <span class="info-card-highlight">Tesla 限量禮品</span><br>
-                    <span style="color:var(--gray-400);font-size:12px;">數量有限，兌完為止</span>
+                    <span style="color:var(--gray-400);font-size:12px;">數量有限，兌完為止 | 僅限現場兌換</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════ TAB 2: 限定配件 ═══════════ -->
+    <!-- ═══════════ TAB 2: 原廠配件 ═══════════ -->
     <div class="tab-panel" id="panel-acc">
         <div class="section" style="padding-bottom:24px;">
             <div class="info-card" style="margin-bottom:16px;">
                 <div class="info-card-desc" style="font-size:13px;">
-                    以下配件現場限量供應，可於教學完成或交車空檔時至配件區選購。<br>點擊商品可前往 Tesla Shop 查看詳情。
+                    原廠配件現場限量販售，可於 B4 配件區選購。<br>點擊商品即可前往 Tesla App 進行結帳。
                 </div>
             </div>
 
@@ -895,14 +895,14 @@
             <div class="section-title">eTag 申辦</div>
 
             <div class="etag-note">
-                ⚠️ 需由車主本人攜帶行照、證件開車前往辦理
+                需由車主本人攜帶行照、證件開車前往辦理
             </div>
 
             <div class="etag-card">
                 <div class="etag-title">車麗屋汽車百貨 內湖行忠店</div>
                 <div class="etag-addr">台北市內湖區行忠路 88 號</div>
                 <a class="etag-link" href="https://maps.google.com/?q=車麗屋汽車百貨內湖行忠店" target="_blank" rel="noopener">
-                    📍 開啟 Google Maps
+                    開啟 Google Maps
                 </a>
             </div>
 
@@ -910,14 +910,14 @@
                 <div class="etag-title">麗車坊汽車百貨 內湖門市</div>
                 <div class="etag-addr">台北市內湖區新湖三路 23 號</div>
                 <a class="etag-link" href="https://maps.google.com/?q=麗車坊汽車百貨內湖門市" target="_blank" rel="noopener">
-                    📍 開啟 Google Maps
+                    開啟 Google Maps
                 </a>
             </div>
         </div>
 
         <div class="flow-congrats">
-            <div class="flow-congrats-title">恭喜成為 Tesla 車主</div>
-            <div class="flow-congrats-sub">祝您用車愉快，歡迎加入 Tesla 大家庭</div>
+            <div class="flow-congrats-title">歡迎加入 Tesla Family</div>
+            <div class="flow-congrats-sub">恭喜您即將展開屬於您的純電生活！</div>
         </div>
     </div>
 
@@ -940,56 +940,56 @@
                 label: '10:00 場次',
                 allDone: '11:30',
                 steps: [
-                    { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '10:20', end: '10:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '10:30', end: '10:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '10:35', end: '10:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '10:45', end: '11:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '10:50', end: '11:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                    { time: '11:00', end: '11:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 11:10' },
+                    { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '10:20', end: '10:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '10:30', end: '10:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '10:35', end: '10:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '10:45', end: '11:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '10:50', end: '11:00', title: '配件選購 & 打卡活動', desc: '教學完成後可至配件區選購或參加現場打卡活動，領取限量贈品' },
+                    { time: '11:00', end: '11:10', title: '自由離場', desc: '完成車輛教學、配件選購後即可離場，本場次將於 11:10 結束' },
                 ]
             },
             12: {
                 label: '12:00 場次',
                 allDone: '13:30',
                 steps: [
-                    { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '12:20', end: '12:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '12:30', end: '12:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '12:35', end: '12:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '12:45', end: '13:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '12:50', end: '13:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                    { time: '13:00', end: '13:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 13:10' },
+                    { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '12:20', end: '12:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '12:30', end: '12:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '12:35', end: '12:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '12:45', end: '13:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '12:50', end: '13:00', title: '配件選購 & 打卡活動', desc: '教學完成後可至配件區選購或參加現場打卡活動，領取限量贈品' },
+                    { time: '13:00', end: '13:10', title: '自由離場', desc: '完成車輛教學、配件選購後即可離場，本場次將於 13:10 結束' },
                 ]
             },
             14: {
                 label: '14:00 場次',
                 allDone: '15:30',
                 steps: [
-                    { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '14:20', end: '14:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '14:30', end: '14:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '14:35', end: '14:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '14:45', end: '15:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '14:50', end: '15:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                    { time: '15:00', end: '15:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 15:10' },
+                    { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '14:20', end: '14:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '14:30', end: '14:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '14:35', end: '14:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '14:45', end: '15:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '14:50', end: '15:00', title: '配件選購 & 打卡活動', desc: '教學完成後可至配件區選購或參加現場打卡活動，領取限量贈品' },
+                    { time: '15:00', end: '15:10', title: '自由離場', desc: '完成車輛教學、配件選購後即可離場，本場次將於 15:10 結束' },
                 ]
             },
             16: {
                 label: '16:00 場次',
                 allDone: '17:30',
                 steps: [
-                    { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至門口處依序報到、領取資料' },
-                    { time: '16:20', end: '16:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '16:30', end: '16:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
-                    { time: '16:35', end: '16:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '16:45', end: '17:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
-                    { time: '16:50', end: '17:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
-                    { time: '17:00', end: '17:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 17:10' },
+                    { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
+                    { time: '16:20', end: '16:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '16:30', end: '16:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '16:35', end: '16:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
+                    { time: '16:45', end: '17:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
+                    { time: '16:50', end: '17:00', title: '配件選購 & 打卡活動', desc: '教學完成後可至配件區選購或參加現場打卡活動，領取限量贈品' },
+                    { time: '17:00', end: '17:10', title: '自由離場', desc: '完成車輛教學、配件選購後即可離場，本場次將於 17:10 結束' },
                 ]
             }
         };
@@ -1048,7 +1048,7 @@
                 hero.className = 'now-hero all-done';
                 document.getElementById('nowLabel').textContent = '流程已完成';
                 document.getElementById('nowTitle').textContent = '所有步驟已結束';
-                document.getElementById('nowDesc').textContent = '請確認車況無誤後即可離場';
+                document.getElementById('nowDesc').textContent = '完成車輛教學、配件選購後即可離場';
                 document.getElementById('nowTimeText').textContent = '已完成';
             } else if (activeStep) {
                 hero.className = 'now-hero';
@@ -1064,7 +1064,7 @@
                 document.getElementById('nowTimeText').textContent = nextStep.time + ' 開始';
             } else {
                 hero.className = 'now-hero';
-                document.getElementById('nowLabel').textContent = '交車流程導覽';
+                document.getElementById('nowLabel').textContent = '交付流程概覽';
                 document.getElementById('nowTitle').textContent = '今日行程一覽';
                 document.getElementById('nowDesc').textContent = '請查看下方流程表了解詳細時間';
                 document.getElementById('nowTimeText').textContent = session.label;
