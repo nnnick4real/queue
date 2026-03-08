@@ -801,7 +801,7 @@
             padding: 12px 16px;
             background: var(--gray-50);
             border-radius: var(--radius);
-            border-left: 3px solid var(--red);
+            border-left: 3px solid #2ecc71;
         }
 
         .nav-tip svg {
@@ -844,7 +844,7 @@
         .social-icon {
             width: 28px;
             height: 28px;
-            fill: var(--white);
+            fill: var(--red);
         }
 
         .social-label {
@@ -1590,7 +1590,7 @@
 
         <!-- 鄰近超級充電站 -->
         <div class="section">
-            <div class="accordion-header" onclick="this.parentElement.classList.toggle('accordion-open')">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
                 <div class="accordion-icon">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--red)">
                         <path
@@ -1631,7 +1631,7 @@
                     </div>
                 </div>
                 <div class="nav-tip">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--red)">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#2ecc71">
                         <path
                             d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z" />
                     </svg>
@@ -1642,7 +1642,7 @@
 
         <!-- eTag 申辦 -->
         <div class="section">
-            <div class="accordion-header" onclick="this.parentElement.classList.toggle('accordion-open')">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
                 <div class="accordion-icon">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--red)">
                         <path
@@ -1673,9 +1673,9 @@
             </div>
         </div>
 
-        <!-- 緊急開門教學 -->
+        <!-- 車門緊急開啟方式教學 -->
         <div class="section">
-            <div class="accordion-header" onclick="this.parentElement.classList.toggle('accordion-open')">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
                 <div class="accordion-icon">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--red)">
                         <path
@@ -1700,7 +1700,7 @@
                 </div>
                 <div class="sc-card">
                     <div class="sc-info">
-                        <div class="sc-name">Model S / X 車門緊急開啟方式</div>
+                        <div class="sc-name">Model S / X 車門緊急開啟方式教學</div>
                         <div class="sc-addr">當車輛斷電時，如何從內部手動開啟車門</div>
                         <a class="sc-link" href="https://www.instagram.com/reels/DByL5NXyHGV/" target="_blank"
                             rel="noopener">觀看影片</a>
@@ -1709,7 +1709,7 @@
             </div>
         </div>
 
-        <!-- ═══ Tesla 官方管道 ═══ -->
+        <!-- ═══ Tesla 官方社群 ═══ -->
         <div class="section">
             <div class="section-title">Tesla 官方社群</div>
             <div class="social-grid">
@@ -1753,6 +1753,16 @@
     <div class="flow-footer">© Tesla 台北交付中心</div>
 
     <script>
+        // ═══ Accordion 排他切換 ═══
+        function toggleAccordion(header) {
+            const section = header.parentElement;
+            const isOpen = section.classList.contains('accordion-open');
+            // 關閉所有手風琴
+            document.querySelectorAll('.accordion-open').forEach(el => el.classList.remove('accordion-open'));
+            // 若原本是關閉的，才打開當前
+            if (!isOpen) section.classList.add('accordion-open');
+        }
+
         // ═══ Tab 切換 ═══
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(b => {
