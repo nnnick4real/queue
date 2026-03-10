@@ -1,29 +1,13 @@
-<!--
-  Tesla 台北交付中心 | 統一交付體驗系統 v3.0
-  整合叫號 + 交付流程
-  Views: ?mode=kiosk (車主端) | ?mode=admin (管理端)
--->
 <!DOCTYPE html>
 <html lang="zh-TW">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla 台北交付中心 | 號碼牌系統</title>
-    <meta name="description" content="Tesla 台北交付中心數位號碼牌叫號系統">
+    <title>Tesla 台北交付中心 | 交車流程</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Firebase SDK (compat 版本) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <!-- QRCode.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
     <style>
-        /* ════════════════════════════════════════
-           Tesla Design System — Tesla.com 風格
-           ════════════════════════════════════════ */
         *,
         *::before,
         *::after {
@@ -48,9 +32,6 @@
             --radius: 8px;
             --radius-lg: 12px;
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-            --shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
         }
 
         body {
@@ -63,300 +44,29 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        .view {
-            display: none;
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-
-        .view.active {
-            display: flex;
-        }
-
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* ── Tesla Logo SVG ── */
-        .tesla-logo {
-            display: block;
-        }
-
-        /* ════════════════════════════════════════
-           CONFIG ERROR
-           ════════════════════════════════════════ */
-        #screen-error {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 40px 24px;
-            text-align: center;
-            background: var(--white);
-        }
-
-        #screen-error.active {
-            display: flex;
-        }
-
-        #screen-error h1 {
-            font-size: 22px;
-            font-weight: 500;
-            margin: 20px 0 12px;
-            color: var(--black);
-        }
-
-        #screen-error p {
-            color: var(--gray-600);
-            max-width: 480px;
-            line-height: 1.7;
-            font-size: 14px;
-        }
-
-        #screen-error code {
-            display: block;
-            background: var(--gray-100);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-top: 20px;
-            text-align: left;
-            font-size: 12px;
-            color: var(--gray-800);
-            white-space: pre;
-            overflow-x: auto;
-        }
-
-        /* ════════════════════════════════════════
-           共用元件
-           ════════════════════════════════════════ */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: inherit;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: var(--transition);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            letter-spacing: 0.3px;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        /* Tesla 主要按鈕 — 黑底白字 */
-        .btn-primary {
-            background: var(--black);
-            color: var(--white);
-            padding: 13px 28px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .btn-primary:hover {
-            background: #222;
-        }
-
-        /* Tesla 次要按鈕 — 白底黑框 */
-        .btn-secondary {
-            background: var(--white);
-            color: var(--black);
-            padding: 13px 28px;
-            border: 1px solid var(--black);
-            font-size: 14px;
-        }
-
-        .btn-secondary:hover {
-            background: var(--gray-100);
-        }
-
-        /* 小型按鈕 */
-        .btn-sm {
-            padding: 9px 18px;
-            font-size: 13px;
-        }
-
-        /* 危險按鈕 */
-        .btn-danger {
-            background: transparent;
-            color: var(--red);
-            padding: 13px 28px;
-            border: 1px solid var(--red);
-        }
-
-        .btn-danger:hover {
-            background: rgba(232, 33, 39, 0.06);
-        }
-
-        /* 紅色主按鈕 */
-        .btn-red {
-            background: var(--red);
-            color: var(--white);
-            padding: 13px 28px;
-        }
-
-        .btn-red:hover {
-            background: var(--red-dark);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .badge-green {
-            background: rgba(62, 145, 66, 0.1);
-            color: var(--green);
-        }
-
-        .badge-red {
-            background: rgba(232, 33, 39, 0.1);
-            color: var(--red);
-        }
-
-        .badge-gray {
-            background: var(--gray-100);
-            color: var(--gray-600);
-        }
-
-        /* ════════════════════════════════════════
-           KIOSK / 車主端
-           ════════════════════════════════════════ */
-        #view-kiosk {
-            flex-direction: column;
-            background: var(--white);
-        }
-
-        /* ── 頂部導覽 ── */
-        .kiosk-nav {
+        /* ═══ Nav ═══ */
+        .flow-nav {
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px 24px;
             border-bottom: 1px solid var(--gray-200);
-            position: relative;
-        }
-
-        /* ── 領號畫面 ── */
-        #kiosk-landing {
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-
-        .hero-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 24px 40px;
-            text-align: center;
+            position: sticky;
+            top: 0;
             background: var(--white);
+            z-index: 10;
         }
 
-        .hero-eyebrow {
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            color: var(--gray-600);
-            margin-bottom: 16px;
-        }
-
-        .hero-title {
-            font-size: clamp(28px, 7vw, 48px);
-            font-weight: 300;
-            color: var(--black);
-            letter-spacing: -0.5px;
-            line-height: 1.15;
-            margin-bottom: 12px;
-        }
-
-        .hero-subtitle {
-            font-size: 16px;
-            color: var(--gray-600);
-            font-weight: 400;
-            margin-bottom: 48px;
-        }
-
-        /* 大型CTA按鈕 — Tesla官網風格 */
-        .btn-cta {
-            background: var(--black);
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: inherit;
+        .flow-nav-text {
             font-size: 15px;
             font-weight: 500;
-            padding: 16px 48px;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: 0.3px;
-            min-width: 220px;
-            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 1px;
         }
 
-        .btn-cta:hover {
-            background: #222;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow);
-        }
-
-        .btn-cta:active {
-            transform: scale(0.97) translateY(0);
-        }
-
-        .hero-note {
-            margin-top: 20px;
-            font-size: 12px;
-            color: var(--gray-400);
-        }
-
-        /* 底部資訊欄 */
-        .kiosk-footer-bar {
-            padding: 20px 24px;
-            border-top: 1px solid var(--gray-200);
-            text-align: center;
-            font-size: 12px;
-            color: var(--gray-400);
-        }
-
-        /* ── 等待畫面 ── */
-        #kiosk-waiting {
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-
-        .waiting-nav {
+        /* ═══ Hero ═══ */
+        .flow-hero {
             width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .ticket-hero {
-            width: 100%;
-            padding: 48px 24px 32px;
+            padding: 40px 24px 32px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -364,743 +74,335 @@
             border-bottom: 1px solid var(--gray-200);
         }
 
-        .ticket-label {
+        .flow-hero-label {
             font-size: 11px;
             font-weight: 600;
             letter-spacing: 3px;
             text-transform: uppercase;
             color: var(--gray-400);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .ticket-number {
-            font-size: clamp(72px, 20vw, 120px);
+        .flow-hero-title {
+            font-size: clamp(24px, 6vw, 36px);
             font-weight: 300;
             color: var(--black);
-            letter-spacing: -4px;
-            line-height: 1;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 12px;
         }
 
-        .ticket-number-prefix {
-            font-size: 0.35em;
-            font-weight: 400;
-            letter-spacing: 0;
-            color: var(--gray-400);
-            vertical-align: super;
-            margin-right: 4px;
-        }
-
-        /* 進度條 */
-        .progress-wrap {
-            width: 100%;
-            max-width: 480px;
-            padding: 0 24px;
-            margin-top: 20px;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 2px;
-            background: var(--gray-200);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
+        .flow-session-badge {
+            display: inline-block;
             background: var(--black);
-            border-radius: 2px;
-            transition: width 0.8s ease;
-            width: 0%;
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 1px;
         }
 
-        /* 統計卡片 */
-        .stats-row {
-            display: flex;
-            width: 100%;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .stat-item {
-            flex: 1;
-            padding: 24px 16px;
-            text-align: center;
-            border-right: 1px solid var(--gray-200);
-        }
-
-        .stat-item:last-child {
-            border-right: none;
-        }
-
-        .stat-label {
+        /* ═══ Section label ═══ */
+        .section-label {
             font-size: 10px;
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--gray-400);
-            margin-bottom: 6px;
+            padding: 24px 24px 14px;
         }
 
-        .stat-value {
-            font-size: 24px;
-            font-weight: 300;
-            color: var(--black);
-            letter-spacing: -0.5px;
+        /* ═══ Timeline ═══ */
+        .timeline {
+            padding: 0 24px 24px;
         }
 
-        .stat-value.highlight {
-            color: var(--red);
-        }
-
-        .stat-value.green {
-            color: var(--green);
-        }
-
-        .wake-notice {
-            margin: 20px 24px 0;
-            padding: 14px 18px;
-            background: var(--gray-100);
-            border-radius: var(--radius);
-            font-size: 12px;
-            color: var(--gray-600);
+        .tl-item {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            max-width: 480px;
-            width: calc(100% - 48px);
+            gap: 14px;
         }
 
-        .wake-notice-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--green);
+        .tl-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 16px;
             flex-shrink: 0;
+            padding-top: 16px;
         }
 
-        /* ── 叫號畫面 ── */
-        #kiosk-called {
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-            text-align: center;
-            padding: 40px 24px;
-            background: var(--black);
-            color: var(--white);
-            animation: called-bg-pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes called-bg-pulse {
-
-            0%,
-            100% {
-                background: #171a20;
-            }
-
-            50% {
-                background: #1f0507;
-            }
-        }
-
-        .called-badge {
-            display: inline-block;
-            background: var(--red);
-            color: var(--white);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            padding: 8px 20px;
-            border-radius: 20px;
-            margin-bottom: 32px;
-            animation: called-badge-appear 0.5s ease;
-        }
-
-        @keyframes called-badge-appear {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .called-title {
-            font-size: clamp(28px, 8vw, 48px);
-            font-weight: 300;
-            letter-spacing: -1px;
-            line-height: 1.2;
-            margin-bottom: 8px;
-        }
-
-        .called-sub {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 48px;
-        }
-
-        .called-number {
-            font-size: clamp(80px, 22vw, 140px);
-            font-weight: 200;
-            letter-spacing: -6px;
-            line-height: 1;
-            color: var(--white);
-        }
-
-        .called-number-hash {
-            font-size: 0.35em;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 0;
-            vertical-align: super;
-            margin-right: 4px;
-        }
-
-        /* ════════════════════════════════════════
-           ADMIN / 管理端
-           ════════════════════════════════════════ */
-        #view-admin {
-            flex-direction: column;
-            min-height: 100vh;
+        .tl-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-200);
             background: var(--white);
+            flex-shrink: 0;
+            z-index: 2;
         }
 
-        /* ── 密碼鎖 ── */
-        #admin-lock {
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            gap: 28px;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .admin-lock-title {
-            font-size: 22px;
-            font-weight: 300;
-            letter-spacing: -0.5px;
-            margin-top: 16px;
-        }
-
-        .admin-lock-sub {
-            font-size: 14px;
-            color: var(--gray-600);
-        }
-
-        .input-field {
-            width: 100%;
-            max-width: 320px;
-            padding: 13px 16px;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-sm);
-            color: var(--black);
-            font-size: 15px;
-            font-family: inherit;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .input-field:focus {
-            border-color: var(--black);
-        }
-
-        .input-group {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            max-width: 320px;
-        }
-
-        .input-group .input-field {
+        .tl-line {
+            width: 1px;
             flex: 1;
-            max-width: none;
+            background: var(--gray-200);
         }
 
-        .pwd-error {
-            color: var(--red);
-            font-size: 12px;
+        .tl-item:last-child .tl-line {
             display: none;
         }
 
-        /* ── 管理面板 ── */
-        #admin-panel {
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .admin-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            height: 64px;
+        .tl-card {
+            flex: 1;
+            padding: 14px 0;
             border-bottom: 1px solid var(--gray-200);
-            background: var(--white);
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
-        .admin-header-title {
+        .tl-item:last-child .tl-card {
+            border-bottom: none;
+        }
+
+        .tl-time {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+
+        .tl-title {
             font-size: 15px;
             font-weight: 500;
             color: var(--black);
+            margin-bottom: 3px;
         }
 
-        .admin-body {
-            padding: 32px;
-            flex: 1;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* 統計卡片 */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1px;
-            background: var(--gray-200);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 28px 24px;
-            text-align: center;
-        }
-
-        .stat-card-label {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--gray-400);
-            margin-bottom: 8px;
-        }
-
-        .stat-card-value {
-            font-size: 23px;
-            font-weight: 300;
-            letter-spacing: 0;
-            color: var(--black);
-            white-space: nowrap;
-        }
-
-        .stat-card-value.num-only {
-            font-size: 20px;
-            font-weight: 200;
-            letter-spacing: -2px;
-        }
-
-        .stat-card-value.red {
-            color: var(--red);
-        }
-
-        .stat-card-value.amber {
-            color: var(--amber);
-        }
-
-        /* 區塊 */
-        .admin-section {
-            margin-bottom: 40px;
-        }
-
-        .admin-section-title {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--gray-400);
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .action-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .batch-input {
-            width: 64px;
-            padding: 9px 10px;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-sm);
-            color: var(--black);
-            font-size: 14px;
-            text-align: center;
-            font-family: inherit;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .batch-input:focus {
-            border-color: var(--black);
-        }
-
-        /* QR Section */
-        .qr-section {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .qr-box {
-            padding: 16px;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius);
-            display: inline-block;
-        }
-
-        .qr-url {
+        .tl-desc {
             font-size: 12px;
-            color: var(--gray-400);
-            word-break: break-all;
-        }
-
-        /* Admin footer */
-        .admin-footer {
-            padding: 16px 32px;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--gray-400);
-        }
-
-        .connection-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-        }
-
-        .status-dot.online {
-            background: var(--green);
-        }
-
-        .status-dot.offline {
-            background: var(--red);
-        }
-
-        /* Divider */
-        .divider {
-            height: 1px;
-            background: var(--gray-200);
-            margin: 32px 0;
-        }
-
-
-        /* ════════════════════════════════════════
-           Modal
-           ════════════════════════════════════════ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-box {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 40px 32px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .modal-icon {
-            font-size: 32px;
-            margin-bottom: 16px;
-        }
-
-        .modal-box h3 {
-            font-size: 20px;
-            font-weight: 400;
-            letter-spacing: -0.3px;
-            margin-bottom: 10px;
-        }
-
-        .modal-box p {
             color: var(--gray-600);
-            margin-bottom: 28px;
-            font-size: 14px;
             line-height: 1.6;
         }
 
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
+        .tl-item.done .tl-dot {
+            background: var(--green);
+            border-color: var(--green);
         }
 
-        /* ════════════════════════════════════════
-           Animations
-           ════════════════════════════════════════ */
-        .fade-in {
-            animation: fadeIn 0.4s ease;
+        .tl-item.done .tl-title,
+        .tl-item.done .tl-desc,
+        .tl-item.done .tl-time {
+            opacity: 0.4;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .tl-item.active .tl-dot {
+            background: var(--red);
+            border-color: var(--red);
+            box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15);
+            animation: activePulse 2s ease-in-out infinite;
         }
 
-        /* ════════════════════════════════════════
-           Phase 4: Waiting Screen Enhancements
-           ════════════════════════════════════════ */
-        .waiting-card {
-            margin: 12px 24px;
+        @keyframes activePulse {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(232, 33, 39, 0.15); }
+            50% { box-shadow: 0 0 0 8px rgba(232, 33, 39, 0.06); }
+        }
+
+        .tl-item.active .tl-time {
+            color: var(--red);
+        }
+
+        .tl-item.active .tl-title {
+            font-weight: 600;
+        }
+
+        .tl-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+        }
+
+        .tl-badge.now {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .tl-badge.completed {
+            background: var(--gray-100);
+            color: var(--gray-400);
+        }
+
+        /* ═══ Divider ═══ */
+        .flow-divider {
+            height: 8px;
+            background: var(--gray-100);
+        }
+
+        /* ═══ Card ═══ */
+        .flow-card {
+            margin: 0 24px;
             padding: 16px 20px;
             background: var(--gray-100);
             border-radius: var(--radius);
-            max-width: 480px;
-            width: calc(100% - 48px);
         }
 
-        .waiting-card-title {
+        .flow-card-title {
             font-weight: 600;
             color: var(--black);
-            margin-bottom: 10px;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .delivery-list-scroll {
-            max-height: 200px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .delivery-list-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .delivery-list-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .delivery-list-scroll::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 4px;
-        }
-
-        .dl-table {
-            width: 100%;
-            border-collapse: collapse;
+        .flow-card-desc {
             font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.7;
         }
 
-        .dl-table th {
-            text-align: left;
-            color: var(--gray-500);
-            font-weight: 500;
-            font-size: 11px;
-            padding: 4px 8px 8px;
-            border-bottom: 1px solid var(--gray-200);
-            letter-spacing: 0.5px;
-        }
-
-        .dl-table td {
-            padding: 6px 8px;
-            color: var(--gray-700);
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .dl-table td:first-child {
+        .flow-card-highlight {
             color: var(--red);
             font-weight: 600;
-            width: 36px;
         }
 
-        .dl-table td:nth-child(2) {
-            color: var(--gray-500);
+        /* ═══ 配件 ═══ */
+        .acc-list {
+            margin: 0 24px;
+        }
+
+        .acc-group-label {
             font-size: 12px;
-            width: 48px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            padding: 16px 0 8px;
         }
 
-        .waiting-map-img {
-            width: 100%;
-            border-radius: var(--radius);
-            margin-top: 4px;
+        .acc-group-label:first-child {
+            padding-top: 0;
         }
 
-        /* ════════════════════════════════════════
-           Order Search + Map Highlight
-           ════════════════════════════════════════ */
-        .search-section {
-            margin: 16px 24px;
-            max-width: 480px;
-            width: calc(100% - 48px);
+        .acc-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            gap: 12px;
         }
 
-        .search-card {
+        .acc-row:last-child {
+            border-bottom: none;
+        }
+
+        .acc-img {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-100);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .acc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .acc-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--black);
+        }
+
+        .acc-sub {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-top: 1px;
+        }
+
+        .acc-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--red);
+            margin-top: 2px;
+        }
+
+        /* ═══ ETAG ═══ */
+        .etag-card {
+            margin: 0 24px;
+            padding: 16px 20px;
             background: var(--gray-100);
             border-radius: var(--radius);
-            padding: 16px 20px;
         }
 
-        .search-card-title {
+        .etag-title {
             font-weight: 600;
+            color: var(--black);
             font-size: 14px;
-            color: var(--black);
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
-        .search-input-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 12px 14px;
-            border: 1.5px solid var(--gray-200);
-            border-radius: var(--radius);
-            font-size: 15px;
-            font-family: 'Inter', sans-serif;
-            color: var(--black);
-            background: var(--white);
-            outline: none;
-            transition: border-color 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .search-input:focus {
-            border-color: var(--red);
-        }
-
-        .search-input::placeholder {
-            color: var(--gray-400);
-            text-transform: none;
-            letter-spacing: 0;
+        .etag-addr {
             font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 12px;
         }
 
-        .search-btn {
-            padding: 12px 20px;
+        .etag-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             background: var(--black);
             color: var(--white);
-            border: none;
-            border-radius: var(--radius);
-            font-size: 14px;
-            font-weight: 500;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .search-btn:active {
-            opacity: 0.7;
-        }
-
-        /* Result */
-        .search-result {
-            margin-top: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius);
-            display: none;
-        }
-
-        .search-result.found {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: linear-gradient(135deg, rgba(232, 33, 39, 0.06), rgba(232, 33, 39, 0.02));
-            border: 1px solid rgba(232, 33, 39, 0.15);
-        }
-
-        .search-result.not-found {
-            display: block;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
-        }
-
-        .result-spot {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--red);
-            white-space: nowrap;
-        }
-
-        .result-spot-label {
+            font-family: inherit;
             font-size: 13px;
-            color: var(--gray-500);
-            white-space: nowrap;
-        }
-
-        .result-name {
-            font-size: 15px;
-            color: var(--black);
             font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            letter-spacing: 0.3px;
         }
 
-        .result-not-found-text {
+        /* ═══ 恭喜 ═══ */
+        .flow-congrats {
+            text-align: center;
+            padding: 48px 24px 60px;
+        }
+
+        .flow-congrats-title {
+            font-size: clamp(22px, 5vw, 32px);
+            font-weight: 300;
+            color: var(--black);
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .flow-congrats-sub {
             font-size: 14px;
-            color: var(--gray-600);
+            color: var(--gray-400);
+            line-height: 1.7;
         }
 
-        /* ════════════════════════════════════════
-           Interactive Map with Spot Highlighting
-           ════════════════════════════════════════ */
-        .map-interactive {
+        .flow-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        /* ═══ 地圖 + 車位標記 ═══ */
+        .flow-map-wrap {
             position: relative;
-            margin-top: 12px;
+            background: var(--gray-100);
             border-radius: var(--radius);
             overflow: hidden;
-            background: #000;
         }
 
-        .map-interactive img {
-            width: 100%;
-            display: block;
-        }
-
-        /* 車位標記 — 脈衝動畫 */
         .spot-marker {
             position: absolute;
             transform: translate(-50%, -50%);
@@ -1108,7 +410,6 @@
             z-index: 5;
         }
 
-        /* 核心紅點 */
         .spot-marker-dot {
             width: 16px;
             height: 16px;
@@ -1122,23 +423,11 @@
         }
 
         @keyframes spotBounceIn {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            60% {
-                transform: scale(1.3);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 外圈脈衝波紋 */
         .spot-marker-pulse {
             position: absolute;
             top: 50%;
@@ -1152,29 +441,14 @@
             z-index: 2;
         }
 
-        .spot-marker-pulse:nth-child(2) {
-            animation-delay: 0.6s;
-        }
-
-        .spot-marker-pulse:nth-child(3) {
-            animation-delay: 1.2s;
-        }
+        .spot-marker-pulse:nth-child(2) { animation-delay: 0.6s; }
+        .spot-marker-pulse:nth-child(3) { animation-delay: 1.2s; }
 
         @keyframes spotPulse {
-            0% {
-                width: 16px;
-                height: 16px;
-                opacity: 0.8;
-            }
-
-            100% {
-                width: 56px;
-                height: 56px;
-                opacity: 0;
-            }
+            0% { width: 16px; height: 16px; opacity: 0.8; }
+            100% { width: 56px; height: 56px; opacity: 0; }
         }
 
-        /* 車位號碼標籤 */
         .spot-marker-label {
             position: absolute;
             bottom: calc(100% + 6px);
@@ -1187,7 +461,6 @@
             padding: 3px 8px;
             border-radius: 4px;
             white-space: nowrap;
-            letter-spacing: 0.5px;
             box-shadow: 0 2px 8px rgba(232, 33, 39, 0.4);
             animation: spotLabelIn 0.4s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
             z-index: 4;
@@ -1204,1404 +477,298 @@
         }
 
         @keyframes spotLabelIn {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(4px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
-
-        /* 地圖滾動提示 */
-        .map-scroll-hint {
-            text-align: center;
-            font-size: 11px;
-            color: var(--gray-400);
-            margin-top: 6px;
-            animation: fadeIn 0.5s 0.8s both;
-        }
-
-        /* ════════════════════════════════════════
-           Animations
-           ════════════════════════════════════════ */
-
-        /* ════════════════════════════════════════
-           Responsive
-           ════════════════════════════════════════ */
-        @media (max-width: 480px) {
-            .spot-marker-dot {
-                width: 14px;
-                height: 14px;
-            }
-
-            .spot-marker-label {
-                font-size: 10px;
-                padding: 2px 6px;
-            }
-        }
-
-        /* ═══ Flow styles (merged from flow.html) ═══ */
-        .flow-content-area { background: #fafafa; }
-        .flow-tab-bar { display:flex; gap:0; background:var(--white); border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:40; }
-        .flow-tab-btn { flex:1; padding:14px 0; text-align:center; font-family:inherit; font-size:13px; font-weight:500; color:var(--gray-400); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:var(--transition); letter-spacing:0.5px; }
-        .flow-tab-btn.active { color:var(--black); font-weight:600; border-bottom-color:var(--red); }
-        .flow-tab-panel { display:none; }
-        .flow-tab-panel.active { display:block; }
-
-        .now-hero-mini { background:var(--white); padding:16px 24px 12px; text-align:center; border-bottom:1px solid var(--gray-200); }
-        .now-hero-mini .now-hero-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--red); margin-bottom:4px; }
-        .now-hero-mini .now-hero-title { font-size:16px; font-weight:500; color:var(--black); margin-bottom:2px; }
-        .now-hero-mini .now-hero-desc { font-size:12px; color:var(--gray-600); }
-        .now-hero-mini .now-hero-time { display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:11px; font-weight:500; color:var(--gray-600); background:var(--gray-100); padding:4px 12px; border-radius:20px; }
-        .now-hero-mini .now-hero-time .dot { width:5px; height:5px; border-radius:50%; background:var(--red); animation:heroPulse 2s ease-in-out infinite; }
-        .now-hero-mini.all-done .now-hero-label { color:var(--green); }
-        .now-hero-mini.all-done .now-hero-time .dot { background:var(--green); animation:none; }
-        @keyframes heroPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-        .ticket-hero-mini { background:var(--white); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-200); }
-        .ticket-mini-left { display:flex; align-items:center; gap:12px; }
-        .ticket-mini-label { font-size:10px; font-weight:600; letter-spacing:1.5px; color:var(--gray-400); text-transform:uppercase; }
-        .ticket-mini-number { font-size:28px; font-weight:300; color:var(--black); letter-spacing:-2px; }
-        .ticket-mini-number .prefix { font-size:12px; color:var(--gray-400); letter-spacing:0; margin-right:2px; }
-        .ticket-mini-number .suffix { font-size:14px; font-weight:300; color:var(--black); }
-        .ticket-mini-status { text-align:right; }
-        .ticket-mini-status-label { font-size:10px; font-weight:600; letter-spacing:1px; color:var(--gray-400); }
-        .ticket-mini-status-value { font-size:14px; font-weight:500; color:var(--red); }
-
-        .called-overlay { display:none; position:fixed; inset:0; z-index:200; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 24px; background:var(--black); color:var(--white); animation:called-bg-pulse 2s ease-in-out infinite; }
-        .called-overlay.active { display:flex; }
-        .called-overlay .btn-back-flow { display:inline-block; margin-top:24px; padding:14px 36px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); border-radius:6px; color:#fff; font-family:inherit; font-size:14px; font-weight:500; text-decoration:none; letter-spacing:0.5px; cursor:pointer; transition:all 0.2s; }
-        .called-overlay .btn-back-flow:hover { background:rgba(255,255,255,0.25); }
-
-        .section { padding:20px 20px 0; }
-        .section-title { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--gray-400); padding:0 4px; margin-bottom:12px; }
-        .timeline { padding:0 4px; }
-        .tl-item { display:flex; gap:14px; }
-        .tl-left { display:flex; flex-direction:column; align-items:center; width:16px; flex-shrink:0; padding-top:16px; }
-        .tl-dot { width:10px; height:10px; border-radius:50%; border:2px solid var(--gray-200); background:var(--white); flex-shrink:0; z-index:2; transition:var(--transition); }
-        .tl-line { width:1px; flex:1; background:var(--gray-200); }
-        .tl-item:last-child .tl-line { display:none; }
-        .tl-card { flex:1; padding:14px 0; border-bottom:1px solid var(--gray-100); }
-        .tl-item:last-child .tl-card { border-bottom:none; }
-        .tl-time { font-size:11px; font-weight:600; letter-spacing:1px; color:var(--gray-400); margin-bottom:4px; }
-        .tl-title { font-size:15px; font-weight:500; color:var(--black); margin-bottom:3px; }
-        .tl-desc { font-size:12px; color:var(--gray-600); line-height:1.6; }
-        .tl-item.done .tl-dot { background:var(--green); border-color:var(--green); }
-        .tl-item.done .tl-title, .tl-item.done .tl-desc, .tl-item.done .tl-time { opacity:0.4; }
-        .tl-item.active .tl-dot { background:var(--red); border-color:var(--red); box-shadow:0 0 0 4px rgba(232,33,39,0.15); animation:activePulse 2s ease-in-out infinite; }
-        @keyframes activePulse { 0%,100%{box-shadow:0 0 0 4px rgba(232,33,39,0.15)} 50%{box-shadow:0 0 0 8px rgba(232,33,39,0.06)} }
-        .tl-item.active .tl-time { color:var(--red); }
-        .tl-item.active .tl-title { font-weight:600; }
-        .tl-badge { display:inline-block; font-size:10px; font-weight:600; letter-spacing:1px; padding:3px 10px; border-radius:20px; margin-top:6px; }
-        .tl-badge.now { background:var(--red); color:var(--white); }
-        .tl-badge.completed { background:var(--gray-100); color:var(--gray-400); }
-
-        .info-card { background:var(--white); border-radius:var(--radius-lg); padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06); border:1px solid var(--gray-100); }
-        .info-card.highlight { background:rgba(232,33,39,0.08); border-color:rgba(232,33,39,0.18); }
-        .info-card-title { font-weight:600; color:var(--black); font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
-        .info-card-desc { font-size:13px; color:var(--gray-600); line-height:1.8; }
-        .info-card-highlight { color:var(--red); font-weight:600; }
-
-        .flow-map-wrap { position:relative; background:var(--gray-100); border-radius:var(--radius-lg); overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
-        .flow-map-wrap img { width:100%; display:block; }
-        .map-hint { text-align:center; font-size:11px; color:var(--gray-400); margin-top:8px; }
-
-        .acc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 4px; }
-        .acc-card { display:flex; flex-direction:column; background:var(--white); border-radius:var(--radius-lg); overflow:hidden; text-decoration:none; color:inherit; box-shadow:0 1px 3px rgba(0,0,0,0.06); border:1px solid var(--gray-100); transition:var(--transition); position:relative; }
-        .acc-card:active { transform:scale(0.98); }
-        .acc-card-img { width:100%; aspect-ratio:1; object-fit:contain; background:var(--gray-100); padding:8px; }
-        .acc-card-tag { position:absolute; top:8px; left:8px; background:var(--red); color:var(--white); font-size:10px; font-weight:700; padding:4px 8px; border-radius:4px; letter-spacing:0.3px; line-height:1.4; z-index:2; text-align:center; }
-        .acc-card-body { padding:10px 12px 12px; flex:1; display:flex; flex-direction:column; }
-        .acc-card-name { font-size:13px; font-weight:500; color:var(--black); line-height:1.4; margin-bottom:2px; }
-        .acc-card-sub { font-size:11px; color:var(--gray-400); margin-bottom:auto; }
-        .acc-card-price { font-size:13px; font-weight:600; color:var(--red); margin-top:6px; }
-        .acc-group-title { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gray-400); padding:20px 4px 10px; }
-        .acc-group-title:first-child { padding-top:0; }
-
-        .model-filter { display:flex; gap:8px; padding:0 4px; margin-bottom:16px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
-        .model-filter::-webkit-scrollbar { display:none; }
-        .model-btn { flex:1; min-width:0; padding:10px 0; text-align:center; font-family:inherit; font-size:13px; font-weight:500; color:var(--gray-600); background:var(--white); border:1.5px solid var(--gray-200); border-radius:var(--radius); cursor:pointer; transition:var(--transition); letter-spacing:0.3px; white-space:nowrap; }
-        .model-btn:active { transform:scale(0.97); }
-        .model-btn.active { color:var(--white); background:var(--black); border-color:var(--black); font-weight:600; }
-        .acc-model-group { display:none; }
-        .acc-model-group.active { display:block; }
-
-        .checklist { list-style:none; padding:0; margin:0; }
-        .checklist li { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--gray-100); font-size:14px; color:var(--black); line-height:1.4; cursor:pointer; user-select:none; }
-        .checklist li:last-child { border-bottom:none; }
-        .checklist li .ck-box { width:22px; height:22px; border-radius:6px; border:2px solid #ccc; background:var(--gray-100); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:var(--transition); }
-        .checklist li .ck-box svg { width:14px; height:14px; fill:#ccc; transition:var(--transition); }
-        .checklist li.checked .ck-box { background:var(--green); border-color:var(--green); }
-        .checklist li.checked .ck-box svg { fill:var(--white); }
-        .checklist li.checked .ck-text { color:var(--gray-400); }
-
-        .accordion-header { display:flex; align-items:center; gap:12px; padding:16px 20px; background:var(--white); border-radius:var(--radius-lg); border:1px solid var(--gray-100); box-shadow:0 1px 3px rgba(0,0,0,0.06); cursor:pointer; transition:var(--transition); -webkit-tap-highlight-color:transparent; }
-        .accordion-header:active { transform:scale(0.98); }
-        .accordion-icon { flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-        .accordion-title { flex:1; font-size:15px; font-weight:600; color:var(--black); }
-        .accordion-arrow { flex-shrink:0; display:flex; align-items:center; color:var(--gray-400); transition:transform 0.3s ease; }
-        .accordion-open .accordion-arrow { transform:rotate(180deg); }
-        .accordion-body { max-height:0; overflow:hidden; transition:max-height 0.35s ease, padding 0.35s ease; padding:0; }
-        .accordion-open .accordion-body { max-height:800px; padding-top:12px; }
-        .accordion-open .accordion-header { border-color:var(--red); box-shadow:0 0 0 1px rgba(232,33,39,0.15); }
-
-        .nav-tip { display:flex; align-items:flex-start; gap:8px; margin-top:12px; padding:10px 14px; font-size:12px; font-weight:500; line-height:1.6; color:#27ae60; background:rgba(46,204,113,0.08); border-radius:var(--radius); border:1px solid rgba(46,204,113,0.25); }
-        .nav-tip svg { flex-shrink:0; margin-top:2px; }
-        .nav-tip span { font-size:12px; color:var(--gray-600); line-height:1.6; }
-
-        .social-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-        .social-card { display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 8px 16px; background:var(--black); border-radius:var(--radius-lg); text-decoration:none; color:var(--white); transition:var(--transition); }
-        .social-card:active { transform:scale(0.96); opacity:0.9; }
-        .social-icon { width:28px; height:28px; fill:var(--white); }
-        .social-label { font-size:12px; font-weight:600; color:var(--white); text-align:center; }
-        .social-sub { font-size:10px; color:rgba(255,255,255,0.6); text-align:center; }
-        .social-meta { font-size:9px; color:rgba(255,255,255,0.4); text-align:center; margin-top:2px; }
-
-        .sc-card { background:var(--white); border-radius:var(--radius-lg); padding:16px 20px; box-shadow:0 1px 3px rgba(0,0,0,0.06); border:1px solid var(--gray-100); margin-bottom:10px; display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; }
-        .sc-info { flex:1; min-width:0; }
-        .sc-name { font-size:14px; font-weight:600; color:var(--black); margin-bottom:2px; }
-        .sc-addr { font-size:12px; color:var(--gray-400); line-height:1.4; }
-        .sc-hours { font-size:11px; color:var(--gray-400); margin-top:2px; }
-        .sc-link { display:inline-flex; align-items:center; gap:6px; background:var(--black); color:var(--white); font-family:inherit; font-size:12px; font-weight:500; padding:8px 16px; border-radius:var(--radius-sm); text-decoration:none; letter-spacing:0.3px; transition:var(--transition); margin-top:8px; }
-        .sc-link:active { opacity:0.7; }
-
-        .etag-card { background:var(--white); border-radius:var(--radius-lg); padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.06); border:1px solid var(--gray-100); margin-bottom:12px; }
-        .etag-title { font-weight:600; color:var(--black); font-size:15px; margin-bottom:4px; }
-        .etag-addr { font-size:13px; color:var(--gray-600); line-height:1.6; margin-bottom:10px; }
-        .etag-link { display:inline-flex; align-items:center; gap:6px; background:var(--black); color:var(--white); font-family:inherit; font-size:12px; font-weight:500; padding:8px 16px; border-radius:var(--radius-sm); text-decoration:none; letter-spacing:0.3px; transition:var(--transition); }
-        .etag-link:active { opacity:0.7; }
-        .etag-note { font-size:12px; color:var(--red); font-weight:500; line-height:1.6; padding:10px 14px; background:rgba(232,33,39,0.08); border-radius:var(--radius); border:1px solid rgba(232,33,39,0.18); margin-bottom:16px; }
-
-        .contact-card { background:var(--black); color:var(--white); border-radius:var(--radius-lg); padding:16px 20px; text-align:center; }
-        .contact-card-label { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
-        .contact-card-number { font-size:20px; font-weight:300; letter-spacing:1px; }
-        .contact-card-number a { color:var(--white); text-decoration:none; }
-
-        .flow-congrats { text-align:center; padding:48px 24px 60px; background:var(--white); }
-        .flow-congrats-title { font-size:clamp(22px,5vw,32px); font-weight:300; color:var(--black); letter-spacing:-0.5px; line-height:1.3; margin-bottom:8px; }
-        .flow-congrats-sub { font-size:14px; color:var(--gray-400); line-height:1.7; }
-
-        .flow-map-wrap .spot-marker { position:absolute; transform:translate(-50%,-50%); pointer-events:none; z-index:5; }
-        @media (max-width:360px) { .acc-grid { grid-template-columns:1fr; } }
-
     </style>
 </head>
 
 <body>
 
-    <!-- CONFIG ERROR -->
-    <div id="screen-error">
-        <h1>Firebase 尚未設定</h1>
-        <p>請開啟 <strong>index.html</strong>，找到 <code>firebaseConfig</code> 區塊，填入您的 Firebase 設定值。</p>
-        <code>const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "...",
-    databaseURL: "...",
-    ...
-};</code>
-        <p style="margin-top:16px;font-size:13px;">詳細步驟請參考 <strong>SETUP_GUIDE.md</strong></p>
+    <div class="flow-nav">
+        <span class="flow-nav-text">Tesla 台北交付中心</span>
     </div>
 
-    <!-- ════════════════════════════════════════
-         KIOSK / 車主端
-         ════════════════════════════════════════ -->
-    <div id="view-kiosk" class="view">
+    <div class="flow-hero">
+        <div class="flow-hero-label">交車流程導覽</div>
+        <h1 class="flow-hero-title">今日行程一覽</h1>
+        <div class="flow-session-badge" id="sessionBadge">10:00 場次</div>
+    </div>
 
-        <!-- 領號 -->
-        <div id="kiosk-landing" class="screen active">
-            <div class="kiosk-nav">
-                <span style="font-size:15px;font-weight:500;letter-spacing:1px;">Tesla 台北交付中心</span>
-            </div>
-
-            <div class="hero-section">
-                <p class="hero-eyebrow">Tesla 台北交付中心</p>
-                <h1 class="hero-title">歡迎蒞臨</h1>
-                <p class="hero-subtitle">請領取您的報到號碼牌</p>
-
-                <button class="btn-cta" id="btnTakeTicket" onclick="takeTicket()">
-                    領取號碼牌
-                </button>
-
-                <p class="hero-note">點擊後請保持頁面開啟以接收通知</p>
-                <p
-                    style="margin-top:16px;font-size:13px;color:var(--gray-600);max-width:300px;line-height:1.7;text-align:center;">
-                    若多人前來交車，請一位代表抽取即可
-                </p>
-            </div>
-
-            <div class="kiosk-footer-bar">
-                © Tesla 台北交付中心叫號系統
-            </div>
+    <!-- B4 車位圖 -->
+    <div class="section-label">B4 交車位置圖</div>
+    <div style="padding:0 24px 4px;">
+        <div class="flow-map-wrap" id="flowMapWrap">
+            <img src="b4_map.png" alt="B4 交車位置圖" style="width:100%;display:block;"
+                onerror="this.parentElement.parentElement.style.display='none';">
         </div>
+        <div id="flowMapHint" style="display:none;text-align:center;font-size:11px;color:var(--gray-400);margin-top:6px;">📍 紅點為您的車位位置</div>
+    </div>
 
-        <!-- 主體驗頁（等待 + 流程導覽） -->
-        <div id="kiosk-waiting" class="screen">
+    <div class="flow-divider"></div>
 
-            <!-- Mini Ticket Hero -->
-            <div class="ticket-hero-mini">
-                <div class="ticket-mini-left">
-                    <div>
-                        <div class="ticket-mini-label" id="kioskTicketLabel">您的梯次</div>
-                        <div class="ticket-mini-number">
-                            <span class="prefix" id="kioskPrefix">第</span><span id="myNumber">—</span><span class="suffix" id="kioskSuffix">梯次</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="ticket-mini-status">
-                    <div class="ticket-mini-status-label">目前叫號</div>
-                    <div class="ticket-mini-status-value" id="kioskCurrent">尚未叫號</div>
-                </div>
-            </div>
+    <div class="section-label">流程時間</div>
+    <div class="timeline" id="timeline"></div>
 
-            <!-- Progress -->
-            <div style="padding:0 24px;"><div class="progress-track"><div class="progress-fill" id="progressBar"></div></div></div>
+    <div class="flow-divider"></div>
 
-            <div class="stats-row fade-in" style="max-width:100%;width:100%;">
-                <div class="stat-item">
-                    <div class="stat-label" id="kioskAheadLabel">前方梯次</div>
-                    <div class="stat-value" id="kioskAhead">—</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">預估等待</div>
-                    <div class="stat-value green" id="kioskETA">—</div>
-                </div>
-            </div>
-
-            <div id="wakeLockHint" style="margin:8px 24px 0;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gray-600);font-weight:500;">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;" id="wakeDot"></span>
-                <span style="color:var(--red);font-weight:600;">請保持螢幕恆亮</span>以接收叫號通知
-            </div>
-
-            <!-- Now Hero Mini -->
-            <div class="now-hero-mini" id="nowHero">
-                <div class="now-hero-label" id="nowLabel">目前進行</div>
-                <div class="now-hero-title" id="nowTitle">交車流程導覽</div>
-                <div class="now-hero-desc" id="nowDesc">自動偵測場次，即時顯示當前步驟</div>
-                <div class="now-hero-time"><span class="dot"></span><span id="nowTimeText">偵測中…</span></div>
-            </div>
-
-            <!-- Flow Tabs -->
-            <div class="flow-tab-bar">
-                <button class="flow-tab-btn active" data-ftab="flow" onclick="switchFlowTab('flow')">交付流程</button>
-                <button class="flow-tab-btn" data-ftab="acc" onclick="switchFlowTab('acc')">原廠配件</button>
-                <button class="flow-tab-btn" data-ftab="info" onclick="switchFlowTab('info')">啟程準備</button>
-            </div>
-
-            <div class="flow-content-area">
-                <!-- TAB 1: 交付流程 -->
-                <div class="flow-tab-panel active" id="fpanel-flow">
-                    <!-- 車位查詢 -->
-                    <div class="section">
-                        <div class="section-title">查詢您的車位</div>
-                        <div class="info-card">
-                            <div style="font-weight:600;color:var(--black);margin-bottom:10px;font-size:14px;">請輸入 RN 訂單編號查詢車位</div>
-                            <div style="display:flex;gap:8px;">
-                                <input class="search-input" id="searchInputWaiting" type="text" placeholder="例：RN123456789"
-                                    maxlength="11" inputmode="text" autocomplete="off"
-                                    onkeydown="if(event.key==='Enter')searchSpot('waiting')"
-                                    style="flex:1;">
-                                <button class="search-btn" onclick="searchSpot('waiting')">查詢</button>
-                            </div>
-                            <div class="search-result" id="searchResultWaiting"></div>
-                        </div>
-                    </div>
-                    <!-- 地圖 -->
-                    <div class="section">
-                        <div class="section-title">B4 交車位置圖</div>
-                        <div class="flow-map-wrap" id="waitingMapInteractive">
-                            <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.closest('.section').style.display='none'">
-                        </div>
-                        <div class="map-hint" id="waitingMapHint" style="display:none;">紅點為您的車位位置</div>
-                    </div>
-
-
-        <!-- 車位圖 -->
-        <div class="map-section">
-            <div class="section-title">B4 交車位置圖</div>
-            <div class="flow-map-wrap" id="flowMapWrap">
-                <img src="b4_map.png" alt="B4 交車位置圖" onerror="this.parentElement.parentElement.style.display='none';">
-            </div>
-            <div class="map-hint" id="flowMapHint" style="display:none;">紅點為您的車位位置</div>
-        </div>
-
-        <!-- 流程時間軸 -->
-        <div class="section">
-            <div class="section-title">交付流程</div>
-            <div class="timeline" id="timeline"></div>
-        </div>
-
-        <!-- 打卡活動 -->
-        <div class="section" style="padding-bottom:24px;">
-            <div class="section-title" style="margin-bottom:8px;">限定活動</div>
-            <div class="info-card highlight">
-                <div class="info-card-title">打卡 & 發布貼文 贈限量禮品</div>
-                <div class="info-card-desc">
-                    在交付中心打卡拍照並現場發布貼文至社群平台<br>
-                    出示貼文畫面即可兌換 <span class="info-card-highlight">Tesla 限量禮品</span><br>
-                    <span style="color:var(--gray-400);font-size:12px;">僅限現場兌換，數量有限，兌完為止</span>
-                </div>
+    <div class="section-label">限定活動</div>
+    <div style="padding:0 24px 24px;">
+        <div class="flow-card">
+            <div class="flow-card-title">📸 打卡發文 贈限量禮品</div>
+            <div class="flow-card-desc">
+                在交付中心拍照並現場 PO 文至社群平台<br>
+                出示貼文畫面即可兌換 <span class="flow-card-highlight">Tesla 限量禮品</span><br>
+                <span style="color:var(--gray-400);font-size:12px;">數量有限，兌完為止</span>
             </div>
         </div>
     </div>
 
-    
-                    <!-- 報到須知 -->
-                    <div class="section">
-                        <div class="section-title">報到須知</div>
-                        <div class="info-card">
-                            <div style="font-size:13px;line-height:1.9;">
-                                <div style="font-weight:600;color:var(--black);margin-bottom:6px;">請準備以下證件以領取資料完成報到</div>
-                                <div>個人戶：訂購人 或 車輛登記人 之<strong>第二證件</strong></div>
-                                <div style="margin-top:4px;">公司戶：訂購人<strong>身分證</strong> 或 <strong>公司名片</strong></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 名單 -->
-                    <div class="section" id="waitingDeliveryCard" style="display:none;">
-                        <div class="section-title">本場次報到名單</div>
-                        <div class="info-card" style="padding:0;overflow:hidden;">
-                            <div style="max-height:200px;overflow-y:auto;">
-                                <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                                    <thead><tr>
-                                        <th style="text-align:left;padding:8px 12px;border-bottom:1px solid var(--gray-200);font-size:11px;color:var(--gray-400);font-weight:500;">車位</th>
-                                        <th style="text-align:left;padding:8px 12px;border-bottom:1px solid var(--gray-200);font-size:11px;color:var(--gray-400);font-weight:500;">時間</th>
-                                        <th style="text-align:left;padding:8px 12px;border-bottom:1px solid var(--gray-200);font-size:11px;color:var(--gray-400);font-weight:500;">姓名</th>
-                                    </tr></thead>
-                                    <tbody id="waitingDeliveryBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="flow-divider"></div>
 
-                <!-- TAB 2: 原廠配件 -->
-                <div class="flow-tab-panel" id="fpanel-acc">
-        <div class="section" style="padding-bottom:24px;">
-            <div class="info-card" style="margin-bottom:16px;">
-                <div class="info-card-desc" style="font-size:13px;">
-                    原廠配件現場限量販售，可於 B4 配件櫃台選購。<br>點擊商品即可前往 Tesla App 進行結帳。<br>現場購買旅充組或任一 85 折、 9 折優惠套組即加贈<span
-                        class="info-card-highlight">Tesla 限量禮品</span>
-                </div>
+    <div class="section-label">現場限定配件</div>
+    <div style="padding:0 24px 4px;">
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:8px;">
+            以下配件現場限量供應，可於教學完成或交車空檔時至配件區選購
+        </div>
+    </div>
+
+    <div class="acc-list">
+        <div class="acc-group-label">Model Y</div>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/new-model-y-all-weather-liners-set" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2048569-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 17,000</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/new-model-y-sunshade-bundle" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2073497-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 4,913</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-y-console-_-pocket-organizer-set" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/1977818-SET_1_2000.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 2,520</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-y-projection-lights" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/EXTERIOR/2097852-00-A-1-01.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model Y 專用</div><div class="acc-price">NT$ 1,000</div></div>
+        </a>
+
+        <div class="acc-group-label">Model 3</div>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-all-weather-liners-set" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1974087-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">全天候地墊 4 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 11,951</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-sunshade-bundle" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1135832-SET.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">抗曬 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 5,725</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3-console-_-pocket-organizer-set" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2097835-SET_1_2000.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車內儲物 2 件組</div><div class="acc-sub">Model 3 煥新版專用</div><div class="acc-price">NT$ 2,490</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3-projection-lights" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/EXTERIOR/2097851-00-A-1-01.png" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">迎賓燈</div><div class="acc-sub">Model 3 專用</div><div class="acc-price">NT$ 1,000</div></div>
+        </a>
+
+        <div class="acc-group-label">通用配件</div>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">第二代 旅行用 Type 2 充電座套件</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 9,500</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_1_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">遙控鑰匙</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 5,520</div></div>
+        </a>
+        <a class="acc-row" href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set" target="_blank" rel="noopener">
+            <img class="acc-img" src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg" alt="" onerror="this.style.display='none'">
+            <div class="acc-info"><div class="acc-name">車用頸枕 & 靠墊 2 件組</div><div class="acc-sub">Model 3 / Y 通用</div><div class="acc-price">NT$ 2,430</div></div>
+        </a>
+        </div>
+    </div>
+
+    <div class="flow-divider" style="margin-top:24px;"></div>
+
+    <div class="section-label">離場資訊</div>
+    <div style="padding:0 24px 24px;">
+        <div class="etag-card" style="margin-bottom:12px;">
+            <div class="etag-title">eTag 申辦地點</div>
+            <div style="font-size:12px;color:var(--red);font-weight:500;margin-bottom:12px;line-height:1.6;">
+                需由車主本人攜帶行照、證件開車前往辦理
             </div>
 
-            <!-- 車型篩選按鈕 -->
-            <div class="model-filter">
-                <button class="model-btn active" data-model="model-y" onclick="filterModel('model-y')">Model Y</button>
-                <button class="model-btn" data-model="model-3" onclick="filterModel('model-3')">Model 3</button>
-                <button class="model-btn" data-model="model-s" onclick="filterModel('model-s')">Model S</button>
-                <button class="model-btn" data-model="model-x" onclick="filterModel('model-x')">Model X</button>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">車麗屋汽車百貨 內湖行忠店</div>
+                <div class="etag-addr">台北市內湖區行忠路 88 號</div>
+                <a class="etag-link" href="https://maps.google.com/?q=車麗屋汽車百貨內湖行忠店" target="_blank" rel="noopener">
+                    開啟 Google Maps
+                </a>
             </div>
 
-            <!-- Model Y 配件 -->
-            <div class="acc-model-group active" id="acc-model-y">
-                <div class="acc-group-title">現貨限量供應</div>
-                <div class="acc-grid">
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
-                            alt="充電座套件" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">第二代旅行用 Type 2 充電座套件</div>
-                            <div class="acc-card-sub">Model 3 / Y / S / X 通用</div>
-                            <div class="acc-card-price">NT$ 9,500</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/new-model-y-all-weather-liners-set"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">85 折 立省 $3,000</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2048569-SET.png"
-                            alt="全天候地墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">全天候地墊 4 件組</div>
-                            <div class="acc-card-sub">Model Y 專用</div>
-                            <div class="acc-card-price">NT$ 17,000</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/new-model-y-sunshade-bundle"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">85 折 立省 $867</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2073497-SET.png"
-                            alt="抗曬組" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">抗曬 2 件組</div>
-                            <div class="acc-card-sub">Model Y 專用</div>
-                            <div class="acc-card-price">NT$ 4,913</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">9折 立省 $270</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg"
-                            alt="頸枕靠墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車用頸枕 & 靠墊 2 件組</div>
-                            <div class="acc-card-sub">Model 3 / Y 通用</div>
-                            <div class="acc-card-price">NT$ 2,430</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/model-y-console-_-pocket-organizer-set"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">9 折 立省 $280</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/1977818-SET_1_2000.png"
-                            alt="儲物組" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車內儲物 2 件組</div>
-                            <div class="acc-card-sub">Model Y 專用</div>
-                            <div class="acc-card-price">NT$ 2,520</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-y-projection-lights"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/EXTERIOR/2097852-00-A-1-01.png"
-                            alt="迎賓燈" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">迎賓燈</div>
-                            <div class="acc-card-sub">Model Y 專用</div>
-                            <div class="acc-card-price">NT$ 1,000</div>
-                        </div>
-                    </a>
-                </div>
-                <!-- 宅配寄送 -->
-                <div class="acc-group-title">宅配寄送</div>
-                <div class="acc-grid">
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-y-air-mattress" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2013118-00-A-01.jpg"
-                            alt="Model Y 充氣床墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">充氣床墊</div>
-                            <div class="acc-card-sub">Model Y 專用</div>
-                            <div class="acc-card-price">NT$ 7,320</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-y-cooler" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_Y/INTERIOR/2065448-00-A_2_2000.png"
-                            alt="Model Y 保冷箱" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">保冷箱</div>
-                            <div class="acc-card-sub">Model Y 專用</div>
-                            <div class="acc-card-price">NT$ 9,050</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s_3_y-_" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1562262-00-A_11_2000.jpg"
-                            alt="車用寵物坐墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車用寵物坐墊</div>
-                            <div class="acc-card-sub">Model 3 / Y / S 專用</div>
-                            <div class="acc-card-price">NT$ 4,350</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_1_2000.jpg"
-                            alt="遙控鑰匙" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">遙控鑰匙</div>
-                            <div class="acc-card-sub">Model 3 / Y 通用</div>
-                            <div class="acc-card-price">NT$ 5,520</div>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-
-            <!-- Model 3 配件 -->
-            <div class="acc-model-group" id="acc-model-3">
-                <div class="acc-group-title">現貨限量供應</div>
-                <div class="acc-grid">
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
-                            alt="充電座套件" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">第二代旅行用 Type 2 充電座套件</div>
-                            <div class="acc-card-sub">Model 3 / Y / S / X 通用</div>
-                            <div class="acc-card-price">NT$ 9,500</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-all-weather-liners-set"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">85 折 立省 $2,109</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1974087-SET.png"
-                            alt="全天候地墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">全天候地墊 4 件組</div>
-                            <div class="acc-card-sub">Model 3 煥新版專用</div>
-                            <div class="acc-card-price">NT$ 11,951</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/refreshed-model-3-sunshade-bundle"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">85 折 立省 $1,010</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1135832-SET.png"
-                            alt="抗曬組" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">抗曬 2 件組</div>
-                            <div class="acc-card-sub">Model 3 煥新版專用</div>
-                            <div class="acc-card-price">NT$ 5,725</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/model-3_y-headrest-pillow_lumbar-pillow-set"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">9 折 立省 $270</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2057184-00-A_0_2000.jpg"
-                            alt="頸枕靠墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車用頸枕 & 靠墊 2 件組</div>
-                            <div class="acc-card-sub">Model 3 / Y 通用</div>
-                            <div class="acc-card-price">NT$ 2,430</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/model-3-console-_-pocket-organizer-set"
-                        target="_blank" rel="noopener">
-                        <div class="acc-card-tag">9 折 立省 $280</div>
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/2097835-SET_1_2000.png"
-                            alt="儲物組" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車內儲物 2 件組</div>
-                            <div class="acc-card-sub">Model 3 煥新版專用</div>
-                            <div class="acc-card-price">NT$ 2,490</div>
-                        </div>
-                    </a>
-
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3-projection-lights"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/EXTERIOR/2097851-00-A-1-01.png"
-                            alt="迎賓燈" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">迎賓燈</div>
-                            <div class="acc-card-sub">Model 3 專用</div>
-                            <div class="acc-card-price">NT$ 1,000</div>
-                        </div>
-                    </a>
-                </div>
-                <!-- 宅配寄送 -->
-                <div class="acc-group-title">宅配寄送</div>
-                <div class="acc-grid">
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s_3_y-_" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1562262-00-A_11_2000.jpg"
-                            alt="車用寵物坐墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車用寵物坐墊</div>
-                            <div class="acc-card-sub">Model 3 / Y / S 專用</div>
-                            <div class="acc-card-price">NT$ 4,350</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-3_y-key-fob" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/INTERIOR/1449859-00-D_1_2000.jpg"
-                            alt="遙控鑰匙" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">遙控鑰匙</div>
-                            <div class="acc-card-sub">Model 3 / Y 通用</div>
-                            <div class="acc-card-price">NT$ 5,520</div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Model S 配件 -->
-            <div class="acc-model-group" id="acc-model-s">
-                <div class="acc-group-title">現貨限量供應</div>
-                <div class="acc-grid">
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
-                            alt="充電座套件" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">第二代旅行用 Type 2 充電座套件</div>
-                            <div class="acc-card-sub">Model 3 / Y / S / X 通用</div>
-                            <div class="acc-card-price">NT$ 9,500</div>
-                        </div>
-                    </a>
-                </div>
-                <!-- 宅配寄送 -->
-                <div class="acc-group-title">宅配寄送</div>
-                <div class="acc-grid">
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s-all-weather-interior-liners"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/studio/CAR_ACCESSORIES/MODEL_S/INTERIOR/1669541-00-A_0_2000.jpg"
-                            alt="全天候內裝地墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">全天候內裝地墊</div>
-                            <div class="acc-card-sub">Model S 專用</div>
-                            <div class="acc-card-price">NT$ 8,425</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/model-s-all-weather-rear-cargo-liner-set"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1669543-01-A_1_2000.jpg"
-                            alt="全天候後行李箱襯墊組" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">全天候後行李箱襯墊組</div>
-                            <div class="acc-card-sub">Model S 專用</div>
-                            <div class="acc-card-price">NT$ 6,740</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s-glass-roof-sunshade"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1801349-00-A_04.jpg"
-                            alt="遮陽罩" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">遮陽罩</div>
-                            <div class="acc-card-sub">Model S 專用</div>
-                            <div class="acc-card-price">NT$ 2,960 - NT$ 4,430</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-s_3_y-_" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_S/INTERIOR/1562262-00-A_11_2000.jpg"
-                            alt="車用寵物坐墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車用寵物坐墊</div>
-                            <div class="acc-card-sub">Model 3 / Y / S 專用</div>
-                            <div class="acc-card-price">NT$ 4,350</div>
-                        </div>
-                    </a>
-                </div>
-                <div style="padding:20px 4px;text-align:center;">
-                    <a href="https://shop.tesla.com/zh_tw/category/model-s" target="_blank" rel="noopener"
-                        style="font-size:13px;color:var(--red);font-weight:500;text-decoration:none;">查看所有 Model S 配件
-                        →</a>
-                </div>
-            </div>
-
-            <!-- Model X 配件 -->
-            <div class="acc-model-group" id="acc-model-x">
-                <div class="acc-group-title">現貨限量供應</div>
-                <div class="acc-grid">
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/type-2-universal-mobile-connector-bundle"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_3/CHARGING_ADAPTERS/1729026-00-A_0_2000.jpg"
-                            alt="充電座套件" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">第二代旅行用 Type 2 充電座套件</div>
-                            <div class="acc-card-sub">Model 3 / Y / S / X 通用</div>
-                            <div class="acc-card-price">NT$ 9,500</div>
-                        </div>
-                    </a>
-                </div>
-                <!-- 宅配寄送 -->
-                <div class="acc-group-title">宅配寄送</div>
-                <div class="acc-grid">
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-x-all-weather-interior-liners"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1846099-00-A_0_2000.jpg"
-                            alt="全天候地墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">全天候地墊組 5 / 6 / 7 座</div>
-                            <div class="acc-card-sub">Model X 專用</div>
-                            <div class="acc-card-price">NT$ 9,935 - NT$ 10,940</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-x-all-weather-interior-liners"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1078360-00-A_1_2000.jpg"
-                            alt="遮陽罩" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">遮陽罩</div>
-                            <div class="acc-card-sub">Model X 專用</div>
-                            <div class="acc-card-price">NT$ 2,555 - NT$ 3,600</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-x-pet-liner" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1562263-00-A_0_2000.jpg"
-                            alt="X車用寵物坐墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">車用寵物坐墊</div>
-                            <div class="acc-card-sub">Model X 專用</div>
-                            <div class="acc-card-price">NT$ 4,350</div>
-                        </div>
-                    </a>
-                    <a class="acc-card" href="https://shop.tesla.com/zh_tw/product/model-x-cargo-net" target="_blank"
-                        rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1521206-00-A_0_2000.jpg"
-                            alt="後行李箱固定網" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">後行李箱固定網</div>
-                            <div class="acc-card-sub">Model X 專用</div>
-                            <div class="acc-card-price">NT$ 1,540</div>
-                        </div>
-                    </a>
-                    <a class="acc-card"
-                        href="https://shop.tesla.com/zh_tw/product/model-x-all-weather-front-trunk-liner"
-                        target="_blank" rel="noopener">
-                        <img class="acc-card-img" loading="lazy"
-                            src="https://digitalassets-shop.tesla.com/image/upload/f_auto,q_auto/v1/content/dam/tesla/CAR_ACCESSORIES/MODEL_X/INTERIOR/1846377-00-A_1_2000.jpg"
-                            alt="全天候前行李廂襯墊" onerror="this.style.display='none'">
-                        <div class="acc-card-body">
-                            <div class="acc-card-name">全天候前行李廂襯墊</div>
-                            <div class="acc-card-sub">Model X 專用</div>
-                            <div class="acc-card-price">NT$ 2,700</div>
-                        </div>
-                    </a>
-                </div>
-                <div style="padding:20px 4px;text-align:center;">
-                    <a href="https://shop.tesla.com/zh_tw/category/model-x" target="_blank" rel="noopener"
-                        style="font-size:13px;color:var(--red);font-weight:500;text-decoration:none;">查看所有 Model X 配件
-                        →</a>
-                </div>
+            <div style="border-top:1px solid var(--gray-200);padding-top:14px;">
+                <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:2px;">麗車坊汽車百貨 內湖門市</div>
+                <div class="etag-addr">台北市內湖區新湖三路 23 號</div>
+                <a class="etag-link" href="https://maps.google.com/?q=麗車坊汽車百貨內湖門市" target="_blank" rel="noopener">
+                    開啟 Google Maps
+                </a>
             </div>
         </div>
     </div>
 
-                    </div>
-
-                <!-- TAB 3: 啟程準備 -->
-                <div class="flow-tab-panel" id="fpanel-info">
-
-        <!-- 離場前確認 -->
-        <div class="section">
-            <div class="section-title">離場前最後確認</div>
-            <div class="info-card">
-                <ul class="checklist" id="departureChecklist">
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">領取車籍資料袋（含行照證件、車籍資料）</span>
-                    </li>
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">登入 Tesla App 並設定手機鑰匙</span>
-                    </li>
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">完成充電教學與車內語音教學</span>
-                    </li>
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">開啟 行車紀錄器(自動) 設定</span>
-                    </li>
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">開啟 自動輔助轉向 (beta) 版 設定</span>
-                    </li>
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">完成 配件選購</span>
-                    </li>
-                    <li onclick="this.classList.toggle('checked')">
-                        <span class="ck-box"><svg viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg></span>
-                        <span class="ck-text">完成 拍照 &amp; 打卡</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- ═══ 手風琴區 ═══ -->
-
-        <!-- 鄰近超級充電站 -->
-        <div class="section">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-                <div class="accordion-icon">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--red)">
-                        <path
-                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
-                    </svg>
-                </div>
-                <div class="accordion-title">鄰近超級充電站</div>
-                <div class="accordion-arrow">
-                    <svg viewBox="0 0 24 24" width="18" height="18">
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z" fill="currentColor" />
-                    </svg>
-                </div>
-            </div>
-            <div class="accordion-body">
-                <div class="nav-tip">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#2ecc71">
-                        <path
-                            d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z" />
-                    </svg>
-                    <span>點擊「開啟 Google Maps」後，選擇「分享」並將位置傳送至 Tesla App，即可將目的地自動同步至車輛觸控螢幕的導航系統。</span>
-                </div>
-                <div class="sc-card">
-                    <div class="sc-info">
-                        <div class="sc-name">Tesla 內湖營運總部</div>
-                        <div class="sc-addr">台北市內湖區民權東路六段 11 巷 6 號</div>
-                        <a class="sc-link" href="https://maps.app.goo.gl/ZHuprvz8dp47qpCL9" target="_blank"
-                            rel="noopener">開啟 Google Maps</a>
-                    </div>
-                </div>
-                <div class="sc-card">
-                    <div class="sc-info">
-                        <div class="sc-name">台北大巨蛋</div>
-                        <div class="sc-addr">台北市信義區忠孝東路四段 515 號 B1</div>
-                        <a class="sc-link" href="https://maps.app.goo.gl/mBRAbGPWnwaH12gY6" target="_blank"
-                            rel="noopener">開啟 Google Maps</a>
-                    </div>
-                </div>
-                <div class="sc-card">
-                    <div class="sc-info">
-                        <div class="sc-name">大直 NOKE 忠泰樂生活</div>
-                        <div class="sc-addr">台北市中山區樂群三路 200 號 B2</div>
-                        <div class="sc-hours">營業時間：11:00 - 21:00</div>
-                        <a class="sc-link" href="https://maps.app.goo.gl/o9gNk2QSiPp3WzDQ7" target="_blank"
-                            rel="noopener">開啟 Google Maps</a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- eTag 申辦 -->
-        <div class="section">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-                <div class="accordion-icon">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--red)">
-                        <path
-                            d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" />
-                    </svg>
-                </div>
-                <div class="accordion-title">eTag 申辦</div>
-                <div class="accordion-arrow">
-                    <svg viewBox="0 0 24 24" width="18" height="18">
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z" fill="currentColor" />
-                    </svg>
-                </div>
-            </div>
-            <div class="accordion-body">
-                <div class="etag-note">需由車主本人攜帶行照、證件開車前往辦理</div>
-                <div class="nav-tip">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#2ecc71">
-                        <path
-                            d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z" />
-                    </svg>
-                    <span>點擊「開啟 Google Maps」後，選擇「分享」並將位置傳送至 Tesla App，即可將目的地自動同步至車輛觸控螢幕的導航系統。</span>
-                </div>
-                <div class="etag-card">
-                    <div class="etag-title">車麗屋汽車百貨 內湖行忠店</div>
-                    <div class="etag-addr">台北市內湖區行忠路 88 號</div>
-                    <a class="etag-link" href="https://maps.google.com/?q=車麗屋汽車百貨內湖行忠店" target="_blank"
-                        rel="noopener">開啟 Google Maps</a>
-                </div>
-                <div class="etag-card">
-                    <div class="etag-title">麗車坊汽車百貨 內湖門市</div>
-                    <div class="etag-addr">台北市內湖區新湖三路 23 號</div>
-                    <a class="etag-link" href="https://maps.google.com/?q=麗車坊汽車百貨內湖門市" target="_blank" rel="noopener">開啟
-                        Google Maps</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 車門緊急開啟方式教學 -->
-        <div class="section">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-                <div class="accordion-icon">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--red)">
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                    </svg>
-                </div>
-                <div class="accordion-title">車門緊急開啟方式教學</div>
-                <div class="accordion-arrow">
-                    <svg viewBox="0 0 24 24" width="18" height="18">
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z" fill="currentColor" />
-                    </svg>
-                </div>
-            </div>
-            <div class="accordion-body">
-                <div class="sc-card">
-                    <div class="sc-info">
-                        <div class="sc-name">Model 3 / Y 車門緊急開啟方式</div>
-                        <div class="sc-addr">當車輛斷電時，如何從內部手動開啟車門</div>
-                        <a class="sc-link" href="https://www.instagram.com/reels/DBsxeG8SlVO/" target="_blank"
-                            rel="noopener">觀看影片</a>
-                    </div>
-                </div>
-                <div class="sc-card">
-                    <div class="sc-info">
-                        <div class="sc-name">Model S / X 車門緊急開啟方式教學</div>
-                        <div class="sc-addr">當車輛斷電時，如何從內部手動開啟車門</div>
-                        <a class="sc-link" href="https://www.instagram.com/reels/DByL5NXyHGV/" target="_blank"
-                            rel="noopener">觀看影片</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ Tesla 官方社群 ═══ -->
-        <div class="section">
-            <div class="section-title">Tesla 官方社群</div>
-            <div class="social-grid">
-                <a class="social-card" href="tel:0809-007-518">
-                    <svg class="social-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                    </svg>
-                    <div class="social-label">客服專線</div>
-                    <div class="social-sub">0809-007-518</div>
-                    <div class="social-meta">道路救援 24H</div>
-                    <div class="social-meta">客服 09:00–20:00</div>
-                </a>
-                <a class="social-card" href="https://www.instagram.com/tesla.taiwan/" target="_blank" rel="noopener">
-                    <svg class="social-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
-                    </svg>
-                    <div class="social-label">Tesla Taiwan</div>
-                    <div class="social-sub">Instagram</div>
-                    <div class="social-sub">官方帳號</div>
-                </a>
-                <a class="social-card" href="https://lin.ee/3XOX0Ww" target="_blank" rel="noopener">
-                    <svg class="social-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.098-.51-.271l-2.906-3.963v3.607c0 .348-.281.628-.63.628-.345 0-.627-.28-.627-.628V8.108c0-.271.173-.508.43-.595.065-.023.133-.033.2-.033.209 0 .39.098.51.272l2.904 3.96V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-5.741 0c0 .348-.28.628-.63.628-.347 0-.63-.28-.63-.628V8.108c0-.345.283-.63.63-.63.35 0 .63.285.63.63v4.771zm-2.466.628H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-                    </svg>
-                    <div class="social-label">Tesla Taiwan</div>
-                    <div class="social-sub">LINE</div>
-                    <div class="social-sub">官方帳號</div>
-                </a>
-            </div>
-        </div>
-
+    <div style="border-top:1px solid var(--gray-200);">
         <div class="flow-congrats">
-            <div class="flow-congrats-title">歡迎加入 Tesla Family</div>
-            <div class="flow-congrats-sub">恭喜您即將展開屬於您的純電生活！</div>
+            <div class="flow-congrats-title">恭喜成為 Tesla 車主</div>
+            <div class="flow-congrats-sub">祝您用車愉快，歡迎加入 Tesla 大家庭</div>
         </div>
     </div>
 
-                    </div>
-            </div><!-- /flow-content-area -->
+    <div class="flow-footer">© Tesla 台北交付中心</div>
 
-            <div style="text-align:center;padding:20px 24px;border-top:1px solid var(--gray-200);font-size:12px;color:var(--gray-400);background:var(--white);">
-                © Tesla 台北交付中心
-            </div>
-        </div><!-- /kiosk-waiting -->
-
-    <!-- Called Overlay -->
-    <div class="called-overlay" id="calledOverlay">
-        <div class="called-badge">請前往報到</div>
-        <div class="called-title">輪到您了</div>
-        <div class="called-sub">請至門口黑龍處 | 排隊報到領取資料</div>
-        <div class="called-number">
-            <span class="called-number-hash" id="calledPrefix">第</span><span id="calledMyNumber">—</span><span id="calledSuffix" style="font-size:clamp(32px,10vw,60px);font-weight:300;"> 梯次</span>
-        </div>
-        <div id="calledSpotInfo" style="display:none;margin-top:16px;padding:12px 20px;background:rgba(232,33,39,0.06);border:1px solid rgba(232,33,39,0.15);border-radius:10px;text-align:center;">
-            <div style="font-size:13px;color:#999;margin-bottom:4px;">您的車位</div>
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-                <span id="calledSpotNum" style="font-size:15px;font-weight:700;color:#E82127;"></span>
-                <span style="color:#ccc;">|</span>
-                <span id="calledSpotName" style="font-size:15px;color:#999;font-weight:500;"></span>
-            </div>
-        </div>
-        <button class="btn-back-flow" onclick="dismissCalledOverlay()">返回交付流程 →</button>
-    </div>
-
-    </div>
-
-    </div>
-
-    <!-- ════════════════════════════════════════
-         ADMIN / 管理端
-         ════════════════════════════════════════ -->
-    <div id="view-admin" class="view">
-
-        <!-- 密碼 -->
-        <div id="admin-lock" class="screen active">
-            <div>
-                <div class="admin-lock-title">管理後台</div>
-                <div class="admin-lock-sub" style="margin-top:4px;">請輸入管理密碼</div>
-            </div>
-            <div class="input-group">
-                <input type="password" class="input-field" id="adminPwd" placeholder="密碼"
-                    onkeydown="if(event.key==='Enter')adminLogin()">
-                <button class="btn btn-primary" onclick="adminLogin()">進入</button>
-            </div>
-            <p class="pwd-error" id="pwdError">密碼錯誤，請重試</p>
-        </div>
-
-        <!-- 後台面板 -->
-        <div id="admin-panel" class="screen">
-            <div class="admin-header">
-                <span class="admin-header-title">叫號管理</span>
-                <span class="badge badge-green" id="adminSession">場次進行中</span>
-            </div>
-
-            <div class="admin-body">
-                <!-- 統計 -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-card-label">已領號</div>
-                        <div class="stat-card-value" id="statTotal">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card-label">已叫號</div>
-                        <div class="stat-card-value red" id="statCalled">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card-label">等待中</div>
-                        <div class="stat-card-value amber" id="statWaiting">0</div>
-                    </div>
-                </div>
-
-                <!-- 叫號模式切換 -->
-                <div class="admin-section">
-                    <div class="admin-section-title">叫號模式</div>
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                        <span id="modeLabelNum" style="font-size:13px;font-weight:600;color:var(--black);">號碼叫號</span>
-                        <label style="position:relative;display:inline-block;width:52px;height:28px;cursor:pointer;">
-                            <input type="checkbox" id="modeToggle" onchange="toggleCallMode()" style="display:none;">
-                            <span
-                                style="position:absolute;inset:0;background:var(--gray-300);border-radius:28px;transition:background 0.3s;"></span>
-                            <span id="modeToggleDot"
-                                style="position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
-                        </label>
-                        <span id="modeLabelBatch"
-                            style="font-size:13px;font-weight:500;color:var(--gray-400);">梯次叫號</span>
-                    </div>
-                    <p style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">切換後所有車主端與電視看板會即時同步</p>
-                </div>
-
-                <!-- 叫號操作 -->
-                <div class="admin-section">
-                    <div class="admin-section-title" id="adminCallTitle">叫號操作</div>
-                    <div style="margin-bottom:12px;font-size:14px;color:var(--gray-600);" id="adminCurrentInfo">
-                        目前叫到：<strong style="color:var(--black);font-size:18px;" id="adminCurrentBatch">尚未叫號</strong>
-                    </div>
-                    <!-- 梯次模式按鈕 -->
-                    <div id="adminBatchBtns" class="action-row" style="margin-bottom:12px;">
-                        <button class="btn btn-primary" style="padding:16px 40px;font-size:15px;"
-                            onclick="callNextBatch()">
-                            📢 叫下一梯次（10人）
-                        </button>
-                    </div>
-                    <!-- 號碼模式按鈕 -->
-                    <div id="adminNumBtns" style="display:none;">
-                        <div class="action-row" style="margin-bottom:12px;">
-                            <button class="btn btn-primary" style="padding:16px 40px;font-size:15px;"
-                                onclick="callNext(1)">
-                                叫下一號
-                            </button>
-                        </div>
-                        <div class="action-row" style="margin-top:12px;align-items:center;gap:8px;">
-                            <span style="font-size:13px;color:var(--gray-600);">批次叫號</span>
-                            <button class="btn btn-secondary btn-sm" onclick="callNext(3)">+3</button>
-                            <button class="btn btn-secondary btn-sm" onclick="callNext(5)">+5</button>
-                            <button class="btn btn-secondary btn-sm" onclick="callNext(10)">+10</button>
-                            <input type="number" class="batch-input" id="batchSize" value="1" min="1" max="60">
-                            <button class="btn btn-secondary btn-sm" onclick="callNextCustom()">自訂</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- QR Code (可收合) -->
-                <div class="admin-section">
-                    <div class="admin-section-title"
-                        style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;"
-                        onclick="toggleQR()">
-                        <span>車主端 QR Code</span>
-                        <span id="qrToggleIcon"
-                            style="font-size:18px;color:var(--gray-400);transition:transform 0.3s;">▼</span>
-                    </div>
-                    <div id="qrContent" style="display:none;margin-top:12px;">
-                        <div class="qr-section">
-                            <div class="qr-box" id="adminQR"></div>
-                            <p class="qr-url" id="adminQRUrl">—</p>
-                            <p style="font-size:12px;color:var(--gray-400);margin-top:4px;">
-                                列印此 QR Code 放置於入口處，車主掃描即可領號
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 客戶查詢紀錄 -->
-                <div class="admin-section">
-                    <div class="admin-section-title">客戶查詢紀錄</div>
-                    <div id="lookupTableContainer"
-                        style="max-height:240px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;">
-                        <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                            <thead>
-                                <tr style="background:var(--gray-100);position:sticky;top:0;">
-                                    <th
-                                        style="padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--gray-200);">
-                                        報到號</th>
-                                    <th
-                                        style="padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--gray-200);">
-                                        車位</th>
-                                    <th
-                                        style="padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--gray-200);">
-                                        姓名</th>
-                                    <th
-                                        style="padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--gray-200);">
-                                        RN</th>
-                                </tr>
-                            </thead>
-                            <tbody id="lookupTableBody">
-                                <tr>
-                                    <td colspan="4" style="padding:16px;text-align:center;color:var(--gray-400);">尚無查詢紀錄
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p style="font-size:12px;color:var(--gray-400);margin-top:6px;">車主查詢 RN 後自動記錄於此</p>
-                </div>
-
-                <!-- 場次管理 -->
-                <div class="admin-section">
-                    <div class="admin-section-title">場次管理</div>
-                    <button class="btn btn-danger" onclick="showResetModal()">重設場次</button>
-                    <p style="font-size:12px;color:var(--gray-400);margin-top:10px;">
-                        清除所有號碼資料，重新開始
-                    </p>
-                </div>
-            </div>
-
-            <div class="admin-footer">
-                <div class="connection-indicator">
-                    <div class="status-dot" id="fbStatusDot"></div>
-                    <span id="fbStatusText">連線中…</span>
-                </div>
-                <span>Tesla Queue System v2.1</span>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- 重設確認 Modal -->
-    <div class="modal-overlay" id="resetModal">
-        <div class="modal-box">
-            <div class="modal-icon">⚠️</div>
-            <h3>確認重設場次？</h3>
-            <p>這將清除所有已領號碼與叫號進度。此操作無法復原。</p>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="hideResetModal()">取消</button>
-                <button class="btn btn-red" onclick="resetQueue()">確認重設</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ════════════════════════════════════════
-         JavaScript
-         ════════════════════════════════════════ -->
     <script>
-        // ══════════════════════════════════════════
-        // 🔥 Firebase 設定 — 請填入您的 Firebase 專案設定
-        // ══════════════════════════════════════════
-        const firebaseConfig = {
-            apiKey: "AIzaSyCZzriWUnBIPKd9MuiJd5Ym0T7wKit9ul4",
-            authDomain: "new-tesla-queue.firebaseapp.com",
-            databaseURL: "https://new-tesla-queue-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "new-tesla-queue",
-            storageBucket: "new-tesla-queue.firebasestorage.app",
-            messagingSenderId: "612392646704",
-            appId: "1:612392646704:web:667dd0784c72af409695f5"
+        const SESSIONS = {
+            10: {
+                label: '10:00 場次',
+                allDone: '11:30',
+                steps: [
+                    { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '10:20', end: '10:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:30', end: '10:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:35', end: '10:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:45', end: '11:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '10:50', end: '11:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '11:00', end: '11:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 11:10' },
+                ]
+            },
+            12: {
+                label: '12:00 場次',
+                allDone: '13:30',
+                steps: [
+                    { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '12:20', end: '12:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:30', end: '12:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:35', end: '12:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:45', end: '13:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '12:50', end: '13:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '13:00', end: '13:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 13:10' },
+                ]
+            },
+            14: {
+                label: '14:00 場次',
+                allDone: '15:30',
+                steps: [
+                    { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '14:20', end: '14:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:30', end: '14:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:35', end: '14:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:45', end: '15:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '14:50', end: '15:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '15:00', end: '15:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 15:10' },
+                ]
+            },
+            16: {
+                label: '16:00 場次',
+                allDone: '17:30',
+                steps: [
+                    { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至門口處依序報到、領取資料' },
+                    { time: '16:20', end: '16:35', title: '充電教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:30', end: '16:45', title: '廣播教學（第 1 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:35', end: '16:50', title: '廣播教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:45', end: '17:00', title: '充電教學（第 2 場）', desc: 'B4 車輛交付區' },
+                    { time: '16:50', end: '17:00', title: '選購配件・打卡・拍照', desc: '教學空檔或結束後，可至配件區選購、打卡拍照' },
+                    { time: '17:00', end: '17:10', title: '自由離場', desc: '確認車況無誤後即可開心離場，最晚 17:10' },
+                ]
+            }
         };
 
-        // ═════════════════════════════════
-        // 管理密碼 (可自由修改)
-        // ═════════════════════════════════
-        const ADMIN_PASSWORD = '350019';
-
-        const AVG_SERVICE_MIN = 2;
-        const COUNTER_COUNT = 3;
-
-        // ═════════════════════════════════
-        // 全域變數
-        // ═════════════════════════════════
-        let db = null;
-        let queueRef = null;
-        let currentMode = 'kiosk';
-        let myTicketNumber = null;
-        let prevCalledUpTo = 0;
-        let wakeLock = null;
-        let audioCtx = null;
-
-        // ═════════════════════════════════
-        // 初始化
-        // ═════════════════════════════════
-        (function init() {
-            const params = new URLSearchParams(window.location.search);
-            currentMode = params.get('mode') || 'kiosk';
-
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'YOUR_API_KEY' ||
-                !firebaseConfig.databaseURL || firebaseConfig.databaseURL === 'YOUR_DATABASE_URL') {
-                document.getElementById('screen-error').classList.add('active');
-                return;
-            }
-
-            try {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.database();
-                queueRef = db.ref('queue');
-            } catch (e) {
-                document.getElementById('screen-error').classList.add('active');
-                return;
-            }
-
-            const viewEl = document.getElementById('view-' + currentMode);
-            if (viewEl) {
-                viewEl.classList.add('active');
-            } else {
-                document.getElementById('view-kiosk').classList.add('active');
-                currentMode = 'kiosk';
-            }
-
-            switch (currentMode) {
-                case 'kiosk': initKiosk(); break;
-                case 'admin': initAdmin(); break;
-            }
-        })();
-
-        // ═════════════════════════════════
-        // 🎫 KIOSK / 車主端
-        // ═════════════════════════════════
-        function initKiosk() {
-            // 監聽叫號模式變化
-            queueRef.child('callMode').on('value', (snap) => {
-                callMode = snap.val() || 'batch';
-                updateKioskDisplayMode();
-            });
-
-            queueRef.on('value', (snap) => {
-                const data = snap.val() || {};
-                const calledUpTo = data.calledUpTo || 0;
-                const nextTicket = data.nextTicket || 1;
-                const sessionId = data.sessionId || '';
-                const totalTickets = nextTicket - 1;
-                callMode = data.callMode || 'batch';
-                const localSession = localStorage.getItem('tq_session');
-
-                if (localSession && sessionId !== localSession) {
-                    localStorage.removeItem('tq_ticket');
-                    localStorage.removeItem('tq_session');
-                    myTicketNumber = null;
-                    prevCalledUpTo = 0;
-                    switchKioskScreen('kiosk-landing');
-                    return;
-                }
-
-                if (myTicketNumber !== null) {
-                    updateKioskWaiting(calledUpTo, totalTickets);
-                }
-            });
-
-            const saved = localStorage.getItem('tq_ticket');
-            const savedSession = localStorage.getItem('tq_session');
-            if (saved && savedSession) {
-                queueRef.child('sessionId').once('value', (snap) => {
-                    if (snap.val() === savedSession) {
-                        myTicketNumber = parseInt(saved);
-                        const display = formatDisplay(myTicketNumber);
-                        document.getElementById('myNumber').textContent = display;
-                        document.getElementById('calledMyNumber').textContent = display;
-                        switchKioskScreen('kiosk-waiting');
-                        requestWakeLock();
-                    } else {
-                        localStorage.removeItem('tq_ticket');
-                        localStorage.removeItem('tq_session');
-                    }
-                });
-            }
-
-            // Phase 4: 監聽交車名單 → 顯示在等待畫面 + 搜尋資料
-            db.ref('board/deliveryList').on('value', (snap) => {
-                const text = snap.val();
-                renderWaitingDeliveryList(text);
-                updateSearchData(text);
-            });
+        function toMin(str) {
+            const [h, m] = str.split(':').map(Number);
+            return h * 60 + m;
         }
 
-        // Phase 4: 渲染等待畫面報到名單
-        function renderWaitingDeliveryList(text) {
-            const card = document.getElementById('waitingDeliveryCard');
-            const tbody = document.getElementById('waitingDeliveryBody');
-            if (!text || typeof text !== 'string') { card.style.display = 'none'; return; }
+        function detectSession() {
             const now = new Date();
-            const currentHour = now.getHours();
-            const lines = text.split('\n');
-            let html = '';
-            let count = 0;
-            lines.forEach(line => {
-                const parts = line.split('\t');
-                if (parts.length >= 2) {
-                    const time = parts[0].trim();
-                    const spot = parts[1].trim();
-                    const name = parts[2] ? parts[2].trim() : '';
-                    // 篩選目前場次（同一小時）
-                    const h = parseInt(time.split(':')[0]);
-                    if (h === currentHour || (h === currentHour + 1 && now.getMinutes() >= 50)) {
-                        html += `<tr><td>${spot}</td><td>${time}</td><td>${name}</td></tr>`;
-                        count++;
-                    }
-                }
-            });
-            if (count > 0) {
-                tbody.innerHTML = html;
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            const ranges = [
+                { h: 10, start: toMin('09:40'), end: toMin('12:00') },
+                { h: 12, start: toMin('11:40'), end: toMin('14:00') },
+                { h: 14, start: toMin('13:40'), end: toMin('16:00') },
+                { h: 16, start: toMin('15:40'), end: toMin('18:00') },
+            ];
+            for (const r of ranges) {
+                if (nowMin >= r.start && nowMin < r.end) return r.h;
             }
+            for (const r of ranges) {
+                if (nowMin < r.start) return r.h;
+            }
+            return 10;
         }
 
-        // ═════════════════════════════════
-        // 🔍 訂單查車位 + 地圖點亮
-        // ═════════════════════════════════
-        let deliverySearchData = [];
-        let lastSearchResult = null;
+        function renderTimeline() {
+            const sessionH = detectSession();
+            const session = SESSIONS[sessionH];
+            if (!session) return;
 
-        // B4 車位座標 (% 位置，精確校準對應 b4_map.png)
+            document.getElementById('sessionBadge').textContent = session.label;
+
+            const now = new Date();
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            const container = document.getElementById('timeline');
+            let html = '';
+
+            session.steps.forEach((step) => {
+    const startMin = toMin(step.time);
+    const endMin = toMin(step.end);
+    const allDoneMin = toMin(session.allDone);
+    let status = 'upcoming';
+
+    if (nowMin >= allDoneMin) {
+        status = 'done';
+    } else if (nowMin >= endMin) {
+        status = 'done';
+    } else if (nowMin >= startMin && nowMin < endMin) {
+        status = 'active';
+    }
+
+                let badgeHtml = '';
+                if (status === 'active') badgeHtml = '<span class="tl-badge now">進行中</span>';
+                else if (status === 'done') badgeHtml = '<span class="tl-badge completed">已完成</span>';
+
+                html += `
+                    <div class="tl-item ${status}">
+                        <div class="tl-left">
+                            <div class="tl-dot"></div>
+                            <div class="tl-line"></div>
+                        </div>
+                        <div class="tl-card">
+                            <div class="tl-time">${step.time}</div>
+                            <div class="tl-title">${step.title}</div>
+                            <div class="tl-desc">${step.desc}</div>
+                            ${badgeHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            setTimeout(() => {
+                const activeEl = document.querySelector('.tl-item.active');
+                if (activeEl) {
+                    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+        renderTimeline();
+        setInterval(renderTimeline, 30000);
+
+        // ═══════════════════════════════════
+        // 車位標記（從 index.html 帶入 ?spot=XX）
+        // ═══════════════════════════════════
         const SPOT_POSITIONS = {
-            // Zone A 下排 1-10
             1: { x: 15.4, y: 39.6 }, 2: { x: 22.0, y: 39.6 }, 3: { x: 28.6, y: 39.6 },
             4: { x: 35.1, y: 39.6 }, 5: { x: 41.9, y: 39.6 }, 6: { x: 48.4, y: 39.6 },
             7: { x: 55.0, y: 39.6 }, 8: { x: 61.6, y: 39.6 }, 9: { x: 68.1, y: 39.6 },
@@ -2636,769 +803,49 @@
             69: { x: 90.6, y: 64.0 }, 70: { x: 90.6, y: 56.6 },
         };
 
-        // 更新搜尋用資料（從 Firebase deliveryList 同步）
-        function updateSearchData(text) {
-            if (!text || typeof text !== 'string') return;
-            deliverySearchData = [];
-            text.split('\n').forEach(line => {
-                const parts = line.split('\t');
-                if (parts.length >= 3) {
-                    deliverySearchData.push({
-                        time: parts[0].trim(),
-                        spot: parts[1].trim(),
-                        name: parts[2].trim(),
-                        order: parts[3] ? parts[3].trim().toUpperCase() : ''
-                    });
-                }
-            });
-        }
+        (function initSpotHighlight() {
+            const params = new URLSearchParams(window.location.search);
+            const spotStr = params.get('spot');
+            if (!spotStr) return;
 
-        function searchSpot(page) {
-            const input = document.getElementById('searchInputWaiting');
-            const resultEl = document.getElementById('searchResultWaiting');
-            const query = input.value.trim().toUpperCase();
-
-            if (!query) { input.focus(); return; }
-
-            // 搜尋訂單
-            const found = deliverySearchData.find(d => d.order === query);
-
-            if (found) {
-                resultEl.className = 'search-result found';
-                resultEl.innerHTML = `
-                    <div class="result-spot-label">您的車位</div>
-                    <div class="result-spot">${found.spot} 號</div>
-                    <div style="color:#ccc;">|</div>
-                    <div class="result-name">${found.name}</div>
-                `;
-                // 儲存搜尋結果，叫號頁也顯示
-                lastSearchResult = { spot: found.spot, name: found.name };
-
-                // 寫入 Firebase 讓管理後台可以看到
-                try {
-                    const ticketNum = myTicketNumber || '—';
-                    db.ref('queue/lookups').push({
-                        ticket: ticketNum,
-                        spot: found.spot,
-                        name: found.name,
-                        rn: query,
-                        ts: Date.now()
-                    });
-                } catch (e) { console.log('Lookup write failed:', e); }
-
-                // ★ 在底部地圖上標記
-                const spotNum = parseInt(found.spot);
-                if (SPOT_POSITIONS[spotNum]) {
-                    const mapEl = document.getElementById('waitingMapInteractive');
-                    const hintEl = document.getElementById('waitingMapHint');
-                    if (mapEl) {
-                        highlightSpotOnMap(mapEl, spotNum);
-                        if (hintEl) hintEl.style.display = '';
-                        setTimeout(() => {
-                            mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 300);
-                    }
-                }
-
-            } else {
-                resultEl.className = 'search-result not-found';
-                resultEl.innerHTML = '<div class="result-not-found-text">❌ 查無此訂單編號，請確認後重試</div>';
-            }
-        }
-
-        function highlightSpotOnMap(mapContainer, spotNum) {
-            // 移除舊的 marker
-            mapContainer.querySelectorAll('.spot-marker').forEach(m => m.remove());
-
+            const spotNum = parseInt(spotStr);
             const pos = SPOT_POSITIONS[spotNum];
             if (!pos) return;
 
-            // 建立 marker 容器
-            const marker = document.createElement('div');
-            marker.className = 'spot-marker';
-            marker.style.left = pos.x + '%';
-            marker.style.top = pos.y + '%';
+            const mapWrap = document.getElementById('flowMapWrap');
+            const hint = document.getElementById('flowMapHint');
+            if (!mapWrap) return;
 
-            // 脈衝波紋 (3 層)
-            for (let i = 0; i < 3; i++) {
-                const pulse = document.createElement('div');
-                pulse.className = 'spot-marker-pulse';
-                marker.appendChild(pulse);
-            }
+            // 等圖片載入後再標記
+            const img = mapWrap.querySelector('img');
+            const doMark = () => {
+                const marker = document.createElement('div');
+                marker.className = 'spot-marker';
+                marker.style.left = pos.x + '%';
+                marker.style.top = pos.y + '%';
 
-            // 核心紅點
-            const dot = document.createElement('div');
-            dot.className = 'spot-marker-dot';
-            marker.appendChild(dot);
-
-            // 車位號碼標籤
-            const label = document.createElement('div');
-            label.className = 'spot-marker-label';
-            label.textContent = spotNum + ' 號';
-            marker.appendChild(label);
-
-            mapContainer.appendChild(marker);
-        }
-
-        // 每梯次人數
-        const BATCH_SIZE = 10;
-        // 叫號模式: 'batch' = 梯次叫號, 'number' = 號碼叫號
-        let callMode = 'batch';
-
-        // 計算號碼所屬梯次 (1~10=第1梯次, 11~20=第2梯次, ...)
-        function getBatch(ticketNum) {
-            return Math.ceil(ticketNum / BATCH_SIZE);
-        }
-
-        // 根據模式格式化顯示內容
-        function formatDisplay(ticketNum) {
-            if (callMode === 'batch') {
-                return getBatch(ticketNum);
-            } else {
-                return String(ticketNum).padStart(3, '0');
-            }
-        }
-
-        // 更新車主端 UI 顯示模式
-        function updateKioskDisplayMode() {
-            const isBatch = callMode === 'batch';
-            document.getElementById('kioskTicketLabel').textContent = isBatch ? '您的梯次' : '您的號碼';
-            document.getElementById('kioskPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('kioskSuffix').textContent = isBatch ? ' 梯 次' : '';
-            document.getElementById('kioskSuffix').style.display = isBatch ? '' : 'none';
-            var _h=document.getElementById('kioskTicketHint');if(_h) _h.innerHTML = isBatch
-                ? '同梯次車主將一起叫號報到<br>車位號碼請由下方輸入 RN 查詢'
-                : '此為報到順序，非車位號碼<br>車位號碼請由下方輸入 RN 查詢';
-            document.getElementById('kioskAheadLabel').textContent = isBatch ? '前方梯次' : '前方等待';
-            document.getElementById('calledPrefix').textContent = isBatch ? '第' : '#';
-            document.getElementById('calledSuffix').textContent = isBatch ? ' 梯 次' : '';
-            document.getElementById('calledSuffix').style.display = isBatch ? '' : 'none';
-            // 更新顯示的號碼
-            if (myTicketNumber !== null) {
-                const display = formatDisplay(myTicketNumber);
-                document.getElementById('myNumber').textContent = display;
-                document.getElementById('calledMyNumber').textContent = display;
-            }
-        }
-
-        function takeTicket() {
-            if (myTicketNumber !== null) return;
-            // 確保 audioCtx 已初始化（需要使用者互動觸發）
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const btn = document.getElementById('btnTakeTicket');
-            btn.style.pointerEvents = 'none';
-            btn.style.opacity = '0.6';
-            btn.textContent = '領取中…';
-
-            queueRef.child('nextTicket').transaction((current) => {
-                return (current || 1) + 1;
-            }, (error, committed, snapshot) => {
-                if (error || !committed) {
-                    btn.style.pointerEvents = '';
-                    btn.style.opacity = '';
-                    btn.textContent = '領取號碼牌';
-                    alert('領號失敗，請重試');
-                    return;
+                for (let i = 0; i < 3; i++) {
+                    const pulse = document.createElement('div');
+                    pulse.className = 'spot-marker-pulse';
+                    marker.appendChild(pulse);
                 }
 
-                myTicketNumber = snapshot.val() - 1;
+                const dot = document.createElement('div');
+                dot.className = 'spot-marker-dot';
+                marker.appendChild(dot);
 
-                queueRef.child('sessionId').once('value', (snap) => {
-                    let sid = snap.val();
-                    if (!sid) {
-                        sid = Date.now().toString(36);
-                        queueRef.child('sessionId').set(sid);
-                    }
-                    localStorage.setItem('tq_ticket', myTicketNumber);
-                    localStorage.setItem('tq_session', sid);
-                });
+                const label = document.createElement('div');
+                label.className = 'spot-marker-label';
+                label.textContent = spotNum + ' 號';
+                marker.appendChild(label);
 
-                const display = formatDisplay(myTicketNumber);
-                document.getElementById('myNumber').textContent = display;
-                document.getElementById('calledMyNumber').textContent = display;
-                switchKioskScreen('kiosk-waiting');
-                requestWakeLock();
+                mapWrap.appendChild(marker);
+                if (hint) hint.style.display = '';
+            };
 
-                if (navigator.vibrate) navigator.vibrate(100);
-            });
-        }
-
-        function updateKioskWaiting(calledUpTo, totalTickets) {
-            if (myTicketNumber === null) return;
-
-            if (callMode === 'batch') {
-                const myBatch = getBatch(myTicketNumber);
-                const currentBatch = calledUpTo;
-                const batchesAhead = Math.max(0, myBatch - currentBatch - 1);
-                const isCalled = myBatch <= currentBatch;
-
-                document.getElementById('kioskCurrent').textContent = currentBatch === 0 ? '尚未叫號' : '第 ' + currentBatch + ' 梯次';
-                document.getElementById('kioskAhead').textContent = isCalled ? '—' : batchesAhead + ' 梯次';
-                const etaMin = Math.ceil(batchesAhead * AVG_SERVICE_MIN);
-                document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
-
-                const totalBatches = Math.ceil(totalTickets / BATCH_SIZE);
-                const progress = totalBatches > 0 ? (currentBatch / totalBatches) * 100 : 0;
-                document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
-
-                if (isCalled && calledUpTo > prevCalledUpTo) {
-                    triggerCalledNotification();
-                }
-            } else {
-                const ahead = Math.max(0, myTicketNumber - calledUpTo - 1);
-                const isCalled = myTicketNumber <= calledUpTo;
-
-                document.getElementById('kioskCurrent').textContent = '#' + String(calledUpTo).padStart(3, '0');
-                document.getElementById('kioskAhead').textContent = isCalled ? '—' : ahead + ' 人';
-                const etaMin = Math.ceil((ahead / COUNTER_COUNT) * AVG_SERVICE_MIN);
-                document.getElementById('kioskETA').textContent = isCalled ? '—' : ('~' + etaMin + ' 分');
-
-                const progress = totalTickets > 0 ? (calledUpTo / totalTickets) * 100 : 0;
-                document.getElementById('progressBar').style.width = Math.min(100, progress) + '%';
-
-                if (isCalled && calledUpTo > prevCalledUpTo) {
-                    triggerCalledNotification();
-                }
-            }
-
-            prevCalledUpTo = calledUpTo;
-        }
-
-        function triggerCalledNotification() {
-            const overlay = document.getElementById('calledOverlay');
-            overlay.classList.add('active');
-            if (lastSearchResult) {
-                document.getElementById('calledSpotNum').textContent = lastSearchResult.spot + ' 號';
-                document.getElementById('calledSpotName').textContent = lastSearchResult.name;
-                document.getElementById('calledSpotInfo').style.display = '';
-            }
-            playNotificationSound();
-            if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
-        }
-
-        function dismissCalledOverlay() {
-            document.getElementById('calledOverlay').classList.remove('active');
-        }
-
-        function switchKioskScreen(id) {
-            if (id === 'kiosk-called') {
-                triggerCalledNotification();
-                return;
-            }
-            document.querySelectorAll('#view-kiosk .screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        async function requestWakeLock() {
-            const hint = document.getElementById('wakeLockHint');
-            const wakeDot = document.getElementById('wakeDot');
-            if (!('wakeLock' in navigator)) {
-                hint.lastChild.textContent = '瀏覽器不支援螢幕恆亮';
-                if (wakeDot) wakeDot.style.background = 'var(--amber)';
-                return;
-            }
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-                if (wakeDot) wakeDot.style.background = 'var(--green)';
-                wakeLock.addEventListener('release', () => {
-                    if (wakeDot) wakeDot.style.background = 'var(--amber)';
-                });
-            } catch (e) {
-                if (wakeDot) wakeDot.style.background = 'var(--amber)';
-            }
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && currentMode === 'kiosk' && myTicketNumber !== null) {
-                requestWakeLock();
-            }
-        });
-
-        // 確保 audioCtx 在使用者第一次互動時初始化（恢復的 session 需要）
-        function ensureAudioCtx() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            document.removeEventListener('click', ensureAudioCtx);
-            document.removeEventListener('touchstart', ensureAudioCtx);
-        }
-        document.addEventListener('click', ensureAudioCtx);
-        document.addEventListener('touchstart', ensureAudioCtx);
-
-        function playNotificationSound() {
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const now = audioCtx.currentTime;
-
-                // ✈️ 飛機客艙提示音 — ARINC 715-3 標準
-                // High: D5 (587Hz), Low: B4 (494Hz), 間隔 900ms
-                // 播放兩次，間隔 3 秒
-                [0, 3.0].forEach(repeat => {
-                    // 「叮～」— D5 (587Hz)
-                    const osc1 = audioCtx.createOscillator();
-                    const gain1 = audioCtx.createGain();
-                    osc1.connect(gain1);
-                    gain1.connect(audioCtx.destination);
-                    osc1.frequency.value = 587; // D5
-                    osc1.type = 'sine';
-                    const t1 = now + repeat;
-                    gain1.gain.setValueAtTime(0.8, t1);
-                    gain1.gain.exponentialRampToValueAtTime(0.001, t1 + 0.9);
-                    osc1.start(t1);
-                    osc1.stop(t1 + 0.9);
-
-                    // 「東～」— B4 (494Hz)，延遲 0.9 秒
-                    const osc2 = audioCtx.createOscillator();
-                    const gain2 = audioCtx.createGain();
-                    osc2.connect(gain2);
-                    gain2.connect(audioCtx.destination);
-                    osc2.frequency.value = 494; // B4
-                    osc2.type = 'sine';
-                    const t2 = now + repeat + 0.9;
-                    gain2.gain.setValueAtTime(0.8, t2);
-                    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.9);
-                    osc2.start(t2);
-                    osc2.stop(t2 + 0.9);
-                });
-            } catch (e) { }
-        }
-
-        // ═════════════════════════════════
-        // 🖥️ ADMIN / 管理端
-        // ═════════════════════════════════
-        function initAdmin() {
-            db.ref('.info/connected').on('value', (snap) => {
-                const dot = document.getElementById('fbStatusDot');
-                const txt = document.getElementById('fbStatusText');
-                if (snap.val() === true) {
-                    dot.className = 'status-dot online';
-                    txt.textContent = 'Firebase 已連線';
-                } else {
-                    dot.className = 'status-dot offline';
-                    txt.textContent = '連線中斷';
-                }
-            });
-
-            // 監聽 callMode
-            queueRef.child('callMode').on('value', (snap) => {
-                callMode = snap.val() || 'batch';
-                updateAdminModeUI();
-            });
-
-            queueRef.on('value', (snap) => {
-                const data = snap.val() || {};
-                const calledUpTo = data.calledUpTo || 0;
-                const nextTicket = data.nextTicket || 1;
-                const total = nextTicket - 1;
-                callMode = data.callMode || 'batch';
-                document.getElementById('statTotal').textContent = total;
-
-                if (callMode === 'batch') {
-                    const totalBatches = Math.ceil(total / 10) || 0;
-                    const waitingBatches = Math.max(0, totalBatches - calledUpTo);
-                    document.getElementById('statCalled').textContent = calledUpTo === 0 ? '尚未叫號' : '第 ' + calledUpTo + ' 梯次';
-                    document.getElementById('statWaiting').textContent = waitingBatches + ' 梯次';
-                    const batchEl = document.getElementById('adminCurrentBatch');
-                    if (batchEl) batchEl.textContent = calledUpTo === 0 ? '尚未叫號' : '第 ' + calledUpTo + ' 梯次';
-                } else {
-                    const waiting = Math.max(0, total - calledUpTo);
-                    document.getElementById('statCalled').textContent = calledUpTo;
-                    document.getElementById('statWaiting').textContent = waiting;
-                    const batchEl = document.getElementById('adminCurrentBatch');
-                    if (batchEl) batchEl.textContent = '#' + String(calledUpTo).padStart(3, '0');
-                }
-            });
-
-            // 監聽客戶查詢紀錄
-            queueRef.child('lookups').on('value', (snap) => {
-                const data = snap.val();
-                const tbody = document.getElementById('lookupTableBody');
-                if (!data) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--gray-400);">尚無查詢紀錄</td></tr>';
-                    return;
-                }
-                const rows = Object.values(data).sort((a, b) => (b.ts || 0) - (a.ts || 0));
-                let html = '';
-                rows.forEach(r => {
-                    html += `<tr style="border-bottom:1px solid var(--gray-100);">
-                        <td style="padding:6px 10px;">#${r.ticket}</td>
-                        <td style="padding:6px 10px;font-weight:600;color:var(--red);">${r.spot} 號</td>
-                        <td style="padding:6px 10px;">${r.name}</td>
-                        <td style="padding:6px 10px;font-family:monospace;font-size:12px;">${r.rn}</td>
-                    </tr>`;
-                });
-                tbody.innerHTML = html;
-            });
-        }
-
-        function adminLogin() {
-            const pwd = document.getElementById('adminPwd').value;
-            if (pwd === ADMIN_PASSWORD) {
-                switchAdminScreen('admin-panel');
-                generateQR();
-            } else {
-                document.getElementById('pwdError').style.display = 'block';
-                document.getElementById('adminPwd').value = '';
-                if (navigator.vibrate) navigator.vibrate(200);
-            }
-        }
-
-        function switchAdminScreen(id) {
-            document.querySelectorAll('#view-admin .screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function callNextBatch() {
-            if (!queueRef) return;
-            queueRef.child('calledUpTo').transaction((current) => (current || 0) + 1);
-        }
-
-        function callNext(count) {
-            if (!queueRef) return;
-            queueRef.child('calledUpTo').transaction((current) => (current || 0) + count);
-        }
-
-        function callNextCustom() {
-            const n = parseInt(document.getElementById('batchSize').value) || 1;
-            callNext(n);
-        }
-
-        function toggleCallMode() {
-            const toggle = document.getElementById('modeToggle');
-            const newMode = toggle.checked ? 'batch' : 'number';
-            queueRef.child('callMode').set(newMode);
-        }
-
-        function updateAdminModeUI() {
-            const isBatch = callMode === 'batch';
-            const toggle = document.getElementById('modeToggle');
-            const dot = document.getElementById('modeToggleDot');
-            if (toggle) toggle.checked = isBatch;
-            if (dot) dot.style.transform = isBatch ? 'translateX(24px)' : 'translateX(0)';
-            // 切換按鈕顯示
-            const batchBtns = document.getElementById('adminBatchBtns');
-            const numBtns = document.getElementById('adminNumBtns');
-            if (batchBtns) batchBtns.style.display = isBatch ? '' : 'none';
-            if (numBtns) numBtns.style.display = isBatch ? 'none' : '';
-            // 更新標題
-            document.getElementById('adminCallTitle').textContent = isBatch ? '叫號操作（梯次制，每梯 10 人）' : '叫號操作（號碼制）';
-            // 更新標籤顏色
-            document.getElementById('modeLabelNum').style.color = isBatch ? 'var(--gray-400)' : 'var(--black)';
-            document.getElementById('modeLabelNum').style.fontWeight = isBatch ? '500' : '600';
-            document.getElementById('modeLabelBatch').style.color = isBatch ? 'var(--black)' : 'var(--gray-400)';
-            document.getElementById('modeLabelBatch').style.fontWeight = isBatch ? '600' : '500';
-            // 切換背景色
-            const toggleBg = toggle ? toggle.nextElementSibling : null;
-            if (toggleBg) toggleBg.style.background = isBatch ? 'var(--red)' : 'var(--gray-300)';
-        }
-
-        function toggleQR() {
-            const content = document.getElementById('qrContent');
-            const icon = document.getElementById('qrToggleIcon');
-            const isOpen = content.style.display !== 'none';
-            content.style.display = isOpen ? 'none' : 'block';
-            icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-        }
-
-        function generateQR() {
-            const container = document.getElementById('adminQR');
-            const urlDisplay = document.getElementById('adminQRUrl');
-            const kioskUrl = (window.location.origin + window.location.pathname).replace(/\?.*$/, '');
-
-            container.innerHTML = '';
-            try {
-                new QRCode(container, {
-                    text: kioskUrl,
-                    width: 200,
-                    height: 200,
-                    colorDark: '#000000',
-                    colorLight: '#ffffff',
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            } catch (e) {
-                container.innerHTML = '<p style="color:var(--gray-400)">QR Code 產生失敗</p>';
-            }
-            urlDisplay.textContent = kioskUrl;
-        }
-
-        function showResetModal() { document.getElementById('resetModal').classList.add('active'); }
-        function hideResetModal() { document.getElementById('resetModal').classList.remove('active'); }
-
-        function resetQueue() {
-            hideResetModal();
-            queueRef.set({
-                calledUpTo: 0,
-                nextTicket: 1,
-                sessionId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
-            });
-        }
-
-        // ═════════════════════════════════
-        // ⏰ 自動重設場次
-        // 每天 08:00 / 10:30 / 12:30 / 14:30 / 16:30 自動重設
-        // ═════════════════════════════════
-        (function initAutoReset() {
-            const RESET_TIMES = [
-                { h: 8, m: 0 },   // 08:00 — 每日早晨重設
-                { h: 10, m: 30 },   // 10:30 — 第1場後
-                { h: 12, m: 30 },   // 12:30 — 第2場後
-                { h: 14, m: 30 },   // 14:30 — 第3場後
-                { h: 16, m: 30 },   // 16:30 — 第4場後
-            ];
-            let lastResetKey = '';
-
-            function checkAutoReset() {
-                if (!queueRef) return;
-                const now = new Date();
-                const h = now.getHours();
-                const m = now.getMinutes();
-                const key = h + ':' + m;  // 同一分鐘只觸發一次
-
-                if (key === lastResetKey) return;
-
-                const match = RESET_TIMES.find(t => t.h === h && t.m === m);
-                if (match) {
-                    lastResetKey = key;
-                    console.log('[AutoReset] 觸發自動重設 @', key);
-                    queueRef.set({
-                        calledUpTo: 0,
-                        nextTicket: 1,
-                        sessionId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
-                    });
-                }
-            }
-
-            // 每 30 秒檢查一次
-            setInterval(checkAutoReset, 30000);
-            checkAutoReset(); // 啟動時立即檢查一次
+            if (img.complete) { doMark(); } else { img.onload = doMark; }
         })();
-
-
-
-        // ═════════════════════════════════
-        // Flow Tab Switching
-        // ═════════════════════════════════
-        function switchFlowTab(tabId) {
-            document.querySelectorAll('.flow-tab-btn').forEach(function(b) {
-                b.classList.toggle('active', b.dataset.ftab === tabId);
-            });
-            document.querySelectorAll('.flow-tab-panel').forEach(function(p) {
-                p.classList.toggle('active', p.id === 'fpanel-' + tabId);
-            });
-        }
-
-        // Accordion
-        function toggleAccordion(header) {
-            var section = header.parentElement;
-            var isOpen = section.classList.contains('accordion-open');
-            document.querySelectorAll('.accordion-open').forEach(function(el) { el.classList.remove('accordion-open'); });
-            if (!isOpen) section.classList.add('accordion-open');
-        }
-
-        // Model filter
-        function filterModel(modelId) {
-            document.querySelectorAll('.model-btn').forEach(function(b) {
-                b.classList.toggle('active', b.dataset.model === modelId);
-            });
-            document.querySelectorAll('.acc-model-group').forEach(function(g) {
-                g.classList.toggle('active', g.id === 'acc-' + modelId);
-            });
-        }
-
-// ═══ 場次資料 ═══
-        const SESSIONS = {
-            10: {
-                label: '10:00 場次',
-                allDone: '11:30',
-                steps: [
-                    { time: '09:50', end: '10:10', title: '報到（09:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '10:10', end: '10:20', title: '報到（10:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '10:20', end: '10:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '10:30', end: '10:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '10:35', end: '10:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '10:45', end: '11:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '10:50', end: '11:00', title: '配件選購 & 拍照打卡', desc: '教學完成後可至配件櫃台選購、與愛車拍照' },
-                    { time: '11:10', end: '11:30', title: '自由離場', desc: '完成教學、配件選購後即可離場，本場次將於 11:10 結束' },
-                ]
-            },
-            12: {
-                label: '12:00 場次',
-                allDone: '13:30',
-                steps: [
-                    { time: '11:50', end: '12:10', title: '報到（11:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '12:10', end: '12:20', title: '報到（12:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '12:20', end: '12:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '12:30', end: '12:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '12:35', end: '12:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '12:45', end: '13:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '12:50', end: '13:00', title: '配件選購 & 拍照打卡', desc: '教學完成後可至配件櫃台選購、與愛車拍照' },
-                    { time: '13:10', end: '13:30', title: '自由離場', desc: '完成教學、配件選購後即可離場，本場次將於 13:10 結束' },
-                ]
-            },
-            14: {
-                label: '14:00 場次',
-                allDone: '15:30',
-                steps: [
-                    { time: '13:50', end: '14:10', title: '報到（13:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '14:10', end: '14:20', title: '報到（14:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '14:20', end: '14:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '14:30', end: '14:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '14:35', end: '14:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '14:45', end: '15:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '14:50', end: '15:00', title: '配件選購 & 拍照打卡', desc: '教學完成後可至配件櫃台選購、與愛車拍照' },
-                    { time: '15:10', end: '15:30', title: '自由離場', desc: '完成教學、配件選購後即可離場，本場次將於 15:10 結束' },
-                ]
-            },
-            16: {
-                label: '16:00 場次',
-                allDone: '17:30',
-                steps: [
-                    { time: '15:50', end: '16:10', title: '報到（15:50 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '16:10', end: '16:20', title: '報到（16:10 場次）', desc: '請至 4 樓櫃檯完成報到並領取交付資料' },
-                    { time: '16:20', end: '16:35', title: '充電操作示範（第 1 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '16:30', end: '16:45', title: '車內語音教學（第 1 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '16:35', end: '16:50', title: '車內語音教學（第 2 場）', desc: '於車內聆聽語音教學車輛基本操作與重要設定' },
-                    { time: '16:45', end: '17:00', title: '充電操作示範（第 2 場）', desc: '於 B4 展示車輛示範充電操作' },
-                    { time: '16:50', end: '17:00', title: '配件選購 & 拍照打卡', desc: '教學完成後可至配件櫃台選購、與愛車拍照' },
-                    { time: '17:10', end: '17:30', title: '自由離場', desc: '完成教學、配件選購後即可離場，本場次將於 17:10 結束' },
-                ]
-            }
-        };
-
-        function toMin(str) {
-            const [h, m] = str.split(':').map(Number);
-            return h * 60 + m;
-        }
-
-        function detectSession() {
-            const now = new Date();
-            const nowMin = now.getHours() * 60 + now.getMinutes();
-            const ranges = [
-                { h: 10, start: toMin('09:40'), end: toMin('12:00') },
-                { h: 12, start: toMin('11:40'), end: toMin('14:00') },
-                { h: 14, start: toMin('13:40'), end: toMin('16:00') },
-                { h: 16, start: toMin('15:40'), end: toMin('18:00') },
-            ];
-            for (const r of ranges) {
-                if (nowMin >= r.start && nowMin < r.end) return r.h;
-            }
-            for (const r of ranges) {
-                if (nowMin < r.start) return r.h;
-            }
-            return 10;
-        }
-
-        function renderTimeline() {
-            const sessionH = detectSession();
-            const session = SESSIONS[sessionH];
-            if (!session) return;
-
-            // sessionBadge 已移除，不再更新
-
-            const now = new Date();
-            const nowMin = now.getHours() * 60 + now.getMinutes();
-            const allDoneMin = toMin(session.allDone);
-
-            // 更新 Hero 區塊
-            const hero = document.getElementById('nowHero');
-            let activeStep = null;
-            let nextStep = null;
-
-            session.steps.forEach((step) => {
-                const startMin = toMin(step.time);
-                const endMin = toMin(step.end);
-                if (nowMin >= startMin && nowMin < endMin) {
-                    activeStep = step;
-                } else if (!activeStep && !nextStep && nowMin < startMin) {
-                    nextStep = step;
-                }
-            });
-
-            if (nowMin >= allDoneMin) {
-                // 所有流程完成
-                hero.className = 'now-hero all-done';
-                document.getElementById('nowLabel').textContent = '流程已完成';
-                document.getElementById('nowTitle').textContent = '所有步驟已結束';
-                document.getElementById('nowDesc').textContent = '完成車輛教學、配件選購後即可離場';
-                document.getElementById('nowTimeText').textContent = '已完成';
-            } else if (activeStep) {
-                hero.className = 'now-hero';
-                document.getElementById('nowLabel').textContent = '目前進行';
-                document.getElementById('nowTitle').textContent = activeStep.title;
-                document.getElementById('nowDesc').textContent = activeStep.desc;
-                document.getElementById('nowTimeText').textContent = activeStep.time + ' ~ ' + activeStep.end;
-            } else if (nextStep) {
-                hero.className = 'now-hero';
-                document.getElementById('nowLabel').textContent = '即將開始';
-                document.getElementById('nowTitle').textContent = nextStep.title;
-                document.getElementById('nowDesc').textContent = nextStep.desc;
-                document.getElementById('nowTimeText').textContent = nextStep.time + ' 開始';
-            } else {
-                hero.className = 'now-hero';
-                document.getElementById('nowLabel').textContent = '交付流程概覽';
-                document.getElementById('nowTitle').textContent = '今日行程一覽';
-                document.getElementById('nowDesc').textContent = '請查看下方流程表了解詳細時間';
-                document.getElementById('nowTimeText').textContent = session.label;
-            }
-
-            // 渲染時間軸
-            const container = document.getElementById('timeline');
-            let html = '';
-
-            session.steps.forEach((step) => {
-                const startMin = toMin(step.time);
-                const endMin = toMin(step.end);
-                let status = 'upcoming';
-
-                if (nowMin >= allDoneMin) {
-                    status = 'done';
-                } else if (nowMin >= endMin) {
-                    status = 'done';
-                } else if (nowMin >= startMin && nowMin < endMin) {
-                    status = 'active';
-                }
-
-                let badgeHtml = '';
-                if (status === 'active') badgeHtml = '<span class="tl-badge now">進行中</span>';
-                else if (status === 'done') badgeHtml = '<span class="tl-badge completed">已完成</span>';
-
-                html += `
-                    <div class="tl-item ${status}">
-                        <div class="tl-left">
-                            <div class="tl-dot"></div>
-                            <div class="tl-line"></div>
-                        </div>
-                        <div class="tl-card">
-                            <div class="tl-time">${step.time}</div>
-                            <div class="tl-title">${step.title}</div>
-                            <div class="tl-desc">${step.desc}</div>
-                            ${badgeHtml}
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-
-            // 自動捲動到進行中的步驟
-            setTimeout(() => {
-                const activeEl = document.querySelector('.tl-item.active');
-                if (activeEl) {
-                    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 300);
-        }
-
-        renderTimeline();
-        setInterval(renderTimeline, 30000);
-
-        
     </script>
-
 </body>
 
 </html>
